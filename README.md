@@ -1,3 +1,5 @@
+[![Logo](https://github.com/SaneDevelopment/SaneDevelopment.github.io/raw/master/img/Sane%20Development%20Logo.200x200.png)](https://sanedevelopment.github.io/)
+
 # WPF-Controls
 
 `Sane Development WPF 4.5 Controls Library` is an open source .NET WPF 4.5 controls library.
