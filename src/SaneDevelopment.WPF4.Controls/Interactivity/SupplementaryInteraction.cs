@@ -45,7 +45,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
     /// <summary>
     /// Класс представляет собой список тригеров для использования в свойстве <see cref="SupplementaryInteraction.TriggersProperty"/>
     /// </summary>
-    public class TriggersCollection : List<System.Windows.Interactivity.TriggerBase>
+    public class TriggersCollection : List<Microsoft.Xaml.Behaviors.TriggerBase>
     { }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
 
         private static void OnPropertyTriggersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var triggers = System.Windows.Interactivity.Interaction.GetTriggers(d);
+            var triggers = Microsoft.Xaml.Behaviors.Interaction.GetTriggers(d);
             if (triggers == null)
                 return;
 

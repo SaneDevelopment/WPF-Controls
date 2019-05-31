@@ -119,11 +119,11 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
     }
 
     /// <summary>
-    /// Класс представляет собой <see cref="Microsoft.Expression.Interactivity.Core.CallMethodAction"/> (наследуется от него).
+    /// Класс представляет собой <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction"/> (наследуется от него).
     /// Данный класс добавляет к своему родительскому классу два свойства зависимости (параметры),
-    /// которые будут переданы вызываемому методу в момент выполнения <see cref="Microsoft.Expression.Interactivity.Core.CallMethodAction.Invoke"/>.
+    /// которые будут переданы вызываемому методу в момент выполнения <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction.Invoke"/>.
     /// </summary>
-    public class ParameterizedCallMethodAction : Microsoft.Expression.Interactivity.Core.CallMethodAction
+    public class ParameterizedCallMethodAction : Microsoft.Xaml.Behaviors.Core.CallMethodAction
     {
         /// <summary>
         /// Первый параметр
@@ -253,7 +253,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
 
         /// <summary>
         /// Выполняет соответствующее действие.
-        /// Вызывает метод базового класса <see cref="Microsoft.Expression.Interactivity.Core.CallMethodAction.Invoke"/>,
+        /// Вызывает метод базового класса <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction.Invoke"/>,
         /// предварительно "завернув" заданные параметры и исходный параметр события в <see cref="ParameterizedEventArgs"/>
         /// </summary>
         /// <param name="parameter">Параметр вызова исходного метода</param>
