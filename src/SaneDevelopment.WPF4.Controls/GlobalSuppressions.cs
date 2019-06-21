@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -50,7 +50,7 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "WPF", Scope = "namespace",
     Target = "SaneDevelopment.WPF4.Controls.LinqToVisualTree")]
 
-// Предупреждения в сгенерированном коде, которых, вообще-то, быть не должно...
+// Messages in auto-generated code
 [assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Scope = "member",
     Target = "XamlGeneratedNamespace.GeneratedInternalTypeHelper.#AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1", Scope = "member",

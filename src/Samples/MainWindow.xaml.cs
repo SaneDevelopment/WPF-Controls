@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library
+//   Sane Development WPF Controls Library Samples
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,

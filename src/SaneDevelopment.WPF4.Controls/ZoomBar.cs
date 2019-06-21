@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -50,9 +50,9 @@ using System.Windows.Media;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Зум-панель.
-    /// Представляет собой элемент управления с содержимым, позволяющий наглядно масштабировать свое содержимое,
-    /// отрезая от него поля настраиваемой ширины. Таким образом реализуется свого рода элемент предварительного просмотра.
+    /// Zoom bar is a content control, that allows to scale ("zoom") its content
+    /// by cutting edges of adjustable length.
+    /// Can be used as a sort of preview control.
     /// </summary>
     [TemplatePart(Name = "PART_ContentContainer", Type = typeof(FrameworkElement))]
     [TemplatePart(Name = "PART_LeftThumb", Type = typeof(Thumb))]
@@ -63,8 +63,12 @@ namespace SaneDevelopment.WPF4.Controls
     [Description("Sane Zoombar")]
     public class ZoomBar : ContentControl, IRanged<double, double>
     {
+        #region Private fields
+
         private const string c_ShiftLeftCommandName = "ShiftLeftCommand";
         private const string c_ShiftRightCommandName = "ShiftRightCommand";
+
+        #endregion Private fields
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static ZoomBar()
@@ -84,49 +88,49 @@ namespace SaneDevelopment.WPF4.Controls
         #region Default constants
 
         /// <summary>
-        /// Минимальное значение, задаваемое по умолчанию
+        /// Default value for <see cref="MinimumProperty"/>
         /// </summary>
         public const double DefaultMinimum = 0.0;
 
         /// <summary>
-        /// Максимальное значение, задаваемое по умолчанию
+        /// Default value for <see cref="MaximumProperty"/>.
         /// </summary>
         public const double DefaultMaximum = 100.0;
 
         /// <summary>
-        /// Значение сдвига, задаваемое по умолчанию
+        /// Default value for <see cref="ShiftValueProperty"/>.
         /// </summary>
         public const double DefaultShiftValue = 5.0;
 
         /// <summary>
-        /// Минимально возможное значение сдвига
+        /// Minimum value for <see cref="ShiftValueProperty"/>.
         /// </summary>
         public const double MinShiftValue = 1.0;
 
         /// <summary>
-        /// Начальное значение области выделения, задаваемое по умолчанию
+        /// Default value for <see cref="SelectionStartProperty"/>.
         /// </summary>
         public const double DefaultSelectionStart = DefaultMinimum;
 
         /// <summary>
-        /// Конечно значение области выделения, задаваемое по умолчанию
+        /// Default value for <see cref="SelectionEndProperty"/>.
         /// </summary>
         public const double DefaultSelectionEnd = DefaultMaximum;
 
         private const double c_DefaultSelectionRange = DefaultSelectionEnd - DefaultSelectionStart;
 
         /// <summary>
-        /// Толщина границы области выделения, задаваемое по умолчанию
+        /// Default value for <see cref="SelectionBorderThicknessProperty"/>.
         /// </summary>
         public const double DefaultSelectionBorderThickness = 1.0;
 
         /// <summary>
-        /// Прозрачность заливки области за пределами области выделения (т.н. "область невыделения" или "отбрасываемая область"), задаваемое по умолчанию
+        /// Default value for <see cref="NotSelectedOpacityProperty"/>.
         /// </summary>
         public const double DefaultNotSelectedOpacity = 0.7;
 
         /// <summary>
-        /// Прозрачность границы области выделения, задаваемое по умолчанию
+        /// Default value for <see cref="SelectionBorderOpacityProperty"/>.
         /// </summary>
         public const double DefaultSelectionBorderOpacity = 0.5;
 
@@ -138,32 +142,32 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion
 
         /// <summary>
-        /// Содержимое элемента управления
+        /// Gets or sets container for content of a control
         /// </summary>
         protected FrameworkElement ContentContainer { get; set; }
 
         /// <summary>
-        /// Слайдер, на основе которого строится область выделения
+        /// Gets or sets slider that provides selection area.
         /// </summary>
         protected SimpleNumericRangeSlider RangeSlider { get; set; }
 
         /// <summary>
-        /// Начальный ползунок
+        /// Gets or sets start thumb.
         /// </summary>
         protected Thumb StartThumb { get; set; }
 
         /// <summary>
-        /// Конечный ползунок
+        /// Gets or sets end thumb.
         /// </summary>
         protected Thumb EndThumb { get; set; }
 
         /// <summary>
-        /// Кнопка сдвига области выделения влево (вниз)
+        /// Gets or sets shift left (down) button.
         /// </summary>
         protected ButtonBase ShiftLeftButton { get; set; }
 
         /// <summary>
-        /// Кнопка сдвига области выделения вправо (вверх)
+        /// Gets or sets shift right (up) button.
         /// </summary>
         protected ButtonBase ShiftRightButton { get; set; }
 
@@ -194,8 +198,9 @@ namespace SaneDevelopment.WPF4.Controls
                 return;
             }
 
-            // делаем справа и слева от краев области содержимого отступ, равный ширине ползунков,
-            // чтобы в случае, когда ползунок сдвигался до упора он не загораживал бы собой области содержимого
+            // make the indent to the right and to the left of the content container
+            // equals to the thumbs sizes.
+            // So when the slider moves close to the area end, it not overlap content.
             double left = 0.0, top = 0.0, right = 0.0, bottom = 0.0;
             if (this.StartThumb != null)
             {
@@ -228,7 +233,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Orientation Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.Orientation"/>
+        /// Dependency property for <see cref="ZoomBar.Orientation"/>
         /// </summary>
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(
@@ -239,7 +244,7 @@ namespace SaneDevelopment.WPF4.Controls
                 DependencyPropertyUtil.IsValidOrientation);
 
         /// <summary>
-        /// Ориентация контрола
+        /// Control orientation
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public Orientation Orientation
@@ -258,7 +263,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Minimum
 
         /// <summary>
-        /// Минимальное значение
+        /// Gets the minimum value
         /// </summary>
         [Category("Common")]
         public double Minimum
@@ -281,7 +286,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(DefaultMinimum));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.Minimum"/>
+        /// Dependency property for <see cref="ZoomBar.Minimum"/>
         /// </summary>
         public static readonly DependencyProperty MinimumProperty = MinimumPropertyKey.DependencyProperty;
 
@@ -290,7 +295,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Maximum
 
         /// <summary>
-        /// Максимальное значение
+        /// Gets the maximum value.
         /// </summary>
         [Category("Common")]
         public double Maximum
@@ -313,7 +318,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(DefaultMaximum));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.Maximum"/>
+        /// Dependency property for <see cref="ZoomBar.Maximum"/>
         /// </summary>
         public static readonly DependencyProperty MaximumProperty = MaximumPropertyKey.DependencyProperty;
 
@@ -322,7 +327,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region ShiftValue
 
         /// <summary>
-        /// Величина сдвига
+        /// Gets or sets the shift value.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double ShiftValue
@@ -337,7 +342,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.ShiftValue"/>
+        /// Dependency property for <see cref="ZoomBar.ShiftValue"/>
         /// </summary>
         public static readonly DependencyProperty ShiftValueProperty =
             DependencyProperty.Register(
@@ -386,7 +391,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionStart
 
         /// <summary>
-        /// Начало области выделения
+        /// Gets or sets the selection start value.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double SelectionStart
@@ -401,7 +406,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionStart"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionStart"/>
         /// </summary>
         public static readonly DependencyProperty SelectionStartProperty =
             DependencyProperty.Register(
@@ -447,10 +452,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения значения свойства <see cref="ZoomBar.SelectionStart"/>
+        /// A handler implementation that the property system will call whenever the effective value of the <see cref="SelectionStart"/> changes.
         /// </summary>
-        /// <param name="oldValue">Предыдущее значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the <see cref="SelectionStart"/> before the change.</param>
+        /// <param name="newValue">The value of the <see cref="SelectionStart"/> after the change.</param>
         protected virtual void OnSelectionStartChanged(double oldValue, double newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
@@ -465,7 +470,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionEnd
 
         /// <summary>
-        /// Конец области выделения
+        /// Gets or sets the selection end value.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double SelectionEnd
@@ -480,7 +485,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionEnd"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionEnd"/>
         /// </summary>
         public static readonly DependencyProperty SelectionEndProperty =
             DependencyProperty.Register(
@@ -527,10 +532,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения значения свойства <see cref="ZoomBar.SelectionEnd"/>
+        /// A handler implementation that the property system will call whenever the effective value of the <see cref="SelectionEnd"/> changes.
         /// </summary>
-        /// <param name="oldValue">Предыдущее значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the <see cref="SelectionEnd"/> before the change.</param>
+        /// <param name="newValue">The value of the <see cref="SelectionEnd"/> after the change.</param>
         protected virtual void OnSelectionEndChanged(double oldValue, double newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
@@ -545,7 +550,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region MinSelectionRange
 
         /// <summary>
-        /// Минимально допустимое значение ширины области выделения
+        /// Gets or sets the minimum value of selection range.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double MinSelectionRange
@@ -560,7 +565,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.MinSelectionRange"/>
+        /// Dependency property for <see cref="ZoomBar.MinSelectionRange"/>
         /// </summary>
         public static readonly DependencyProperty MinSelectionRangeProperty =
             DependencyProperty.Register(
@@ -613,7 +618,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionRange
 
         /// <summary>
-        /// Текущая величина (ширина/высота) области выделения
+        /// Gets current selection range value.
         /// </summary>
         [Category("Common")]
         public double SelectionRange
@@ -638,7 +643,7 @@ namespace SaneDevelopment.WPF4.Controls
                     OnSelectionRangeChanged));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionRange"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionRange"/>
         /// </summary>
         public static readonly DependencyProperty SelectionRangeProperty = SelectionRangePropertyKey.DependencyProperty;
 
@@ -659,10 +664,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения значения свойства <see cref="ZoomBar.SelectionRange"/>
+        /// A handler implementation that the property system will call whenever the effective value of the <see cref="SelectionRange"/> changes.
         /// </summary>
-        /// <param name="oldValue">Предыдущее значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the <see cref="SelectionRange"/> before the change.</param>
+        /// <param name="newValue">The value of the <see cref="SelectionRange"/> after the change.</param>
         protected virtual void OnSelectionRangeChanged(double oldValue, double newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
@@ -677,8 +682,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region LeftContentIndent
 
         /// <summary>
-        /// Отступ слева/снизу содержимого контрола, относительно крайней левой/нижней точки контрола.
-        /// Показывает текущее положение содержимого относительно самого контрола.
+        /// Gets the left/bottom indent value of control content relative to left/bottom control edge.
+        /// Indicates the current placement of content relative to the control in whole.
         /// </summary>
         [Category("Layout")]
         public double LeftContentIndent
@@ -702,7 +707,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(0.0));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.LeftContentIndent"/>
+        /// Dependency property for <see cref="ZoomBar.LeftContentIndent"/>
         /// </summary>
         public static readonly DependencyProperty LeftContentIndentProperty = LeftContentIndentPropertyKey.DependencyProperty;
 
@@ -711,8 +716,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region RightContentIndent
 
         /// <summary>
-        /// Отступ справа/сверху содержимого контрола, относительно крайней правой/верхней точки контрола.
-        /// Показывает текущее положение содержимого относительно самого контрола.
+        /// Gets the right/top indent value of control content relative to right/top control edge.
+        /// Indicates the current placement of content relative to the control in whole.
         /// </summary>
         [Category("Layout")]
         public double RightContentIndent
@@ -736,7 +741,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(0.0));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.RightContentIndent"/>
+        /// Dependency property for <see cref="ZoomBar.RightContentIndent"/>
         /// </summary>
         public static readonly DependencyProperty RightContentIndentProperty = RightContentIndentPropertyKey.DependencyProperty;
 
@@ -745,9 +750,9 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsSelectionDragging
 
         /// <summary>
-        /// Находится ли контрол в состоянии изменения значения области выделения путем перетаскивания любого из ползунков.
-        /// Позволяет узнать о том, что пользователь находится в процессе выбора величины области выделения,
-        /// захватив и перемещая в данный момент один из ползунков.
+        /// Gets the indicator whether control is in process of dragging (changing) the selection range
+        /// via movement of any of thumbs.
+        /// Indicates that user is in process of choosing the selection value by moving a thumbs.
         /// </summary>
         [Category("Common")]
         public bool IsSelectionDragging
@@ -772,7 +777,7 @@ namespace SaneDevelopment.WPF4.Controls
                     OnIsSelectionDraggingChanged));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.IsSelectionDragging"/>
+        /// Dependency property for <see cref="ZoomBar.IsSelectionDragging"/>
         /// </summary>
         public static readonly DependencyProperty IsSelectionDraggingProperty = IsSelectionDraggingPropertyKey.DependencyProperty;
 
@@ -795,10 +800,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения значения свойства <see cref="ZoomBar.IsSelectionDragging"/>
+        /// A handler implementation that the property system will call whenever the effective value of the <see cref="IsSelectionDragging"/> changes.
         /// </summary>
-        /// <param name="oldValue">Предыдущее значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the <see cref="IsSelectionDragging"/> before the change.</param>
+        /// <param name="newValue">The value of the <see cref="IsSelectionDragging"/> after the change.</param>
         protected virtual void OnIsSelectionDraggingChanged(bool oldValue, bool newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
@@ -813,7 +818,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsRaiseSelectionChangedWhileDragging Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.IsRaiseSelectionChangedWhileDragging"/>
+        /// Dependency property for <see cref="ZoomBar.IsRaiseSelectionChangedWhileDragging"/>
         /// </summary>
         public static readonly DependencyProperty IsRaiseSelectionChangedWhileDraggingProperty =
             DependencyProperty.Register(
@@ -824,9 +829,9 @@ namespace SaneDevelopment.WPF4.Controls
                 DependencyPropertyUtil.IsValidBoolValue);
 
         /// <summary>
-        /// Генерировать событие <see cref="ZoomBar.SelectionChanged"/>,
-        /// когда элемент находится в состоянии изменения значения области выделения путем перетаскивания любого из ползунков,
-        /// иными словами, когда <see cref="ZoomBar.IsSelectionDragging"/> <c>== true</c>.
+        /// Gets of sets indicator whether to raise <see cref="ZoomBar.SelectionChanged"/> event
+        /// when control is in process of changing a selection value via dragging a thumb.
+        /// In other word when <see cref="ZoomBar.IsSelectionDragging"/> is <c>true</c>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool IsRaiseSelectionChangedWhileDragging
@@ -846,7 +851,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipValueConverter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.AutoToolTipValueConverter"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverter"/>
         /// </summary>
         public static readonly DependencyProperty AutoToolTipValueConverterProperty =
             DependencyProperty.Register(
@@ -856,8 +861,8 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Конвертер значений в их строковые представления для отображения во всплывающих подсказках.
-        /// Если задано это значение, то <see cref="ZoomBar.AutoToolTipFormat"/> игнорируется.
+        /// Gets or sets the converter of selection values to their string representations for showing in autotooltips.
+        /// If not <c>null</c> then <see cref="ZoomBar.AutoToolTipFormat"/> ignores.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public IRangeValueToStringConverter<double> AutoToolTipValueConverter
@@ -871,7 +876,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipValueConverterParameter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.AutoToolTipValueConverterParameter"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverterParameter"/>
         /// </summary>
         public static readonly DependencyProperty AutoToolTipValueConverterParameterProperty =
             DependencyProperty.Register(
@@ -881,7 +886,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Параметр конвертера числовых значений в их строковые представления
+        /// Gets or sets the parameter for <see cref="AutoToolTipValueConverter"/>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public object AutoToolTipValueConverterParameter
@@ -895,16 +900,19 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipFormat Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.AutoToolTipFormat"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipFormat"/>
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-        public static readonly DependencyProperty AutoToolTipFormatProperty
-            = DependencyProperty.Register("AutoToolTipFormat", typeof(string), typeof(ZoomBar),
-                                          new FrameworkPropertyMetadata());
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")] public static readonly
+            DependencyProperty AutoToolTipFormatProperty
+                = DependencyProperty.Register(
+                    "AutoToolTipFormat",
+                    typeof (string),
+                    typeof (ZoomBar),
+                    new FrameworkPropertyMetadata());
 
         /// <summary>
-        /// Формат отображения числа во всплывающей подсказке.
-        /// Используется только, если не задан <see cref="ZoomBar.AutoToolTipValueConverter"/>.
+        /// Gets or sets the format string for showing a values in the auto tooltips.
+        /// Uses only if <see cref="ZoomBar.AutoToolTipValueConverter"/> is <c>null</c>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public string AutoToolTipFormat
@@ -924,7 +932,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipPrecision Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.AutoToolTipPrecision"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipPrecision"/>
         /// </summary>
         public static readonly DependencyProperty AutoToolTipPrecisionProperty = DependencyProperty.Register(
             "AutoToolTipPrecision",
@@ -934,7 +942,7 @@ namespace SaneDevelopment.WPF4.Controls
             DependencyPropertyUtil.IsValidAutoToolTipPrecision);
 
         /// <summary>
-        /// Точность отображения чисел с плавающей точкой во всплывающей подсказке, используемой по умолчанию.
+        /// Floating-point precision of numbers for showing in the auto tooltips in UI.
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public int AutoToolTipPrecision
@@ -956,15 +964,18 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipPlacement Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.AutoToolTipPlacement"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipPlacement"/>
         /// </summary>
         public static readonly DependencyProperty AutoToolTipPlacementProperty
-            = DependencyProperty.Register("AutoToolTipPlacement", typeof(AutoToolTipPlacement), typeof(ZoomBar),
-                                          new FrameworkPropertyMetadata(AutoToolTipPlacement.BottomRight),
-                                          DependencyPropertyUtil.IsValidAutoToolTipPlacement);
+            = DependencyProperty.Register(
+                "AutoToolTipPlacement",
+                typeof (AutoToolTipPlacement),
+                typeof (ZoomBar),
+                new FrameworkPropertyMetadata(AutoToolTipPlacement.BottomRight),
+                DependencyPropertyUtil.IsValidAutoToolTipPlacement);
 
         /// <summary>
-        /// Относительное метоположение отображения всплывающей подсказки
+        /// The placement where automatic <see cref="System.Windows.Controls.ToolTip"/> is positioned on the control.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public AutoToolTipPlacement AutoToolTipPlacement
@@ -1049,7 +1060,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region NotSelectedBackground Property
 
         /// <summary>
-        /// Фон невыделенной области содержимого
+        /// Gets or sets the <see cref="Brush"/> for the "not selected" area,
+        /// i.e. area of control located beyond currently selected range.
         /// </summary>
         [Category("Brush")]
         public Brush NotSelectedBackground
@@ -1059,7 +1071,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.NotSelectedBackground"/>
+        /// Dependency property for <see cref="ZoomBar.NotSelectedBackground"/>
         /// </summary>
         public static readonly DependencyProperty NotSelectedBackgroundProperty =
             DependencyProperty.Register(
@@ -1073,8 +1085,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region NotSelectedOpacity Property
 
         /// <summary>
-        /// Прозрачность фона невыделенной области содержимого
+        /// Gets or sets the opacity for the "not selected" area,
+        /// i.e. area of control located beyond currently selected range.
         /// </summary>
+        [Category("Appearance")]
         public double NotSelectedOpacity
         {
             get
@@ -1087,7 +1101,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.NotSelectedOpacity"/>
+        /// Dependency property for <see cref="ZoomBar.NotSelectedOpacity"/>
         /// </summary>
         public static readonly DependencyProperty NotSelectedOpacityProperty =
             DependencyProperty.Register(
@@ -1101,7 +1115,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionBorderBackground Property
 
         /// <summary>
-        /// Фон границы области выделения
+        /// Gets or sets the <see cref="Brush"/> for the background of border of selection area.
         /// </summary>
         [Category("Brush")]
         public Brush SelectionBorderBackground
@@ -1111,7 +1125,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionBorderBackground"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderBackground"/>
         /// </summary>
         public static readonly DependencyProperty SelectionBorderBackgroundProperty =
             DependencyProperty.Register(
@@ -1125,8 +1139,9 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionBorderOpacity Property
 
         /// <summary>
-        /// Прозрачность границы области выделения
+        /// Gets or sets the opacity for the border of selection area.
         /// </summary>
+        [Category("Appearance")]
         public double SelectionBorderOpacity
         {
             get
@@ -1139,7 +1154,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionBorderOpacity"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderOpacity"/>
         /// </summary>
         public static readonly DependencyProperty SelectionBorderOpacityProperty =
             DependencyProperty.Register(
@@ -1153,7 +1168,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region SelectionBorderThickness Property
 
         /// <summary>
-        /// Толщина границы области выделения
+        /// Gets or sets the thickness for the border of selection area.
         /// </summary>
         public double SelectionBorderThickness
         {
@@ -1167,7 +1182,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionBorderThickness"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderThickness"/>
         /// </summary>
         public static readonly DependencyProperty SelectionBorderThicknessProperty =
             DependencyProperty.Register(
@@ -1184,8 +1199,10 @@ namespace SaneDevelopment.WPF4.Controls
 
         #region Public Events
 
+        #region IsSelectionDraggingChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.IsSelectionDraggingChanged"/>
+        /// Dependency property for <see cref="ZoomBar.IsSelectionDraggingChanged"/>
         /// </summary>
         public static readonly RoutedEvent IsSelectionDraggingChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1195,7 +1212,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="ZoomBar.IsSelectionDragging"/>
+        /// Occurs when <see cref="ZoomBar.IsSelectionDragging"/> changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<bool> IsSelectionDraggingChanged
         {
@@ -1203,8 +1220,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(IsSelectionDraggingChangedEvent, value); }
         }
 
+        #endregion IsSelectionDraggingChanged
+
+        #region SelectionStartChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionStartChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionStartChanged"/>
         /// </summary>
         public static readonly RoutedEvent SelectionStartChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1214,7 +1235,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="ZoomBar.SelectionStart"/>
+        /// Occurs when <see cref="ZoomBar.SelectionStart"/> changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionStartChanged
         {
@@ -1222,8 +1243,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(SelectionStartChangedEvent, value); }
         }
 
+        #endregion SelectionStartChanged
+
+        #region SelectionEndChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionEndChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionEndChanged"/>
         /// </summary>
         public static readonly RoutedEvent SelectionEndChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1233,7 +1258,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="ZoomBar.SelectionEnd"/>
+        /// Occurs when <see cref="ZoomBar.SelectionEnd"/> changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionEndChanged
         {
@@ -1241,8 +1266,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(SelectionEndChangedEvent, value); }
         }
 
+        #endregion SelectionEndChanged
+
+        #region SelectionRangeChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionRangeChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionRangeChanged"/>
         /// </summary>
         public static readonly RoutedEvent SelectionRangeChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1252,7 +1281,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="ZoomBar.SelectionRange"/>
+        /// Occurs when <see cref="ZoomBar.SelectionRange"/> changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionRangeChanged
         {
@@ -1260,8 +1289,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(SelectionRangeChangedEvent, value); }
         }
 
+        #endregion SelectionRangeChanged
+
+        #region SelectionChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionChanged"/>
         /// </summary>
         public static readonly RoutedEvent SelectionChangedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1271,8 +1304,8 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие изменения любого из свойств <see cref="ZoomBar.SelectionStart"/>, <see cref="ZoomBar.SelectionEnd"/>
-        /// или <see cref="ZoomBar.SelectionRange"/>
+        /// Occurs when any of properties <see cref="ZoomBar.SelectionStart"/>, <see cref="ZoomBar.SelectionEnd"/>
+        /// or <see cref="ZoomBar.SelectionRange"/> changed.
         /// </summary>
         public event EventHandler<SelectionDragCompletedEventArgs> SelectionChanged
         {
@@ -1280,8 +1313,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(SelectionChangedEvent, value); }
         }
 
+        #endregion SelectionChanged
+
+        #region SelectionDragCompleted
+
         /// <summary>
-        /// Свойство зависимости для <see cref="ZoomBar.SelectionDragCompleted"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionDragCompleted"/>
         /// </summary>
         public static readonly RoutedEvent SelectionDragCompletedEvent =
             EventManager.RegisterRoutedEvent(
@@ -1291,7 +1328,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar));
 
         /// <summary>
-        /// Событие завершения перетаскивания одного из ползунков области выделения
+        /// Occurs when dragging of any of the thumbs completed.
         /// </summary>
         public event EventHandler<SelectionDragCompletedEventArgs> SelectionDragCompleted
         {
@@ -1299,19 +1336,22 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(SelectionDragCompletedEvent, value); }
         }
 
-        #endregion
+        #endregion SelectionDragCompleted
+
+        #endregion Public Events
 
         #region Commands
 
         /// <summary>
-        /// Команда сдвига области выделения влево/вниз
+        /// Routed command for decreasing (left/down) of selection range in whole.
         /// </summary>
         public static RoutedCommand ShiftLeftCommand { get; private set; }
 
         /// <summary>
-        /// Команда сдвига области выделения вправо/вверх
+        /// Routed command for increasing (right/up) of selection range in whole.
         /// </summary>
         public static RoutedCommand ShiftRightCommand { get; private set; }
+
 
         private static void InitializeCommands()
         {
@@ -1381,28 +1421,30 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик сдвига области выделения влево/вниз
+        /// Handler for <see cref="ShiftLeftCommand"/>.
         /// </summary>
-        /// <param name="shiftValue">Величина сдвига</param>
+        /// <param name="shiftValue">Shift value</param>
         protected virtual void OnShiftLeft(double shiftValue)
         {
             DoShift(-shiftValue);
         }
 
         /// <summary>
-        /// Обработчик сдвига области выделения вправо/вверх
+        /// Handler for <see cref="ShiftRightCommand"/>.
         /// </summary>
-        /// <param name="shiftValue">Величина сдвига</param>
+        /// <param name="shiftValue">Shift value</param>
         protected virtual void OnShiftRight(double shiftValue)
         {
             DoShift(shiftValue);
         }
 
         /// <summary>
-        /// Метод выполняет сдвиг области выделения на заданную величину, если это возможно.
-        /// Направление сдвига задается знаком величины сдвига <paramref name="shiftValue"/>.
+        /// Performs shift (move) of the selection range on received value, if it possible.
+        /// Direction of shift determines by the sign of <paramref name="shiftValue"/> -
+        /// if it negative - shift left/down,
+        /// if it positive - shift right/up.
         /// </summary>
-        /// <param name="shiftValue">Величина сдвига</param>
+        /// <param name="shiftValue">Shift value</param>
         public void DoShift(double shiftValue)
         {
             if (DoubleUtil.LessThanOrClose(Math.Abs(shiftValue), double.Epsilon) || RangeSlider == null)
@@ -1414,13 +1456,13 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion Commands
 
         /// <summary>
-        /// Обработчик назначения шаблона данному контролу
+        /// Handler for <see cref="System.Windows.FrameworkElement.ApplyTemplate()"/>.
         /// </summary>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            // TODO заменить все GetTemplateChild на FindName согласно рекомендациям
-            // в http://social.msdn.microsoft.com/forums/en-US/wpf/thread/eb509920-e2c3-43d7-987b-6f67cbd544c9
+            // TODO: replace all calls to GetTemplateChild by the FindName
+            // as it recommended in http://social.msdn.microsoft.com/forums/en-US/wpf/thread/eb509920-e2c3-43d7-987b-6f67cbd544c9
 
             RangeSlider = GetTemplateChild("PART_RangeSlider") as SimpleNumericRangeSlider;
             if (RangeSlider != null)
@@ -1446,7 +1488,7 @@ namespace SaneDevelopment.WPF4.Controls
                 binding = new Binding {Source = this, Path = new PropertyPath(MinSelectionRangeProperty)};
                 RangeSlider.SetBinding(SimpleNumericRangeSlider.MinRangeValueProperty, binding);
 
-                // инициализируем интервал здесь, т.к. он устанавливается только при вызове RangeSlider_RangeValueChanged
+                // initialize interval (range) here, because it set only inside RangeSlider_RangeValueChanged
                 SelectionRange = RangeSlider.RangeValue;
 
                 RangeSlider.RangeValueChanged += this.RangeSlider_RangeValueChanged;
@@ -1478,7 +1520,7 @@ namespace SaneDevelopment.WPF4.Controls
             ContentContainer = GetTemplateChild("PART_ContentContainer") as FrameworkElement;
             if (ContentContainer != null)
             {
-                //ContentContainer.ApplyTemplate(); // непонятно, надо или нет...
+                //ContentContainer.ApplyTemplate(); // don't know whether it necessary here, or not... need research!
 
                 ContentContainer.SizeChanged += this.Content_SizeChanged;
             }
@@ -1498,10 +1540,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения шаблона данного контрола
+        /// Called whenever the control's template changes.
         /// </summary>
-        /// <param name="oldTemplate">Старый шаблон</param>
-        /// <param name="newTemplate">Новый шаблон</param>
+        /// <param name="oldTemplate">The old template.</param>
+        /// <param name="newTemplate">The new template.</param>
         protected override void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
         {
             if (oldTemplate != null)
@@ -1617,9 +1659,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region IRanged<double, double>
 
         /// <summary>
-        /// Для данного объекта реализуется логика единого значения, когда начало интевала совпадает с его концом,
-        /// а величина самого интервала, соответственно, равна нулю.
-        /// Всегда возвращает <c>false</c>.
+        /// Gets the indicator that this object behaves like a single value object, i.e. start value equals to end value,
+        /// so interval (range) value equals to zero.
         /// </summary>
         public bool IsSingleValue
         {
@@ -1627,64 +1668,67 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Method for converting <c>double</c> to value type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert from</param>
+        /// <returns>Always <paramref name="value"/></returns>
         public double DoubleToValue(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Method for converting value type to <c>double</c>
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         public double ValueToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Метод преобразования числа в интервал
+        /// Method for converting <c>double</c> to interval type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         public double DoubleToInterval(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Метод преобразования интервала в число
+        /// Method for converting interval value to <c>double</c>
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         public double IntervalToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Значение начала интервала
+        /// Gets start interval value
         /// </summary>
+        /// <returns><see cref="SelectionStart"/></returns>
         public double StartValue
         {
             get { return SelectionStart; }
         }
 
         /// <summary>
-        /// Значение конца интервала
+        /// Gets end interval value
         /// </summary>
+        /// <returns><see cref="SelectionEnd"/></returns>
         public double EndValue
         {
             get { return SelectionEnd; }
         }
 
         /// <summary>
-        /// Минимально допустимая величина интервала
+        /// Gets minimum available interval (range) value
         /// </summary>
+        /// <returns><see cref="MinSelectionRange"/></returns>
         public double MinRangeValue
         {
             get { return MinSelectionRange; }

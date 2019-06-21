@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -44,19 +44,21 @@ using SaneDevelopment.WPF4.Controls.LinqToVisualTree;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Класс реализует набор вспомогательных методов для выполнения валидации
+    /// Provides handy helper methods for WPF data validation
     /// </summary>
     public static class ValidationHelper
     {
         /// <summary>
-        /// Проверить "валидность" объекта.
-        /// Проверяемый объект "валидный", если он не содержит ошибок
-        /// и все его "дети", которые являются объектами зависимости, тоже не содержат ошибок (являются рекурсивно "валидными").
-        /// Подробности в http://stackoverflow.com/questions/127477/detecting-wpf-validation-errors
-        /// и в http://www.scottlogic.co.uk/blog/colin/2010/03/linq-to-visual-tree/
+        /// Check the validity of dependency object.
+        /// Object is valid if it has no errors
+        /// and all its children (descendants), which are dependency objects, has no errors too
+        /// (i.e. is valid recursively).
+        /// 
+        /// <remarks>See details in http://stackoverflow.com/questions/127477/detecting-wpf-validation-errors
+        /// and in http://www.scottlogic.co.uk/blog/colin/2010/03/linq-to-visual-tree/</remarks>
         /// </summary>
-        /// <param name="obj">Проверяемый объект</param>
-        /// <returns><c>true</c>, если объект <paramref name="obj"/> "валидный", <c>false</c> в противном случае</returns>
+        /// <param name="obj">Object to validate</param>
+        /// <returns><c>true</c> if object <paramref name="obj"/> is valid; otherwise, <c>false</c>.</returns>
         public static bool IsValid(DependencyObject obj)
         {
             // http://stackoverflow.com/questions/127477/detecting-wpf-validation-errors

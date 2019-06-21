@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using SaneDevelopment.WPF4.Controls.Properties;
 
 namespace SaneDevelopment.WPF4.Controls
 {
@@ -60,38 +61,60 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <see cref="System.DateTime.Ticks"/> to <c>string</c> representation of <see cref="DateTime"/>
         /// </summary>
         /// <param name="value">Date time ticks</param>
-        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
         /// <param name="parameter">Convertion parameter: date time format</param>
         /// <param name="culture">Culture</param>
         /// <returns>String representation of date, or <c>null</c>, if <paramref name="value"/> is not <c>double</c></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return string.Empty;
+            }
 
             string res = string.Empty;
 
             var dbl = value as double?;
             if (!dbl.HasValue)
+            {
                 return res;
+            }
 
             var ticks = (long) dbl;
             if (ticks < DateTime.MinValue.Ticks)
+            {
                 return res;
+            }
             if (ticks > DateTime.MaxValue.Ticks + 1)
+            {
                 // allow minimum excess over DateTime.MaxValue.Ticks because of loss of accuracy while casting from double
                 return res;
+            }
 
             if (ticks == DateTime.MaxValue.Ticks + 1)
+            {
                 ticks = DateTime.MaxValue.Ticks;
+            }
 
             Contract.Assume(ticks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
             var date = new DateTime(ticks);
 
-            res = parameter == null
-                      ? date.ToString(culture)
-                      : date.ToString(parameter.ToString(), culture);
-            
+            if (parameter == null)
+            {
+                res = date.ToString(culture);
+            }
+            else
+            {
+                try
+                {
+                    res = date.ToString(parameter.ToString(), culture);
+                }
+                catch (FormatException)
+                {
+                    res = LocalizationResource.BadDateTimeToStringFormat;
+                }
+            }
+
             return res;
         }
 
@@ -99,8 +122,8 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <c>string</c> to <see cref="DateTime.Ticks"/> as <c>double</c>
         /// </summary>
         /// <param name="value">Source string</param>
-        /// <param name="targetType">Target type (ignoring)</param>
-        /// <param name="parameter">Convertion parameter (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
+        /// <param name="parameter">Convertion parameter (ignores)</param>
         /// <param name="culture">Culture</param>
         /// <returns><see cref="DateTime"/>,
         /// or <c>null</c>, if <paramref name="value"/> is empty (or whitespace),
@@ -108,15 +131,21 @@ namespace SaneDevelopment.WPF4.Controls
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             string s = value.ToString();
             if (string.IsNullOrWhiteSpace(s))
+            {
                 return null;
+            }
 
             DateTime dt;
             if (DateTime.TryParse(s, out dt))
+            {
                 return (double)dt.Ticks;
+            }
 
             return DependencyProperty.UnsetValue;
         }
@@ -136,7 +165,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <see cref="System.TimeSpan.Ticks"/> to <c>string</c> representation of <see cref="TimeSpan"/>
         /// </summary>
         /// <param name="value">Time span ticks</param>
-        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
         /// <param name="parameter">Convertion parameter: time span format</param>
         /// <param name="culture">Culture</param>
         /// <returns>String representation of time span, or <c>null</c>, if <paramref name="value"/> is not <c>double</c></returns>
@@ -183,9 +212,21 @@ namespace SaneDevelopment.WPF4.Controls
 
             var timeSpan = new TimeSpan(ticks);
 
-            res = parameter == null ?
-                timeSpan.ToString() :
-                timeSpan.ToString(parameter.ToString(), culture);
+            if (parameter == null)
+            {
+                res = timeSpan.ToString();
+            }
+            else
+            {
+                try
+                {
+                    res = timeSpan.ToString(parameter.ToString(), culture);
+                }
+                catch (FormatException)
+                {
+                    res = LocalizationResource.BadTimeSpanToStringFormat;
+                }
+            }
 
             return res;
         }
@@ -194,8 +235,8 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <c>string</c> to <see cref="TimeSpan.Ticks"/> as <c>double</c>
         /// </summary>
         /// <param name="value">Source string</param>
-        /// <param name="targetType">Target type (ignoring)</param>
-        /// <param name="parameter">Convertion parameter (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
+        /// <param name="parameter">Convertion parameter (ignores)</param>
         /// <param name="culture">Culture</param>
         /// <returns><see cref="TimeSpan"/>,
         /// or <c>null</c>, if <paramref name="value"/> is empty (or whitespace),
@@ -230,8 +271,8 @@ namespace SaneDevelopment.WPF4.Controls
     #region DateTime converters
 
     /// <summary>
-    /// Класс реализует конвертер nullable объектов типа <see cref="DateTime"/> в и из строк
-    /// с возможностью валидации пользовательского ввода
+    /// Converter from nullable <see cref="DateTime"/> to <c>string</c> and vice-versa.
+    /// Also provides a rule in order to check the validity of user input.
     /// </summary>
     public class NullableDateTimeToStringConverter : ValidationRule, IValueConverter
     {
@@ -240,19 +281,21 @@ namespace SaneDevelopment.WPF4.Controls
             Contract.Requires<ArgumentNullException>(converter != null);
 
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
+            {
                 return new ValidationResult(true, null);
+            }
 
             return new ValidationResult(
                 converter.ConvertBack(value, typeof(DateTime?), null, cultureInfo) != DependencyProperty.UnsetValue,
-                LocalizedStrings.DateTimeValidationRuleMsg);
+                LocalizationResource.DateTimeValidationRuleMsg);
         }
 
         /// <summary>
-        /// Метод выполняет валидацию пользовательского ввода
+        /// Performs validation checks on a value.
         /// </summary>
-        /// <param name="value">Проверяемое значение</param>
-        /// <param name="cultureInfo">Используемая культура</param>
-        /// <returns>Возвращает объект <see cref="ValidationResult"/> с данными о результате валидации</returns>
+        /// <param name="value">The value from the binding target to check.</param>
+        /// <param name="cultureInfo">The culture to use in this rule.</param>
+        /// <returns>A <see cref="System.Windows.Controls.ValidationResult"/> object.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             return Validate(this, value, cultureInfo);
@@ -261,51 +304,71 @@ namespace SaneDevelopment.WPF4.Controls
         #region IValueConverter Members
 
         /// <summary>
-        /// Выполняет конвертацию объекта типа <see cref="DateTime"/>? в строку
+        /// Convert a value of type <see cref="DateTime"/>? to <c>string</c>.
         /// </summary>
-        /// <param name="value">Дата</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации: формат</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Строковое представление даты, либо <c>null</c>, если <paramref name="value"/> не является датой</returns>
+        /// <param name="value">The <see cref="DateTime"/> produced by the binding source.</param>
+        /// <param name="targetType"> The type of the binding target property (ignores).</param>
+        /// <param name="parameter">The converter parameter to use: format string.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>String representation of date, or <c>null</c> if <paramref name="value"/> is not date.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return string.Empty;
+            }
 
             string res = string.Empty;
             var dt = value as DateTime?;
             if (dt.HasValue)
             {
-                res = parameter == null ?
-                    dt.Value.ToString(culture) :
-                    dt.Value.ToString(parameter.ToString(), culture);
+                if (parameter == null)
+                {
+                    res = dt.Value.ToString(culture);
+                }
+                else
+                {
+                    try
+                    {
+                        res = dt.Value.ToString(parameter.ToString(), culture);
+                    }
+                    catch (FormatException)
+                    {
+                        res = LocalizationResource.BadDateTimeToStringFormat;
+                    }
+                }
             }
             return res;
         }
 
         /// <summary>
-        /// Выполняет конвертацию строки в объект типа <see cref="DateTime"/>
+        /// Convert a <c>string</c> to <see cref="DateTime"/>.
         /// </summary>
-        /// <param name="value">Исходная строка</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Объект <see cref="DateTime"/>,
-        /// либо <c>null</c>, если <paramref name="value"/> не заполнен,
-        /// либо <see cref="DependencyProperty.UnsetValue"/>, если <paramref name="value"/> содержит некорректную строку</returns>
+        /// <param name="value">The string that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Instance of <see cref="DateTime"/>,
+        /// or <c>null</c> if <paramref name="value"/> is <c>null</c>,
+        /// or <see cref="DependencyProperty.UnsetValue"/> if <paramref name="value"/> has incorrect value.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             string s = value.ToString();
             if (string.IsNullOrWhiteSpace(s))
+            {
                 return null;
+            }
 
             DateTime dt;
             if (DateTime.TryParse(s, out dt))
+            {
                 return dt;
+            }
 
             return DependencyProperty.UnsetValue;
         }
@@ -314,17 +377,17 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Класс реализует конвертер nullable объектов типа <see cref="DateTime"/> в и из чисел с плавающей точкой
-    /// с возможностью валидации пользовательского ввода
+    /// Converter from nullable <see cref="DateTime"/> to <c>double</c> and vice-versa.
+    /// Also provides a rule in order to check the validity of user input.
     /// </summary>
     public class NullableDateTimeToDoubleConverter : ValidationRule, IValueConverter
     {
         /// <summary>
-        /// Метод выполняет валидацию пользовательского ввода
+        /// Performs validation checks on a value.
         /// </summary>
-        /// <param name="value">Проверяемое значение</param>
-        /// <param name="cultureInfo">Используемая культура</param>
-        /// <returns>Возвращает объект <see cref="ValidationResult"/> с данными о результате валидации</returns>
+        /// <param name="value">The value from the binding target to check.</param>
+        /// <param name="cultureInfo">The culture to use in this rule.</param>
+        /// <returns>A <see cref="System.Windows.Controls.ValidationResult"/> object.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             return NullableDateTimeToStringConverter.Validate(this, value, cultureInfo);
@@ -333,17 +396,20 @@ namespace SaneDevelopment.WPF4.Controls
         #region IValueConverter Members
 
         /// <summary>
-        /// Выполняет конвертацию объекта типа <see cref="DateTime"/>? в число
+        /// Convert a value of type <see cref="DateTime"/>? to <c>double</c>.
         /// </summary>
-        /// <param name="value">Дата</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Числовое представление даты (число тактов), либо <c>null</c>, если <paramref name="value"/> не является датой</returns>
+        /// <param name="value">The <see cref="DateTime"/> produced by the binding source.</param>
+        /// <param name="targetType"> The type of the binding target property (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns><see cref="double"/> representation of date (number of ticks),
+        /// or <c>null</c> if <paramref name="value"/> is not date.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             double? res = null;
             var dt = value as DateTime?;
@@ -355,27 +421,34 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Выполняет конвертацию числа в объект типа <see cref="DateTime"/>
+        /// Convert a number to <see cref="DateTime"/>.
         /// </summary>
-        /// <param name="value">Исходное число</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Объект <see cref="DateTime"/>,
-        /// либо <c>null</c>, если <paramref name="value"/> не задан</returns>
+        /// <param name="value">The number that is produced by the binding target.
+        /// Now supports only <see cref="double"/> numbers.</param>
+        /// <param name="targetType">The type to convert to (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Instance of <see cref="DateTime"/>,
+        /// or <c>null</c> if <paramref name="value"/> is <c>null</c> os is not <see cref="double"/>.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || !(value is double))
+            {
                 return null;
+            }
 
             var dbl = (double)value;
             var longTicks = (long) dbl;
 
             if (longTicks < DateTime.MinValue.Ticks)
+            {
                 return DateTime.MinValue;
+            }
 
             if (longTicks > DateTime.MaxValue.Ticks)
+            {
                 return DateTime.MaxValue;
+            }
 
             Contract.Assume(longTicks >= 0 && longTicks <= 0x2bca2875f4373fffL); // code contracts cant recognize DateTime.MaxValue.Ticks and DateTime.MinValue.Ticks below
             return new DateTime(longTicks);
@@ -389,8 +462,8 @@ namespace SaneDevelopment.WPF4.Controls
     #region TimeSpan converters
 
     /// <summary>
-    /// Класс реализует конвертер nullable объектов типа <see cref="TimeSpan"/> в и из строк
-    /// с возможностью валидации пользовательского ввода
+    /// Converter from nullable <see cref="TimeSpan"/> to <c>string</c> and vice-versa.
+    /// Also provides a rule in order to check the validity of user input.
     /// </summary>
     public class NullableTimeSpanToStringConverter : ValidationRule, IValueConverter
     {
@@ -399,19 +472,21 @@ namespace SaneDevelopment.WPF4.Controls
             Contract.Requires<ArgumentNullException>(converter != null);
 
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
+            {
                 return new ValidationResult(true, null);
+            }
 
             return new ValidationResult(
                 converter.ConvertBack(value, typeof(TimeSpan?), null, cultureInfo) != DependencyProperty.UnsetValue,
-                LocalizedStrings.TimeSpanValidationRuleMsg);
+                LocalizationResource.TimeSpanValidationRuleMsg);
         }
 
         /// <summary>
-        /// Метод выполняет валидацию пользовательского ввода
+        /// Performs validation checks on a value.
         /// </summary>
-        /// <param name="value">Проверяемое значение</param>
-        /// <param name="cultureInfo">Используемая культура</param>
-        /// <returns>Возвращает объект <see cref="ValidationResult"/> с данными о результате валидации</returns>
+        /// <param name="value">The value from the binding target to check.</param>
+        /// <param name="cultureInfo">The culture to use in this rule.</param>
+        /// <returns>A <see cref="System.Windows.Controls.ValidationResult"/> object.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             return Validate(this, value, cultureInfo);
@@ -420,51 +495,71 @@ namespace SaneDevelopment.WPF4.Controls
         #region IValueConverter Members
 
         /// <summary>
-        /// Выполняет конвертацию объекта типа <see cref="TimeSpan"/>? в строку
+        /// Convert a value of type <see cref="TimeSpan"/>? to <c>string</c>.
         /// </summary>
-        /// <param name="value">Временной интервал</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации: формат</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Строковое представление интервала, либо <c>null</c>, если <paramref name="value"/> не является временным интервалом</returns>
+        /// <param name="value">The <see cref="TimeSpan"/> produced by the binding source.</param>
+        /// <param name="targetType"> The type of the binding target property (ignores).</param>
+        /// <param name="parameter">The converter parameter to use: format string.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>String representation of timespan, or <c>null</c> if <paramref name="value"/> is not timespan.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return string.Empty;
+            }
 
             string res = string.Empty;
             var dt = value as TimeSpan?;
             if (dt.HasValue)
             {
-                res = parameter == null ?
-                    dt.Value.ToString() :
-                    dt.Value.ToString(parameter.ToString(), culture);
+                if (parameter == null)
+                {
+                    res = dt.Value.ToString();
+                }
+                else
+                {
+                    try
+                    {
+                        res = dt.Value.ToString(parameter.ToString(), culture);
+                    }
+                    catch (FormatException)
+                    {
+                        res = LocalizationResource.BadTimeSpanToStringFormat;
+                    }
+                }
             }
             return res;
         }
 
         /// <summary>
-        /// Выполняет конвертацию строки в объект типа <see cref="TimeSpan"/>
+        /// Convert a <c>string</c> to <see cref="TimeSpan"/>.
         /// </summary>
-        /// <param name="value">Исходная строка</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Объект <see cref="TimeSpan"/>,
-        /// либо <c>null</c>, если <paramref name="value"/> не заполнен,
-        /// либо <see cref="DependencyProperty.UnsetValue"/>, если <paramref name="value"/> содержит некорректную строку</returns>
+        /// <param name="value">The string that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Instance of <see cref="TimeSpan"/>,
+        /// or <c>null</c> if <paramref name="value"/> is <c>null</c>,
+        /// or <see cref="DependencyProperty.UnsetValue"/> if <paramref name="value"/> has incorrect value.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             string s = value.ToString();
             if (string.IsNullOrWhiteSpace(s))
+            {
                 return null;
+            }
 
             TimeSpan tm;
             if (TimeSpan.TryParse(s, out tm))
+            {
                 return tm;
+            }
 
             return DependencyProperty.UnsetValue;
         }
@@ -473,17 +568,17 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Класс реализует конвертер nullable объектов типа <see cref="TimeSpan"/> в и из чисел с плавающей точкой
-    /// с возможностью валидации пользовательского ввода
+    /// Converter from nullable <see cref="TimeSpan"/> to <c>double</c> and vice-versa.
+    /// Also provides a rule in order to check the validity of user input.
     /// </summary>
     public class NullableTimeSpanToDoubleConverter : ValidationRule, IValueConverter
     {
         /// <summary>
-        /// Метод выполняет валидацию пользовательского ввода
+        /// Performs validation checks on a value.
         /// </summary>
-        /// <param name="value">Проверяемое значение</param>
-        /// <param name="cultureInfo">Используемая культура</param>
-        /// <returns>Возвращает объект <see cref="ValidationResult"/> с данными о результате валидации</returns>
+        /// <param name="value">The value from the binding target to check.</param>
+        /// <param name="cultureInfo">The culture to use in this rule.</param>
+        /// <returns>A <see cref="System.Windows.Controls.ValidationResult"/> object.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             return NullableTimeSpanToStringConverter.Validate(this, value, cultureInfo);
@@ -492,17 +587,20 @@ namespace SaneDevelopment.WPF4.Controls
         #region IValueConverter Members
 
         /// <summary>
-        /// Выполняет конвертацию объекта типа <see cref="TimeSpan"/>? в число
+        /// Convert a value of type <see cref="TimeSpan"/>? to <c>double</c>.
         /// </summary>
-        /// <param name="value">Временной интервал</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Строковое представление интервала, либо <c>null</c>, если <paramref name="value"/> не является временным интервалом</returns>
+        /// <param name="value">The <see cref="TimeSpan"/> produced by the binding source.</param>
+        /// <param name="targetType"> The type of the binding target property (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns><see cref="double"/> representation of timespan (number of ticks),
+        /// or <c>null</c> if <paramref name="value"/> is not timespan.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
+            {
                 return null;
+            }
 
             double? res = null;
             var dt = value as TimeSpan?;
@@ -514,18 +612,21 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Выполняет конвертацию числа в объект типа <see cref="TimeSpan"/>
+        /// Convert a number to <see cref="TimeSpan"/>.
         /// </summary>
-        /// <param name="value">Исходное число</param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр конвертации (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Объект <see cref="TimeSpan"/>,
-        /// либо <c>null</c>, если <paramref name="value"/> не задан</returns>
+        /// <param name="value">The number that is produced by the binding target.
+        /// Now supports only <see cref="double"/> numbers.</param>
+        /// <param name="targetType">The type to convert to (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Instance of <see cref="DateTime"/>,
+        /// or <c>null</c> if <paramref name="value"/> is <c>null</c> or is not <see cref="double"/>.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || !(value is double))
+            {
                 return null;
+            }
 
             var dbl = (double)value;
 
@@ -546,7 +647,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <c>long?</c> to <see cref="TimeSpan"/>
         /// </summary>
         /// <param name="value">Value to convert</param>
-        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
         /// <param name="parameter">Conversion parameter: type of <paramref name="value"/>
         /// "D" - days,
         /// "H" - hours,
@@ -600,8 +701,8 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts <see cref="TimeSpan"/> to <c>long</c>
         /// </summary>
         /// <param name="value">Time span</param>
-        /// <param name="targetType">Target type (ignoring)</param>
-        /// <param name="parameter">Conversion parameter (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
+        /// <param name="parameter">Conversion parameter (ignores)</param>
         /// <param name="culture">Culture</param>
         /// <returns><see cref="TimeSpan.Ticks"/></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -626,7 +727,7 @@ namespace SaneDevelopment.WPF4.Controls
     #endregion
 
     /// <summary>
-    /// Конвертер между массивом чисел и объектом <see cref="Thickness"/>
+    /// Converter from array of numbers to <see cref="Thickness"/> and vice-versa.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi")]
     public sealed class ThicknessMultiConverter : IMultiValueConverter
@@ -634,43 +735,78 @@ namespace SaneDevelopment.WPF4.Controls
         #region IMultiValueConverter Members
 
         /// <summary>
-        /// Выполняет конвертацию из массива чисел в объект <see cref="Thickness"/>
+        /// Converts source values to a value for the binding target of <see cref="Thickness"/> type.
+        /// The data binding engine calls this method when it propagates the values from source bindings to the binding target.
         /// </summary>
-        /// <param name="values">Массив объектов, которые можно преобразовать к <see cref="double"/></param>
-        /// <param name="targetType">Целевой тип (игнорируется)</param>
-        /// <param name="parameter">Параметр (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns>Возвращает объект <see cref="Thickness"/>(<paramref name="values"/>[0], <paramref name="values"/>[1], <paramref name="values"/>[2], <paramref name="values"/>[3]).
-        /// Если массив <paramref name="values"/> содержит недостаточно элементов, то недостающие элементы принимаются равными нулю.
-        /// Используются только первые 4 элемента массива, остальные игнорируются.</returns>
+        /// <param name="values">The array of values that the source bindings in the <see cref="System.Windows.Data.MultiBinding"/> produces.
+        /// Each of values must be convertible to <see cref="double"/> using <see cref="System.Convert.ToDouble(object,IFormatProvider)"/>.</param>
+        /// <param name="targetType">The type of the binding target property (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A converted value as <see cref="Thickness"/>(<paramref name="values"/>[0], <paramref name="values"/>[1], <paramref name="values"/>[2], <paramref name="values"/>[3]).
+        /// If received array <paramref name="values"/> contains not enough values (its length is less then 4),
+        /// then lacking values adopt as zeroes (0.0).
+        /// If length of received array is greater then 4, redundant items ignored.
+        /// 
+        /// A return value of <see cref="System.Windows.DependencyProperty.UnsetValue"/> indicates
+        /// that the binding does not transfer the correct value for conversion.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values == null)
+            {
                 return new Thickness();
+            }
 
             int len = values.Length;
 
-            double left = len >= 1 ? System.Convert.ToDouble(values[0], culture) : 0.0;
-            double top = len >= 2 ? System.Convert.ToDouble(values[1], culture) : 0.0;
-            double right = len >= 3 ? System.Convert.ToDouble(values[2], culture) : 0.0;
-            double bottom = len >= 4 ? System.Convert.ToDouble(values[3], culture) : 0.0;
+            double[] convertedValues = {0.0, 0.0, 0.0, 0.0}; // fill with default values
+            for (int i = 0; i < 4; i++)
+            {
+                int expectedLen = i + 1;
+                if (len >= expectedLen)
+                {
+                    try
+                    {
+                        // replace default value by converted value
+                        convertedValues[i] = System.Convert.ToDouble(values[i], culture);
+                    }
+                    catch (FormatException)
+                    {
+                        return DependencyProperty.UnsetValue;
+                    }
+                    catch (InvalidCastException)
+                    {
+                        return DependencyProperty.UnsetValue;
+                    }
+                    catch (OverflowException)
+                    {
+                        return DependencyProperty.UnsetValue;
+                    }
+                }
+            }
 
-            return new Thickness(left, top, right, bottom);
+            return new Thickness(convertedValues[0], convertedValues[1], convertedValues[2], convertedValues[3]);
         }
 
         /// <summary>
-        /// Выполняет конвертацию объекта <see cref="Thickness"/> в массив чисел.
+        /// Converts a binding target value of type <see cref="Thickness"/> to the source binding values of type <c>double[]</c>.
         /// </summary>
-        /// <param name="value">Объект <see cref="Thickness"/></param>
-        /// <param name="targetTypes">Целевые типы (игнорируется)</param>
-        /// <param name="parameter">Параметр (игнорируется)</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <returns><c>null</c>, если <paramref name="value"/> не является объектом <see cref="Thickness"/>,
-        /// иначе массив из четырех чисел: левая, верхняя, правая, нижняя сторона прямоугольника</returns>
+        /// <param name="value">The value of type <see cref="Thickness"/> that the binding target produces.</param>
+        /// <param name="targetTypes">The array of types to convert to (ignores).</param>
+        /// <param name="parameter">The converter parameter to use (ignores).</param>
+        /// <param name="culture">The culture to use in the converter (ignores).</param>
+        /// <returns>An array of sides lengths of <see cref="Thickness"/>
+        /// that have been converted from the target value back to the source values.
+        /// This is array of 4 elements: left, top, right and bottom size length.
+        /// 
+        /// A return value of [<see cref="System.Windows.DependencyProperty.UnsetValue"/>] indicates
+        /// that the binding does not transfer the correct value for conversion (i.e. <c>null</c> or not <see cref="Thickness"/>).</returns>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             if (value == null || !(value is Thickness))
-                return null;
+            {
+                return new[] {DependencyProperty.UnsetValue};
+            }
 
             var thickness = (Thickness)value;
             return new object[] { thickness.Left, thickness.Top, thickness.Right, thickness.Bottom };
@@ -690,9 +826,9 @@ namespace SaneDevelopment.WPF4.Controls
         /// Converts from <see cref="SolidColorBrush"/> to <see cref="Color"/>
         /// </summary>
         /// <param name="value">Value to convert</param>
-        /// <param name="targetType">Target type (ignoring)</param>
-        /// <param name="parameter">Conversion parameter (ignoring)</param>
-        /// <param name="culture">Culture (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
+        /// <param name="parameter">Conversion parameter (ignores)</param>
+        /// <param name="culture">Culture (ignores)</param>
         /// <returns><see cref="Color"/> or <see cref="DependencyProperty.UnsetValue"/>,
         /// if <paramref name="value"/> has incorrect value</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -716,9 +852,9 @@ namespace SaneDevelopment.WPF4.Controls
         /// </summary>
         /// <remarks>This method every time constructs new <see cref="SolidColorBrush"/></remarks>
         /// <param name="value">Color</param>
-        /// <param name="targetType">Target type (ignoring)</param>
-        /// <param name="parameter">Conversion parameter (ignoring)</param>
-        /// <param name="culture">Culture (ignoring)</param>
+        /// <param name="targetType">Target type (ignores)</param>
+        /// <param name="parameter">Conversion parameter (ignores)</param>
+        /// <param name="culture">Culture (ignores)</param>
         /// <returns><see cref="SolidColorBrush"/> or <see cref="DependencyProperty.UnsetValue"/></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

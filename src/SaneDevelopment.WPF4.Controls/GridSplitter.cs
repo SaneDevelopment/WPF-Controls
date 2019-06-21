@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -61,6 +61,7 @@ namespace SaneDevelopment.WPF4.Controls
     /// </summary>
     [StyleTypedProperty(Property = "PreviewStyle", StyleTargetType = typeof(Control))]
     [System.Diagnostics.Contracts.ContractVerification(false)]
+    [Obsolete("Use System.Windows.Controls.GridSplitter instead")]
     public class GridSplitter : Thumb
     {
 // ReSharper disable InconsistentNaming
@@ -373,7 +374,6 @@ namespace SaneDevelopment.WPF4.Controls
                 return true;
             }
             double num = value1 - value2;
-            //System.Diagnostics.Debug.WriteLine(num.ToString(), "AreClose");
             return ((num < 1.53E-06) && (num > -1.53E-06));
         }
 
@@ -387,7 +387,6 @@ namespace SaneDevelopment.WPF4.Controls
                 return true;
             }
             double num = value1 - value2;
-            //System.Diagnostics.Debug.WriteLine(num.ToString(), "AreCloseWithLayoutRounding");
             return ((num <= 1) && (num >= -1));
         }
 

@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -43,14 +43,16 @@ using System.Windows.Controls;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Полностью аналогичен <see cref="RadioButton"/>, но при повторном клике на кнопке делает ее отключенной.
-    /// Подробности в http://www.systenics.com/blog/uncheck-radio-button-in-wpf/
+    /// Behaves similar to <see cref="RadioButton"/>,
+    /// but every button in group can be "unchecked" so the whole group have no checked item.
+    /// 
+    /// <remarks>See details in http://www.systenics.com/blog/uncheck-radio-button-in-wpf/</remarks>
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Uncheckable")]
     public class UncheckableRadioButton : RadioButton
     {
         /// <summary>
-        /// Конструирует новый объект
+        /// Initializes a new instance of a <see cref="UncheckableRadioButton"/>
         /// </summary>
         public UncheckableRadioButton()
         {
@@ -58,7 +60,7 @@ namespace SaneDevelopment.WPF4.Controls
             Click += UncheckableRadioButton_Click;
         }
 
-        void UncheckableRadioButton_Click(object sender, RoutedEventArgs e)
+        private void UncheckableRadioButton_Click(object sender, RoutedEventArgs e)
         {
             if (WasChecked)
             {
@@ -67,19 +69,19 @@ namespace SaneDevelopment.WPF4.Controls
             WasChecked = true;
         }
 
-        void UncheckableRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void UncheckableRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             IsCheckedChanged = true;
             WasChecked = false;
         }
 
         /// <summary>
-        /// Была ли "включена" кнопка после последнего клика по ней
+        /// Whether radio button was "checked" after last click on it.
         /// </summary>
         public bool WasChecked { get; private set; }
 
         /// <summary>
-        /// Изменилось ли значение <see cref="System.Windows.Controls.Primitives.ToggleButton.IsChecked"/>
+        /// Whether value of <see cref="System.Windows.Controls.Primitives.ToggleButton.IsChecked"/> changed.
         /// </summary>
         public bool? IsCheckedChanged
         {
@@ -93,7 +95,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="UncheckableRadioButton.IsCheckedChanged"/>
+        /// Dependency property for <see cref="UncheckableRadioButton.IsCheckedChanged"/>
         /// </summary>
         public static readonly DependencyProperty IsCheckedChangedProperty = DependencyProperty.Register(
             "IsCheckedChanged",

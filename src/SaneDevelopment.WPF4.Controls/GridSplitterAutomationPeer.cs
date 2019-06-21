@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -65,6 +65,7 @@ namespace SaneDevelopment.WPF4.Controls
     /// Exposes <see cref="T:System.Windows.Controls.GridSplitter" /> types to UI Automation.
     /// </summary>
     [System.Diagnostics.Contracts.ContractVerification(false)]
+    [Obsolete("Use System.Windows.Automation.Peers.GridSplitterAutomationPeer instead")]
     public class GridSplitterAutomationPeer : ThumbAutomationPeer, ITransformProvider
     {
         /// <summary>

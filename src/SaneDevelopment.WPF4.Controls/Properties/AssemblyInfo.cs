@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -50,7 +50,7 @@ using System.Windows.Markup;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sane Development")]
 [assembly: AssemblyProduct("Sane Development WPF Controls Library")]
-[assembly: AssemblyCopyright("Copyright © Sane Development 2012-2019")]
+[assembly: AssemblyCopyright("Copyright © Sane Development 2011-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

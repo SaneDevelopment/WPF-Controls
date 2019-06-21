@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -43,23 +43,24 @@ using System.Windows;
 namespace SaneDevelopment.WPF4.Controls.Interactivity
 {
     /// <summary>
-    /// Класс представляет собой список тригеров для использования в свойстве <see cref="SupplementaryInteraction.TriggersProperty"/>
+    /// List of triggers for utilize inside <see cref="SupplementaryInteraction.TriggersProperty"/>
     /// </summary>
     public class TriggersCollection : List<Microsoft.Xaml.Behaviors.TriggerBase>
     { }
 
     /// <summary>
-    /// Класс реализует присоединяемое свойство <see cref="SupplementaryInteraction.TriggersProperty"/>
-    /// для возможности его установки внутри <c>Style.Setter</c> в XAML.
-    /// Обсуждение в http://stackoverflow.com/questions/1647815/how-to-add-a-blend-behavior-in-a-style-setter
+    /// Provides attached dependency property <see cref="SupplementaryInteraction.TriggersProperty"/>
+    /// for ability of setting it inside <c>Style.Setter</c> in XAML.
+    /// 
+    /// See discussion in http://stackoverflow.com/questions/1647815/how-to-add-a-blend-behavior-in-a-style-setter
     /// </summary>
     public static class SupplementaryInteraction
     {
         /// <summary>
-        /// Получить значение присоединяемого свойства <see cref="SupplementaryInteraction.TriggersProperty"/>
+        /// Get value of <see cref="SupplementaryInteraction.TriggersProperty"/>
         /// </summary>
-        /// <param name="obj">Объект, к которому присоединено свойство <see cref="SupplementaryInteraction.TriggersProperty"/></param>
-        /// <returns>Список <see cref="SaneDevelopment.WPF4.Controls.Interactivity.TriggersCollection"/></returns>
+        /// <param name="obj">Dependency object, to which <see cref="SupplementaryInteraction.TriggersProperty"/> attached</param>
+        /// <returns><see cref="SaneDevelopment.WPF4.Controls.Interactivity.TriggersCollection"/></returns>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public static TriggersCollection GetTriggers(DependencyObject obj)
         {
@@ -70,10 +71,10 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Установить значение присоединяемого свойства <see cref="SupplementaryInteraction.TriggersProperty"/>
+        /// Set value to <see cref="SupplementaryInteraction.TriggersProperty"/>
         /// </summary>
-        /// <param name="obj">Объект, к которому присоединено свойство <see cref="SupplementaryInteraction.TriggersProperty"/></param>
-        /// <param name="value">Устанавливаемое значение</param>
+        /// <param name="obj">Dependency object, to which <see cref="SupplementaryInteraction.TriggersProperty"/> attached</param>
+        /// <param name="value">New value</param>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public static void SetTriggers(DependencyObject obj, TriggersCollection value)
         {
@@ -84,23 +85,28 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Присоединяемое свойство, представляющее собой список тригеров <see cref="SaneDevelopment.WPF4.Controls.Interactivity.TriggersCollection"/>
+        /// Attached dependency property as list of triggers <see cref="SaneDevelopment.WPF4.Controls.Interactivity.TriggersCollection"/>
         /// </summary>
-        public static readonly DependencyProperty TriggersProperty = DependencyProperty.RegisterAttached(
-            "Triggers",
-            typeof(TriggersCollection),
-            typeof(SupplementaryInteraction),
-            new UIPropertyMetadata(null, OnPropertyTriggersChanged));
+        public static readonly DependencyProperty TriggersProperty =
+            DependencyProperty.RegisterAttached(
+                "Triggers",
+                typeof (TriggersCollection),
+                typeof (SupplementaryInteraction),
+                new UIPropertyMetadata(null, OnPropertyTriggersChanged));
 
         private static void OnPropertyTriggersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var triggers = Microsoft.Xaml.Behaviors.Interaction.GetTriggers(d);
             if (triggers == null)
+            {
                 return;
+            }
 
             var newTriggers = e.NewValue as TriggersCollection;
             if (newTriggers == null)
+            {
                 return;
+            }
 
             foreach (var newTrigger in newTriggers)
             {

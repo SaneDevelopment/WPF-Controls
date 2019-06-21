@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -48,43 +48,46 @@ using System.Windows.Media;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Тип ползунка
+    /// Range thumb type
     /// </summary>
     public enum RangeThumbType
     {
         /// <summary>
-        /// Не задан
+        /// No set
         /// </summary>
         None = 0,
         /// <summary>
-        /// Начальный ползунок
+        /// Start thumb
         /// </summary>
         StartThumb,
         /// <summary>
-        /// Ползунок интервала
+        /// Interval (range) thumb
         /// </summary>
         RangeThumb,
         /// <summary>
-        /// Конечный ползунок
+        /// End thumb
         /// </summary>
         EndThumb
     }
 
     /// <summary>
-    /// Представляет собой примитив контрола, который управляет позиционированием трех ползунков <see cref="Thumb"/>
-    /// и двух кнопок <see cref="RepeatButton"/>, которые используются для установки значений
-    /// <see cref="RangeTrack{T, TInterval}.StartValue"/> и <see cref="RangeTrack{T, TInterval}.EndValue"/>.
+    /// Control primitive, that manages positions of three <see cref="Thumb"/>s and two <see cref="RepeatButton"/>s,
+    /// which uses for changing of <see cref="RangeTrack{T, TInterval}.StartValue"/> and <see cref="RangeTrack{T, TInterval}.EndValue"/>.
     /// </summary>
     public abstract class RangeTrack<T, TInterval> : FrameworkElement
     {
+        #region Private fields
+
         private RepeatButton m_DecreaseButton, m_IncreaseButton;
         private Thumb m_StartThumb, m_RangeThumb, m_EndThumb;
 
-        private double m_Density = double.NaN; // плотность
+        private double m_Density = double.NaN;
 
         private Visual[] m_VisualChildren;
 
-        private const int c_MaxVisualChildrenCount = 5; // максимальное число подчиненных визуальных элементов
+        private const int c_MaxVisualChildrenCount = 5; // maximum count of visual children elements
+
+        #endregion Private fields
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static RangeTrack()
@@ -101,44 +104,160 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Method should convert <c>double</c> to value type <typeparamref name="T"/>
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объект типа <typeparamref name="T"/></returns>
+        /// <param name="value">Number to convert</param>
+        /// <returns>Number, converted to <typeparamref name="T"/></returns>
         protected abstract T DoubleToValue(double value);
+        
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Method should convert value of type <typeparamref name="T"/> to <c>double</c>
         /// </summary>
-        /// <param name="value">Объект типа <typeparamref name="T"/></param>
-        /// <returns>Число</returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Number representation of <paramref name="value"/></returns>
         protected abstract double ValueToDouble(T value);
+
+        /// <summary>
+        /// Calculates the value change of <see cref="RangeTrack{T, TInterval}.StartValue" /> or <see cref="RangeTrack{T, TInterval}.EndValue" />
+        /// from the distance that the mouse (or thumb) has moved.
+        /// </summary>
+        /// <param name="horizontalChange">The horizontal distance that the mouse or thumb has moved</param>
+        /// <param name="verticalChange">The vertical distance that the mouse or thumb has moved</param>
+        /// <returns>Change of start value or end value corresponding to distance that the mouse or thumb has moved.</returns>
+        public virtual double ValueFromDistance(double horizontalChange, double verticalChange)
+        {
+            return (this.Orientation == Orientation.Horizontal)
+                       ? horizontalChange * this.Density
+                       : -1.0 * verticalChange * this.Density;
+        }
 
         #region Dependency properties
 
+        #region Minimum
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeTrack{T, TInterval}.Maximum"/>
+        /// Minimum available value
+        /// </summary>
+        public T Minimum
+        {
+            get
+            {
+                var res = this.GetValue(MinimumProperty);
+                Contract.Assume(res != null);
+                return (T)res;
+            }
+            set
+            {
+                this.SetValue(MinimumProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Minimum"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
-        public static readonly DependencyProperty MaximumProperty = RangeBaseControl<T, TInterval>.MaximumProperty.AddOwner(
-// ReSharper restore StaticFieldInGenericType
+        // ReSharper disable StaticFieldInGenericType
+        public static readonly DependencyProperty MinimumProperty = RangeBaseControl<T, TInterval>.MinimumProperty.AddOwner(
+            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.AffectsArrange));
 
+        #endregion Minimum
+
+        #region Maximum
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeTrack{T, TInterval}.Minimum"/>
+        /// Maximum available value
+        /// </summary>
+        public T Maximum
+        {
+            get
+            {
+                var res = this.GetValue(MaximumProperty);
+                Contract.Assume(res != null);
+                return (T)res;
+            }
+            set { this.SetValue(MaximumProperty, value); }
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Maximum"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
-        public static readonly DependencyProperty MinimumProperty = RangeBaseControl<T, TInterval>.MinimumProperty.AddOwner(
-// ReSharper restore StaticFieldInGenericType
+        // ReSharper disable StaticFieldInGenericType
+        public static readonly DependencyProperty MaximumProperty = RangeBaseControl<T, TInterval>.MaximumProperty.AddOwner(
+            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        #endregion Maximum
+
+        #region StartValue
+
+        /// <summary>
+        /// Start value of interval (range)
+        /// </summary>
+        public T StartValue
+        {
+            get
+            {
+                var res = this.GetValue(StartValueProperty);
+                Contract.Assume(res != null);
+                return (T)res;
+            }
+            set
+            {
+                this.SetValue(StartValueProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.StartValue"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        // ReSharper disable StaticFieldInGenericType
+        public static readonly DependencyProperty StartValueProperty = RangeBaseControl<T, TInterval>.StartValueProperty.AddOwner(
+            // ReSharper restore StaticFieldInGenericType
+            typeof(RangeTrack<T, TInterval>),
+            new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        #endregion StartValue
+
+        #region EndValue
+
+        /// <summary>
+        /// End value of interval (range)
+        /// </summary>
+        public T EndValue
+        {
+            get
+            {
+                var res = this.GetValue(EndValueProperty);
+                Contract.Assume(res != null);
+                return (T)res;
+            }
+            set
+            {
+                this.SetValue(EndValueProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.EndValue"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        // ReSharper disable StaticFieldInGenericType
+        public static readonly DependencyProperty EndValueProperty = RangeBaseControl<T, TInterval>.EndValueProperty.AddOwner(
+            // ReSharper restore StaticFieldInGenericType
+            typeof(RangeTrack<T, TInterval>),
+            new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        #endregion EndValue
 
         #region Orientation
 
         /// <summary>
-        /// Ориентация контрола
+        /// Control orientation
         /// </summary>
         public Orientation Orientation
         {
@@ -155,7 +274,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeTrack{T, TInterval}.Orientation"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Orientation"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -167,35 +286,15 @@ namespace SaneDevelopment.WPF4.Controls
             new FrameworkPropertyMetadata(Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsMeasure),
             DependencyPropertyUtil.IsValidOrientation);
 
-        #endregion
-
-        /// <summary>
-        /// Свойство зависимости для <see cref="RangeTrack{T, TInterval}.StartValue"/>
-        /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
-        public static readonly DependencyProperty StartValueProperty = RangeBaseControl<T, TInterval>.StartValueProperty.AddOwner(
-// ReSharper restore StaticFieldInGenericType
-            typeof(RangeTrack<T, TInterval>),
-            new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        /// <summary>
-        /// Свойство зависимости для <see cref="RangeTrack{T, TInterval}.EndValue"/>
-        /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
-        public static readonly DependencyProperty EndValueProperty = RangeBaseControl<T, TInterval>.EndValueProperty.AddOwner(
-// ReSharper restore StaticFieldInGenericType
-            typeof(RangeTrack<T, TInterval>),
-            new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
+        #endregion Orientation
 
         #endregion
 
         /// <summary>
-        /// Выполняет расположение контрола <see cref="RangeTrack{T, TInterval}" />.
+        /// Positions child elements and determines a size for a <see cref="RangeTrack{T, TInterval}"/>.
         /// </summary>
-        /// <param name="finalSize">Область, доступная для <see cref="RangeTrack{T, TInterval}" />.</param>
-        /// <returns>Размер <see cref="Size"/>, который будет использоваться для содержимого <see cref="RangeTrack{T, TInterval}" />.</returns>
+        /// <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
+        /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             double decreaseButtonLength, startThumbLength, rangeThumbLength, endThumbLength, increaseButtonLength;
@@ -341,10 +440,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вычисляет размер, необходимый для <see cref="RangeTrack{T, TInterval}" /> и его компонентов.
+        /// Measures the size in layout required for child elements and determines a size for the <see cref="RangeTrack{T, TInterval}"/>.
         /// </summary>
-        /// <param name="availableSize">Размер доступного пространства.</param>
-        /// <returns>Размер <see cref="Size"/>, который требуется для <see cref="RangeTrack{T, TInterval}" />.</returns>
+        /// <param name="availableSize">The available size that this element can give to child elements. Infinity can be specified as a value to indicate that the element will size to whatever content is available.</param>
+        /// <returns>The size that this element determines it needs during layout, based on its calculations of child element sizes.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             bool isVertical = this.Orientation == Orientation.Vertical;
@@ -356,7 +455,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод выполняет непосредственную обработку <see cref="FrameworkElement.OnApplyTemplate"/>
+        /// Method performs immediate processing of <see cref="FrameworkElement.OnApplyTemplate"/>.
         /// </summary>
         public void DoApplyTemplate()
         {
@@ -368,7 +467,8 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик назначения шаблона данному контролу
+        /// Is invoked whenever application code or internal processes call <see cref="System.Windows.FrameworkElement.ApplyTemplate"/>().
+        /// Invokes <see cref="DoApplyTemplate"/>().
         /// </summary>
         public override void OnApplyTemplate()
         {
@@ -378,8 +478,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Число дочерних элементов управления от 0 до 5.
+        /// Gets the number of visual child elements within this element.
         /// </summary>
+        /// <returns>The number of visual child elements for this element (0 to 5).</returns>
         protected override int VisualChildrenCount
         {
             get
@@ -399,12 +500,12 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Возвращает дочерний элемент контрола по его индексу.
+        /// Overrides <see cref="System.Windows.Media.Visual.GetVisualChild(System.Int32)"/>,
+        /// and returns a child at the specified index from a collection of child elements.
         /// </summary>
-        /// <param name="index">Индекс дочернего элемента</param>
-        /// <exception cref="ArgumentOutOfRangeException">Заданный индекс больше чем <see cref="RangeTrack{T, TInterval}.VisualChildrenCount" /> минус один (1).</exception>
-        /// <returns>Возвращает дочерний визуальный элемент контрола по заданному индексу.
-        /// Индекс должен быть между нулем (0) и значением <see cref="RangeTrack{T, TInterval}.VisualChildrenCount" /> минус один (1).</returns>
+        /// <param name="index">The zero-based index of the requested child element in the collection.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The provided index is out of range [0..<see cref="RangeTrack{T, TInterval}.VisualChildrenCount"/>-1].</exception>
+        /// <returns>The requested child element. If the provided index is out of range, an exception is thrown.</returns>
         protected override Visual GetVisualChild(int index)
         {
             if (this.m_VisualChildren == null ||
@@ -418,11 +519,11 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Назначить связь между заданным элементом и свойством родительского шаблона
+        /// Attaches a binding to <paramref name="element"/>, based on the <see cref="FrameworkElement.TemplatedParent"/> as the binding source.
         /// </summary>
-        /// <param name="element">Элемент</param>
-        /// <param name="target">Целевое свойство</param>
-        /// <param name="source">Свойство родительского шаблона</param>
+        /// <param name="element">Element</param>
+        /// <param name="target">Identifies the property where the binding should be established.</param>
+        /// <param name="source">A property path that describes a path to single dependency property.</param>
         public void BindChildToTemplatedParent(FrameworkElement element, DependencyProperty target, DependencyProperty source)
         {
             if (target == null)
@@ -442,10 +543,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Назначить связь со свойством родительского шаблона
+        /// Attaches a binding to this element, based on the templated parent relatively.
         /// </summary>
-        /// <param name="target">Целевое свойство</param>
-        /// <param name="source">Свойство родительского шаблона</param>
+        /// <param name="target">Identifies the property where the binding should be established.</param>
+        /// <param name="source">A property path that describes a path to single dependency property.</param>
         public void BindToTemplatedParent(DependencyProperty target, DependencyProperty source)
         {
             if (target == null)
@@ -521,17 +622,21 @@ namespace SaneDevelopment.WPF4.Controls
             }
         }
 
-        private void ComputeLengths(Size arrangeSize, bool isVertical,
+        private void ComputeLengths(
+            Size arrangeSize,
+            bool isVertical,
             out double decreaseButtonLength,
-            out double startThumbLength, out double rangeThumbLength, out double endThumbLength,
+            out double startThumbLength,
+            out double rangeThumbLength,
+            out double endThumbLength,
             out double increaseButtonLength)
         {
             Contract.Requires(!arrangeSize.IsEmpty);
 
             double minimum = ValueToDouble(this.Minimum), maximum = ValueToDouble(this.Maximum);
-            double interval = Math.Max(0.0, maximum - minimum); // длина доступного интервала значений
-            double decreaseAreaInterval = Math.Min(interval, ValueToDouble(this.StartValue) - minimum); // длина интервала от минимума до текущего значения (левая область)
-            double increaseAreaInterval = Math.Min(interval, maximum - ValueToDouble(this.EndValue)); // длина интервала от текущего значения до максимума (правая область)
+            double interval = Math.Max(0.0, maximum - minimum); // the "length" of available interval of values
+            double decreaseAreaInterval = Math.Min(interval, ValueToDouble(this.StartValue) - minimum); // interval "length" from minimum to start value ("left" area)
+            double increaseAreaInterval = Math.Min(interval, maximum - ValueToDouble(this.EndValue)); // interval "length" from end value to maximum ("right" area)
 
             double height;
             if (isVertical)
@@ -563,24 +668,10 @@ namespace SaneDevelopment.WPF4.Controls
             CoerceLength(ref rangeThumbLength, trackLength);
         }
 
-        /// <summary>
-        /// Вычисляет изменение <see cref="RangeTrack{T, TInterval}.StartValue" /> или <see cref="RangeTrack{T, TInterval}.EndValue" />
-        /// когда сдвигается один из ползунков.
-        /// </summary>
-        /// <param name="horizontal">Горизонтальный сдвиг ползунка</param>
-        /// <param name="vertical">Вертикальный сдвиг ползунка</param>
-        /// <returns>Величина смещения, соответствющая расположению ползунка.</returns>
-        public virtual double ValueFromDistance(double horizontal, double vertical)
-        {
-            return (this.Orientation == Orientation.Horizontal) ?
-                horizontal * this.Density :
-                -1.0 * vertical * this.Density;
-        }
-
         #region Control Parts
 
         /// <summary>
-        /// Кнопка сдвига интервала в меньшую сторону
+        /// Button for decreasing interval
         /// </summary>
         public virtual RepeatButton DecreaseRepeatButton
         {
@@ -604,7 +695,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Кнопка сдвига интервала в большую сторону
+        /// Button for increasing interval
         /// </summary>
         public virtual RepeatButton IncreaseRepeatButton
         {
@@ -628,7 +719,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ползунок начала интервала
+        /// Start interval thumb
         /// </summary>
         public virtual Thumb StartThumb
         {
@@ -644,7 +735,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ползунок интервала
+        /// Interval (range) thumb
         /// </summary>
         public virtual Thumb RangeThumb
         {
@@ -660,7 +751,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ползунок конца интервала
+        /// End interval thumb
         /// </summary>
         public virtual Thumb EndThumb
         {
@@ -676,71 +767,6 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         #endregion
-
-        /// <summary>
-        /// Минимально возможная величина значения
-        /// </summary>
-        public T Minimum
-        {
-            get
-            {
-                var res = this.GetValue(MinimumProperty);
-                Contract.Assume(res != null);
-                return (T)res;
-            }
-            set
-            {
-                this.SetValue(MinimumProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Максимально возможная величина значения
-        /// </summary>
-        public T Maximum
-        {
-            get
-            {
-                var res = this.GetValue(MaximumProperty);
-                Contract.Assume(res != null);
-                return (T) res;
-            }
-            set { this.SetValue(MaximumProperty, value); }
-        }
-
-        /// <summary>
-        /// Значение начала интервала
-        /// </summary>
-        public T StartValue
-        {
-            get
-            {
-                var res = this.GetValue(StartValueProperty);
-                Contract.Assume(res != null);
-                return (T)res;
-            }
-            set
-            {
-                this.SetValue(StartValueProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Значение конца интервала
-        /// </summary>
-        public T EndValue
-        {
-            get
-            {
-                var res = this.GetValue(EndValueProperty);
-                Contract.Assume(res != null);
-                return (T)res;
-            }
-            set
-            {
-                this.SetValue(EndValueProperty, value);
-            }
-        }
 
         private double Density
         {
@@ -763,7 +789,7 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Трэк, использующий числа с плавающей точкой в качестве значений и интервала
+    /// Track that uses <c>double</c> as values and inteval type
     /// </summary>
     public class NumericRangeTrack : RangeTrack<double, double>
     {
@@ -786,27 +812,30 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Converts <c>double</c> to value type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double DoubleToValue(double value)
         {
             return value;
         }
+        
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Convert received value to <c>double</c>
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double ValueToDouble(double value)
         {
             return value;
         }
 
-// ReSharper disable RedundantOverridenMember
+        #region Control Parts
+        // ReSharper disable RedundantOverridenMember
+
         /// <summary>
-        /// Кнопка сдвига интервала в меньшую сторону
+        /// Button for decreasing interval
         /// </summary>
         public override RepeatButton DecreaseRepeatButton
         {
@@ -819,8 +848,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.DecreaseRepeatButton = value;
             }
         }
+        
         /// <summary>
-        /// Кнопка сдвига интервала в большую сторону
+        /// Button for increasing interval
         /// </summary>
         public override RepeatButton IncreaseRepeatButton
         {
@@ -835,7 +865,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ползунок начала интервала
+        /// Start interval thumb
         /// </summary>
         public override Thumb StartThumb
         {
@@ -848,8 +878,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.StartThumb = value;
             }
         }
+        
         /// <summary>
-        /// Ползунок интервала
+        /// Interval (range) thumb
         /// </summary>
         public override Thumb RangeThumb
         {
@@ -862,8 +893,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.RangeThumb = value;
             }
         }
+        
         /// <summary>
-        /// Ползунок конца интервала
+        /// End interval thumb
         /// </summary>
         public override Thumb EndThumb
         {
@@ -876,11 +908,13 @@ namespace SaneDevelopment.WPF4.Controls
                 base.EndThumb = value;
             }
         }
-// ReSharper restore RedundantOverridenMember
+
+        // ReSharper restore RedundantOverridenMember
+        #endregion Control Parts
     }
 
     /// <summary>
-    /// Трэк, использующий даты <see cref="DateTime"/> в качестве значений и <see cref="TimeSpan"/> в качестве интервала
+    /// Track that uses <see cref="DateTime"/> as values type and <see cref="TimeSpan"/> as inteval type
     /// </summary>
     public class DateTimeRangeTrack : RangeTrack<DateTime, TimeSpan>
     {
@@ -901,27 +935,30 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод преобразования числа в дату
+        /// Converts <c>double</c> to <see cref="DateTime"/>
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Дата, сформированная на основе <paramref name="value"/> тактов</returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Date initialized to a <paramref name="value"/> number of ticks.</returns>
         protected override DateTime DoubleToValue(double value)
         {
             return (value > 10.0) ? new DateTime((long)value) : DateTime.MinValue;
         }
+        
         /// <summary>
-        /// Метод преобразования даты в число
+        /// Converts date to number.
         /// </summary>
-        /// <param name="value">Дата</param>
-        /// <returns>Число тактов даты</returns>
+        /// <param name="value">Date to convert</param>
+        /// <returns>The number of ticks that represent the date and time of <paramref name="value"/>.</returns>
         protected override double ValueToDouble(DateTime value)
         {
             return value.Ticks;
         }
 
-// ReSharper disable RedundantOverridenMember
+        #region Control Parts
+        // ReSharper disable RedundantOverridenMember
+
         /// <summary>
-        /// Кнопка сдвига интервала в меньшую сторону
+        /// Button for decreasing interval
         /// </summary>
         public override RepeatButton DecreaseRepeatButton
         {
@@ -934,8 +971,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.DecreaseRepeatButton = value;
             }
         }
+        
         /// <summary>
-        /// Кнопка сдвига интервала в большую сторону
+        /// Button for increasing interval
         /// </summary>
         public override RepeatButton IncreaseRepeatButton
         {
@@ -950,7 +988,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ползунок начала интервала
+        /// Start interval thumb
         /// </summary>
         public override Thumb StartThumb
         {
@@ -963,8 +1001,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.StartThumb = value;
             }
         }
+        
         /// <summary>
-        /// Ползунок интервала
+        /// Interval (range) thumb
         /// </summary>
         public override Thumb RangeThumb
         {
@@ -977,8 +1016,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.RangeThumb = value;
             }
         }
+        
         /// <summary>
-        /// Ползунок конца интервала
+        /// End interval thumb
         /// </summary>
         public override Thumb EndThumb
         {
@@ -991,7 +1031,9 @@ namespace SaneDevelopment.WPF4.Controls
                 base.EndThumb = value;
             }
         }
-// ReSharper restore RedundantOverridenMember
+
+        // ReSharper restore RedundantOverridenMember
+        #endregion Control Parts
     }
 }
 

@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -38,25 +38,26 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using Microsoft.Xaml.Behaviors.Core;
 
 namespace SaneDevelopment.WPF4.Controls.Interactivity
 {
     /// <summary>
-    /// Класс реализует оболочку вокруг набора параметров при обработке вызова <see cref="ParameterizedCallMethodAction"/>
+    /// Class provides container for parameter set when invoking <see cref="ParameterizedCallMethodAction"/>
     /// </summary>
     public class ParameterizedEventArgs : EventArgs
     {
         /// <summary>
-        /// Конструирует объект класса
+        /// Initialize instance
         /// </summary>
-        /// <param name="initialEventArgs">Аргументы исходного события</param>
-        /// <param name="parameter">Первый параметр</param>
-        /// <param name="parameter2">Второй параметр</param>
-        /// <param name="parameter3">Третий параметр</param>
-        /// <param name="parameter4">Четвертый параметр</param>
-        /// <param name="parameter5">Пятый параметр</param>
-        /// <param name="parameter6">Шестой параметр</param>
-        /// <param name="parameter7">Седьмой параметр</param>
+        /// <param name="initialEventArgs">Initial event's arguments</param>
+        /// <param name="parameter">Parameter #1</param>
+        /// <param name="parameter2">Parameter #2</param>
+        /// <param name="parameter3">Parameter #3</param>
+        /// <param name="parameter4">Parameter #4</param>
+        /// <param name="parameter5">Parameter #5</param>
+        /// <param name="parameter6">Parameter #6</param>
+        /// <param name="parameter7">Parameter #7</param>
         public ParameterizedEventArgs(
             EventArgs initialEventArgs, 
             object parameter, 
@@ -78,55 +79,55 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Аргуметы исходного события
+        /// Initial event's arguments
         /// </summary>
         public EventArgs InitialEventArgs { get; private set; }
 
         /// <summary>
-        /// Значение первого параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter"/>
         /// </summary>
         public object Parameter { get; private set; }
 
         /// <summary>
-        /// Значение второго параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter2"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter2"/>
         /// </summary>
         public object Parameter2 { get; private set; }
 
         /// <summary>
-        /// Значение третьего параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter3"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter3"/>
         /// </summary>
         public object Parameter3 { get; private set; }
 
         /// <summary>
-        /// Значение четвертого параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter4"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter4"/>
         /// </summary>
         public object Parameter4 { get; private set; }
 
         /// <summary>
-        /// Значение пятого параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter4"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter5"/>
         /// </summary>
         public object Parameter5 { get; private set; }
 
         /// <summary>
-        /// Значение шестого параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter5"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter6"/>
         /// </summary>
         public object Parameter6 { get; private set; }
 
         /// <summary>
-        /// Значение седьмого параметра, заданного в <see cref="ParameterizedCallMethodAction.Parameter7"/>
+        /// Parameter value from <see cref="ParameterizedCallMethodAction.Parameter7"/>
         /// </summary>
         public object Parameter7 { get; private set; }
     }
 
     /// <summary>
-    /// Класс представляет собой <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction"/> (наследуется от него).
-    /// Данный класс добавляет к своему родительскому классу два свойства зависимости (параметры),
-    /// которые будут переданы вызываемому методу в момент выполнения <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction.Invoke"/>.
+    /// Class behaves like <see cref="CallMethodAction"/> (derives from it).
+    /// This class appends to base class several dependency properties (additional parameters),
+    /// which will pass to method <see cref="CallMethodAction.MethodName"/> while <see cref="CallMethodAction.Invoke"/>.
     /// </summary>
-    public class ParameterizedCallMethodAction : Microsoft.Xaml.Behaviors.Core.CallMethodAction
+    public class ParameterizedCallMethodAction : CallMethodAction
     {
         /// <summary>
-        /// Первый параметр
+        /// Parameter #1
         /// </summary>
         public object Parameter
         {
@@ -135,7 +136,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter"/>
         /// </summary>
         public static readonly DependencyProperty ParameterProperty =
             DependencyProperty.Register(
@@ -144,7 +145,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Второй параметр
+        /// Parameter #2
         /// </summary>
         public object Parameter2
         {
@@ -153,7 +154,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter2"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter2"/>
         /// </summary>
         public static readonly DependencyProperty Parameter2Property =
             DependencyProperty.Register(
@@ -162,7 +163,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Третий параметр
+        /// Parameter #3
         /// </summary>
         public object Parameter3
         {
@@ -171,7 +172,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter3"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter3"/>
         /// </summary>
         public static readonly DependencyProperty Parameter3Property =
             DependencyProperty.Register(
@@ -180,7 +181,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Четвертый параметр
+        /// Parameter #4
         /// </summary>
         public object Parameter4
         {
@@ -189,7 +190,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter4"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter4"/>
         /// </summary>
         public static readonly DependencyProperty Parameter4Property =
             DependencyProperty.Register(
@@ -198,7 +199,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Пятый параметр
+        /// Parameter #5
         /// </summary>
         public object Parameter5
         {
@@ -207,7 +208,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter5"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter5"/>
         /// </summary>
         public static readonly DependencyProperty Parameter5Property =
             DependencyProperty.Register(
@@ -216,7 +217,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Шестой параметр
+        /// Parameter #6
         /// </summary>
         public object Parameter6
         {
@@ -225,7 +226,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter6"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter6"/>
         /// </summary>
         public static readonly DependencyProperty Parameter6Property =
             DependencyProperty.Register(
@@ -234,7 +235,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Седьмой параметр
+        /// Parameter #7
         /// </summary>
         public object Parameter7
         {
@@ -243,7 +244,7 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="ParameterizedCallMethodAction.Parameter7"/>
+        /// Dependency property for <see cref="ParameterizedCallMethodAction.Parameter7"/>
         /// </summary>
         public static readonly DependencyProperty Parameter7Property =
             DependencyProperty.Register(
@@ -252,11 +253,11 @@ namespace SaneDevelopment.WPF4.Controls.Interactivity
                 typeof(ParameterizedCallMethodAction));
 
         /// <summary>
-        /// Выполняет соответствующее действие.
-        /// Вызывает метод базового класса <see cref="Microsoft.Xaml.Behaviors.Core.CallMethodAction.Invoke"/>,
-        /// предварительно "завернув" заданные параметры и исходный параметр события в <see cref="ParameterizedEventArgs"/>
+        /// Invokes method <see cref="CallMethodAction.MethodName"/>.
+        /// Calls base method <see cref="CallMethodAction.Invoke"/>,
+        /// but before wraps initial event's arguments and parameters into <see cref="ParameterizedEventArgs"/>.
         /// </summary>
-        /// <param name="parameter">Параметр вызова исходного метода</param>
+        /// <param name="parameter">Initial parameter value</param>
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         protected override void Invoke(object parameter)
         {

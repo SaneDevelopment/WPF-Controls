@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -43,9 +43,10 @@ using System.Windows.Input;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Класс полностью аналогичен <see cref="DataGrid"/>,
-    /// но никогда не "проглатывает" событие <see cref="UIElement.MouseWheelEvent"/>, как это делает <see cref="DataGrid"/>.
-    /// Подробности в комментарии Kevin Stumpf к http://blog.ramondeklein.nl/index.php/2009/07/24/scrollviewer-always-handles-the-mousewheel/
+    /// Control behaves absolutely like a <see cref="DataGrid"/>,
+    /// but never "swallow" (handles) <see cref="UIElement.MouseWheelEvent"/> event (as <see cref="DataGrid"/> does).
+    /// 
+    /// <remarks>See details in comment of Kevin Stumpf to http://blog.ramondeklein.nl/index.php/2009/07/24/scrollviewer-always-handles-the-mousewheel/</remarks>
     /// </summary>
     public class SaneDataGrid : DataGrid
     {

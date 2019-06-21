@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +45,8 @@ using System.Windows.Controls.Primitives;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Класс предоставляет набо вспомогательный функций для работы со свойствами зависимости
+    /// Provides bunch of usefull handy methods for work with dependency properties
+    /// of controls in this library.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Util")]
     public static class DependencyPropertyUtil
@@ -100,11 +101,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением типа <see cref="double"/>
+        /// Checks whether received value is valid <see cref="System.Double"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns><c>true</c>, если <paramref name="value"/> может быть приведено к числу с плавающей точкой
-        /// и является допустимым значением (т.е. не NaN и не бесконечность)</returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> can be cast to <c>double</c> and is valid value (i.e. not Nan and not infinity).</returns>
         public static bool IsValidDoubleValue(object value)
         {
             Contract.Ensures(value != null || !Contract.Result<bool>());
@@ -125,20 +125,20 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением типа <see cref="DateTime"/>
+        /// Checks whether received value is valid <see cref="System.DateTime"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли <paramref name="value"/> объектом типа <see cref="DateTime"/></returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is <see cref="DateTime"/>; otherwise, <c>false</c>.</returns>
         public static bool IsValidDateTimeValue(object value)
         {
             return value is DateTime;
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением типа <see cref="bool"/>
+        /// Checks whether received value is valid <see cref="System.Boolean"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли <paramref name="value"/> объектом типа <see cref="bool"/></returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is <see cref="System.Boolean"/>; otherwise, <c>false</c>.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "bool")]
         public static bool IsValidBoolValue(object value)
         {
@@ -146,24 +146,23 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением типа <see cref="TimeSpan"/>
+        /// Checks whether received value is valid <see cref="System.TimeSpan"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли <paramref name="value"/> объектом типа <see cref="TimeSpan"/></returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is <see cref="TimeSpan"/>; otherwise, <c>false</c>.</returns>
         public static bool IsValidTimeSpanValue(object value)
         {
             return value is TimeSpan;
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением типа <paramref name="targetType"/>
+        /// Checks whether received value is valid value of type <paramref name="targetType"/>.
         /// </summary>
-        /// <param name="targetType">Проверяемый тип</param>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns><c>true</c>, если <paramref name="value"/> является корректным значением типа <paramref name="targetType"/></returns>
+        /// <param name="targetType">Target type</param>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c>, if <paramref name="value"/> is valid value of type <paramref name="targetType"/></returns>
         public static bool IsValidValue(Type targetType, object value)
         {
-            // TODO сделать возможность динамически добавлять обработчики для новых типов
             if (typeof(double).IsAssignableFrom(targetType))
             {
                 return IsValidDoubleValue(value);
@@ -180,16 +179,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли заданный объект корректным значением смещения типа <paramref name="targetType"/>
+        /// Checks whether received value is valid change (distance) value of type <paramref name="targetType"/>.
         /// </summary>
-        /// <param name="targetType">Проверяемый тип</param>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns><c>true</c>, если <paramref name="value"/> является корректным значением смещения типа <paramref name="targetType"/></returns>
+        /// <param name="targetType">Target type</param>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> id valid change value of type <paramref name="targetType"/></returns>
         public static bool IsValidChange(Type targetType, object value)
         {
             Contract.Ensures(value != null || !Contract.Result<bool>());
 
-            // TODO сделать возможность динамически добавлять обработчики для новых типов
             if (value == null)
                 return false;
 
@@ -210,10 +208,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли объект <paramref name="value"/> корректным значением типа <see cref="Orientation"/>
+        /// Checks whether received value is valid <see cref="Orientation"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли объект <paramref name="value"/> корректным значением типа <see cref="Orientation"/></returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is valid <see cref="Orientation"/>; otherwise, <c>false</c>.</returns>
         public static bool IsValidOrientation(object value)
         {
             if (!(value is Orientation))
@@ -224,10 +222,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли объект <paramref name="value"/> корректным значением для точности отображения чисел с плавающей точкой
+        /// Checks whether received value is valid value of floating-point number precision for auto tooltip view.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли объект <paramref name="value"/> корректным значением для точности отображения чисел с плавающей точкой</returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is valid value of floating-point number precision; otherwise, <c>false</c>.</returns>
         public static bool IsValidAutoToolTipPrecision(object value)
         {
             if (!(value is int))
@@ -239,10 +237,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Является ли объект <paramref name="value"/> корректным значением типа <see cref="AutoToolTipPlacement"/>
+        /// Checks whether received value is valid <see cref="AutoToolTipPlacement"/> value.
         /// </summary>
-        /// <param name="value">Проверяемый объект</param>
-        /// <returns>Является ли объект <paramref name="value"/> корректным значением типа <see cref="AutoToolTipPlacement"/></returns>
+        /// <param name="value">Value to check</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is valid <see cref="AutoToolTipPlacement"/>; otherwise, <c>false</c>.</returns>
         public static bool IsValidAutoToolTipPlacement(object value)
         {
             if (!(value is AutoToolTipPlacement))
@@ -256,15 +254,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Функция выполняет коррекцию начального значения интервала для заданного объекта.
-        /// Коррекция выполняется согласно принятым для интервальных контролов правилам, а именно,
-        /// что начальное значение не должно меньше минимума и больше конечного значения или максимума
+        /// Method performs coercing of range start value.
+        /// Used ranged controls rules: e.g. start value must be greater or equal to minimum value
+        /// and must be less or equal to end value or maximum value.
         /// </summary>
-        /// <typeparam name="T">Тип значения</typeparam>
-        /// <typeparam name="TInterval">Тип интервала</typeparam>
-        /// <param name="ranged">Корректируемый объект</param>
-        /// <param name="value">Проверяемое значение</param>
-        /// <returns><paramref name="value"/>, либо скорректированное значение</returns>
+        /// <typeparam name="T">Value type</typeparam>
+        /// <typeparam name="TInterval">Interval type</typeparam>
+        /// <param name="ranged">Ranged object</param>
+        /// <param name="value">Value to coerce</param>
+        /// <returns><paramref name="value"/>, or coerced value</returns>
         public static object CoerceRangeStartValue<T, TInterval>(IRanged<T, TInterval> ranged, T value)
         {
             if (ranged == null) return value;
@@ -272,8 +270,9 @@ namespace SaneDevelopment.WPF4.Controls
             double? coercedValue = null;
             double doubleValue = ranged.ValueToDouble(value);
 
-            // порядок проверок важен: сначала проверяем размер интервала,
-            // т.к. его "подгонка" под минимальное значение может "испортить" более важные ограничения.
+            // the order of validations below is important
+            // at first, validate range (interval) value,
+            // because its coercing to minimum value can damage other more important limitations.
             double endValue = ranged.ValueToDouble(ranged.EndValue);
             double minRangeValue = ranged.IntervalToDouble(ranged.MinRangeValue);
             double newRangeValue = endValue - doubleValue;
@@ -302,15 +301,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Функция выполняет коррекцию конечного значения интервала для заданного объекта.
-        /// Коррекция выполняется согласно принятым для интервальных контролов правилам, а именно,
-        /// что конечное значение не должно меньше начального значение или минимума и больше максимума
+        /// Method performs coercing of range end value.
+        /// Used ranged controls rules: e.g. end value must be greater or equal to start value or minimum value
+        /// and must be less or equal to maximum value.
         /// </summary>
-        /// <typeparam name="T">Тип значения</typeparam>
-        /// <typeparam name="TInterval">Тип интервала</typeparam>
-        /// <param name="ranged">Корректируемый объект</param>
-        /// <param name="value">Проверяемое значение</param>
-        /// <returns><paramref name="value"/>, либо скорректированное значение</returns>
+        /// <typeparam name="T">Value type</typeparam>
+        /// <typeparam name="TInterval">Interval type</typeparam>
+        /// <param name="ranged">Ranged object</param>
+        /// <param name="value">Value to coerce</param>
+        /// <returns><paramref name="value"/>, or coerced value</returns>
         public static object CoerceRangeEndValue<T, TInterval>(IRanged<T, TInterval> ranged, T value)
         {
             if (ranged == null) return value;
@@ -318,8 +317,9 @@ namespace SaneDevelopment.WPF4.Controls
             double? coercedValue = null;
             double doubleValue = ranged.ValueToDouble(value);
 
-            // порядок проверок важен: сначала проверяем размер интервала,
-            // т.к. его "подгонка" под минимальное значение может "испортить" более важные ограничения.
+            // the order of validations below is important
+            // at first, validate range (interval) value,
+            // because its coercing to minimum value can damage other more important limitations.
             double startValue = ranged.ValueToDouble(ranged.StartValue);
             double minRangeValue = ranged.IntervalToDouble(ranged.MinRangeValue);
             double newRangeValue = doubleValue - startValue;

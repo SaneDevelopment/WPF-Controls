@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -40,18 +40,18 @@ using System.Windows;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Аргументы события завершения перетаскивания центрального ползунка интервального контрола
+    /// Contains state information and event data associated with a range thumb drag completed routed event.
     /// </summary>
-    /// <typeparam name="T">Тип значений контрола</typeparam>
+    /// <typeparam name="T">Range values type</typeparam>
     public class RangeDragCompletedEventArgs<T> : RoutedEventArgs
     {
         /// <summary>
-        /// Инициализирует новый объект
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="oldStartValue">Старое значение начала интервала</param>
-        /// <param name="oldEndValue">Старое значение конца интервала</param>
-        /// <param name="newStartValue">Новое значение начала интервала</param>
-        /// <param name="newEndValue">Новое значение конца интервала</param>
+        /// <param name="oldStartValue">Old range start value</param>
+        /// <param name="oldEndValue">Old range end value</param>
+        /// <param name="newStartValue">New range start value</param>
+        /// <param name="newEndValue">New range end value</param>
         public RangeDragCompletedEventArgs(T oldStartValue, T oldEndValue,
             T newStartValue, T newEndValue)
         {
@@ -62,36 +62,38 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Старое значение начала интервала
+        /// Old range start value
         /// </summary>
         public T OldStartValue { get; private set; }
+        
         /// <summary>
-        /// Старое значение конца интервала
+        /// Old range end value
         /// </summary>
         public T OldEndValue { get; private set; }
 
         /// <summary>
-        /// Новое значение начала интервала
+        /// New range start value
         /// </summary>
         public T NewStartValue { get; private set; }
+        
         /// <summary>
-        /// Новое значение конца интервала
+        /// New range end value
         /// </summary>
         public T NewEndValue { get; private set; }
     }
 
     /// <summary>
-    /// Аргументы события завершения перетаскивания области выделения интервального контрола
+    /// Contains state information and event data associated with a double-range control drag completed routed event.
     /// </summary>
     public class SelectionDragCompletedEventArgs : RoutedEventArgs
     {
         /// <summary>
-        /// Инициализирует новый объект
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="oldSelectionStart">Старое значение начала интервала</param>
-        /// <param name="oldSelectionEnd">Старое значение конца интервала</param>
-        /// <param name="newSelectionStart">Новое значение начала интервала</param>
-        /// <param name="newSelectionEnd">Новое значение конца интервала</param>
+        /// <param name="oldSelectionStart">Old selection start value</param>
+        /// <param name="oldSelectionEnd">Old selection end value</param>
+        /// <param name="newSelectionStart">New selection start value</param>
+        /// <param name="newSelectionEnd">New selection end value</param>
         public SelectionDragCompletedEventArgs(double oldSelectionStart, double oldSelectionEnd,
             double newSelectionStart, double newSelectionEnd)
         {
@@ -102,28 +104,32 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Старое значение начала интервала
+        /// Old selection start value
         /// </summary>
         public double OldSelectionStart { get; private set; }
+
         /// <summary>
-        /// Старое значение конца интервала
+        /// Old selection end value
         /// </summary>
         public double OldSelectionEnd { get; private set; }
+        
         /// <summary>
-        /// Старое значение величины области выделения
+        /// Old value of selection range
         /// </summary>
         public double OldSelectionRange { get { return OldSelectionEnd - OldSelectionStart; } }
 
         /// <summary>
-        /// Новое значение начала интервала
+        /// New selection start value
         /// </summary>
         public double NewSelectionStart { get; private set; }
+        
         /// <summary>
-        /// Новое значение конца интервала
+        /// New selection end value
         /// </summary>
         public double NewSelectionEnd { get; private set; }
+        
         /// <summary>
-        /// Новое значение величины области выделения
+        /// New value of selection range
         /// </summary>
         public double NewSelectionRange { get { return NewSelectionEnd - NewSelectionStart; } }
     }

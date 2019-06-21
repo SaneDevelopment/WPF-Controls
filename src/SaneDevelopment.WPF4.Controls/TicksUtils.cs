@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -44,23 +44,24 @@ using System.Windows.Media;
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Интерфейс, который должны реализовывать все коллекции, чтобы иметь возможность использоваться в качестве набора меток в ползунках
+    /// Defines methods to manipulate collections, that uses as ticks collections for tick bars inside sliders.
     /// </summary>
-    /// <typeparam name="T">Тип значений, хранимых в коллекции</typeparam>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
     [ContractClass(typeof(ITicksCollectionContract<>))]
     public interface ITicksCollection<out T>
     {
         /// <summary>
-        /// Элемент коллекции по заданному индексу
+        /// Gets the element at the specified index.
         /// </summary>
-        /// <param name="index">Индекс</param>
-        /// <returns>Элемент коллекции по заданному индексу</returns>
+        /// <param name="index">The zero-based index of the element to get.</param>
+        /// <returns>The element at the specified index.</returns>
         T this[int index] { get; }
 
         /// <summary>
-        /// Число элементов в коллекции
+        /// Gets the number of elements contained in the collection.
         /// </summary>
+        /// <returns>The number of elements contained in the collection.</returns>
         int Count { get; }
     }
 
@@ -90,7 +91,7 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Реализация интерфейса <see cref="ITicksCollection{T}"/> для типа <see cref="double"/>
+    /// Collection of ticks of <see cref="double"/> type.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
     public sealed class DoubleTicksCollection : ITicksCollection<double>
@@ -98,9 +99,10 @@ namespace SaneDevelopment.WPF4.Controls
         private readonly DoubleCollection m_Ticks;
 
         /// <summary>
-        /// Инициализирует объект
+        /// Initializes a new instance of the <see cref="DoubleTicksCollection"/> class
+        /// with the specified collection of <see cref="double"/> values.
         /// </summary>
-        /// <param name="ticks">Коллекция значений</param>
+        /// <param name="ticks">The collection of <see cref="double"/> values that make up the <see cref="DoubleTicksCollection"/>.</param>
         public DoubleTicksCollection(DoubleCollection ticks)
         {
             Contract.Requires<ArgumentNullException>(ticks != null);
@@ -109,18 +111,19 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Элемент коллекции по заданному индексу
+        /// Gets the element at the specified index.
         /// </summary>
-        /// <param name="index">Индекс</param>
-        /// <returns>Элемент коллекции по заданному индексу</returns>
+        /// <param name="index">The zero-based index of the element to get.</param>
+        /// <returns>The element at the specified index.</returns>
         public double this[int index]
         {
             get { return m_Ticks[index]; }
         }
 
         /// <summary>
-        /// Число элементов в коллекции
+        /// Gets the number of elements contained in the collection.
         /// </summary>
+        /// <returns>The number of elements contained in the collection.</returns>
         public int Count
         {
             get
@@ -141,7 +144,7 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Реализация интерфейса <see cref="ITicksCollection{T}"/> для типа <see cref="DateTime"/>
+    /// Collection of ticks of <see cref="DateTime"/> type.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
     public sealed class DateTimeTicksCollection : ITicksCollection<DateTime>
@@ -149,9 +152,10 @@ namespace SaneDevelopment.WPF4.Controls
         private readonly IList<DateTime> m_Ticks;
 
         /// <summary>
-        /// Инициализирует объект
+        /// Initializes a new instance of the <see cref="DateTimeTicksCollection"/> class
+        /// with the specified collection of <see cref="DateTime"/> values.
         /// </summary>
-        /// <param name="ticks">Коллекция значений</param>
+        /// <param name="ticks">The collection of <see cref="DateTime"/> values that make up the <see cref="DateTimeTicksCollection"/>.</param>
         public DateTimeTicksCollection(IList<DateTime> ticks)
         {
             Contract.Requires<ArgumentNullException>(ticks != null);
@@ -160,18 +164,19 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Элемент коллекции по заданному индексу
+        /// Gets the element at the specified index.
         /// </summary>
-        /// <param name="index">Индекс</param>
-        /// <returns>Элемент коллекции по заданному индексу</returns>
+        /// <param name="index">The zero-based index of the element to get.</param>
+        /// <returns>The element at the specified index.</returns>
         public DateTime this[int index]
         {
             get { return m_Ticks[index]; }
         }
 
         /// <summary>
-        /// Число элементов в коллекции
+        /// Gets the number of elements contained in the collection.
         /// </summary>
+        /// <returns>The number of elements contained in the collection.</returns>
         public int Count
         {
             get

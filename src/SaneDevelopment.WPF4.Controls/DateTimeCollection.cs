@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -47,43 +47,44 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Markup;
+using SaneDevelopment.WPF4.Controls.Properties;
 
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Класс реализует сериализацию коллекции дат в и из строки
+    /// Provides serialization of <see cref="DateTimeCollection"/> from and to string
     /// </summary>
     public class DateTimeCollectionValueSerializer : ValueSerializer
     {
         /// <summary>
-        /// Функция проверяет возможность получения коллекции дат из строки
+        /// Determines whether the specified <c>string</c> can be converted to an instance of the <see cref="DateTimeCollection"/>
         /// </summary>
-        /// <param name="value">Исходная строка</param>
-        /// <param name="context">Контекст сериализации</param>
-        /// <returns>Всегда <c>true</c></returns>
+        /// <param name="value">The string to evaluate for conversion.</param>
+        /// <param name="context">Context information that is used for conversion.</param>
+        /// <returns>Always <c>true</c></returns>
         public override bool CanConvertFromString(string value, IValueSerializerContext context)
         {
             return true;
         }
 
         /// <summary>
-        /// Функция проверяет возможность получения строкового представления коллекции дат из входного параметра
+        /// Determines whether the specified object can be converted into a <c>string</c>
         /// </summary>
-        /// <param name="value">Входной параметр</param>
-        /// <param name="context">Контекст сериализации</param>
-        /// <returns><c>true</c>, если параметр <paramref name="value"/> является коллекцией дат; иначе <c>false</c></returns>
+        /// <param name="value">The object to evaluate for conversion.</param>
+        /// <param name="context">Context information that is used for conversion.</param>
+        /// <returns><c>true</c>, if <paramref name="value"/> is instance of <see cref="DateTimeCollection"/>; otherwise <c>false</c></returns>
         public override bool CanConvertToString(object value, IValueSerializerContext context)
         {
             return (value is DateTimeCollection);
         }
 
         /// <summary>
-        /// Формирует коллекцию дат на основе заданной строки <paramref name="value"/>
-        /// либо генерирует <see cref="NotSupportedException"/> или <see cref="FormatException"/>, если это невозможно
+        /// Converts a <c>string</c> to an instance of the <see cref="DateTimeCollection"/>
+        /// or raises <see cref="NotSupportedException"/> or <see cref="FormatException"/>, if conversion failed.
         /// </summary>
-        /// <param name="value">Исходная строка</param>
-        /// <param name="context">Контекст сериализации</param>
-        /// <returns>Коллекция дат</returns>
+        /// <param name="value">The string to convert.</param>
+        /// <param name="context">Context information that is used for conversion.</param>
+        /// <returns><see cref="DateTimeCollection"/></returns>
         public override object ConvertFromString(string value, IValueSerializerContext context)
         {
             return DateTimeCollectionConverter.ParseImpl(
@@ -93,11 +94,11 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Преобразует коллекцию дат в строку
+        /// Converts the specified object to a <c>string</c>
         /// </summary>
-        /// <param name="value">Колллекция дат</param>
-        /// <param name="context">Контекст сериализации</param>
-        /// <returns>Строковое представление коллекции</returns>
+        /// <param name="value"><see cref="DateTimeCollection"/></param>
+        /// <param name="context">Context information that is used for conversion.</param>
+        /// <returns>A string representation of the specified object.</returns>
         public override string ConvertToString(object value, IValueSerializerContext context)
         {
             var dates = value as DateTimeCollection;
@@ -115,7 +116,8 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Класс реализует конвертацию коллекции дат в и из строки
+    /// Provides a unified way of converting <see cref="DateTimeCollection"/> to other types
+    /// (only <c>string</c> for now)
     /// </summary>
     public sealed class DateTimeCollectionConverter : TypeConverter
     {
@@ -131,34 +133,35 @@ namespace SaneDevelopment.WPF4.Controls
 
 
         /// <summary>
-        /// Функция проверяет возможность получения коллекции дат из строки
+        /// Returns whether this converter can convert an object of the given type to the type of <see cref="DateTimeCollection"/>,
+        /// using the specified context.
         /// </summary>
-        /// <param name="context">Контекст дескриптора</param>
-        /// <param name="sourceType">Тип, из которого предполагается получение коллекции</param>
-        /// <returns><c>true</c>, если <paramref name="sourceType"/> является строкой; иначе <c>false</c></returns>
+        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="sourceType">A <see cref="System.Type"/> that represents the type you want to convert from.</param>
+        /// <returns><c>true</c>, if <paramref name="sourceType"/> is <c>string</c>; otherwise, <c>false</c></returns>
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return ((sourceType == typeof(string)) || base.CanConvertFrom(context, sourceType));
         }
 
         /// <summary>
-        /// Функция проверяет возможность получения строкового представления коллекции дат из входного параметра
+        /// Returns whether this converter can convert the object to the specified type, using the specified context.
         /// </summary>
-        /// <param name="context">Контекст дескриптора</param>
-        /// <param name="destinationType">Тип, в который предполагается конвертация коллекции</param>
-        /// <returns><c>true</c>, если <paramref name="destinationType"/> является строкой; иначе <c>false</c></returns>
+        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="destinationType">A <see cref="System.Type"/> that represents the type you want to convert to.</param>
+        /// <returns><c>true</c>, if <paramref name="destinationType"/> is <c>string</c>; otherwise, <c>false</c></returns>
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
             return ((destinationType == typeof(string)) || base.CanConvertTo(context, destinationType));
         }
 
         /// <summary>
-        /// Формирует коллекцию дат на основе заданной строки <paramref name="value"/>
+        /// Converts the given object to the <see cref="DateTimeCollection"/>, using the specified context and culture information.
         /// </summary>
-        /// <param name="context">Контекст дескриптора</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <param name="value">Исходная строка</param>
-        /// <returns>Коллекция дат</returns>
+        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="culture">The <see cref="System.Globalization.CultureInfo"/> to use as the current culture.</param>
+        /// <param name="value">The <c>string</c> to convert.</param>
+        /// <returns><see cref="DateTimeCollection"/></returns>
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value == null)
@@ -174,13 +177,13 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Преобразует коллекцию дат в строку
+        /// Converts the given value object to the specified type, using the specified context and culture information.
         /// </summary>
-        /// <param name="context">Контекст дескриптора</param>
-        /// <param name="culture">Используемая культура</param>
-        /// <param name="value">Колллекция дат</param>
-        /// <param name="destinationType">Тип, в который предполагается конвертация коллекции</param>
-        /// <returns>Строковое представление коллекции</returns>
+        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="culture">A <see cref="System.Globalization.CultureInfo"/>. If <c>null</c> is passed, the current culture is assumed.</param>
+        /// <param name="value">The <see cref="System.Object"/> to convert.</param>
+        /// <param name="destinationType">The <see cref="System.Type"/> to convert the value parameter to.</param>
+        /// <returns>An <see cref="System.Object"/> that represents the converted value.</returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             var dates = value as DateTimeCollection;
@@ -245,7 +248,7 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Коллекция дат
+    /// Represents a collection of <see cref="DateTime"/> values.
     /// </summary>
     [ValueSerializer(typeof(DateTimeCollectionValueSerializer))]
     [TypeConverter(typeof(DateTimeCollectionConverter))]
@@ -267,7 +270,7 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion Private fields
 
         /// <summary>
-        /// Инициализирует пустую коллекцию
+        /// Initializes a new instance of a <see cref="DateTimeCollection"/>
         /// </summary>
         public DateTimeCollection()
         {
@@ -275,9 +278,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Инициализирует коллекцию на основе заданного перечисления
+        /// Initializes a new instance of the <see cref="DateTimeCollection"/> class with the specified collection of <see cref="DateTime"/> values.
         /// </summary>
-        /// <param name="collection">Исходное перечисление дат</param>
+        /// <param name="collection">The collection of <see cref="DateTime"/> values that make up the <see cref="DateTimeCollection"/>.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public DateTimeCollection(IEnumerable<DateTime> collection)
         {
@@ -310,9 +313,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Инициализирует коллекцию заданной начальной емкости
+        /// Initializes a new instance of the <see cref="DateTimeCollection"/> class with the specified capacity,
+        /// or the number of <see cref="DateTime"/> values the collection is initially capable of storing.
         /// </summary>
-        /// <param name="capacity">Начальная емкость коллекции</param>
+        /// <param name="capacity">The number of <see cref="DateTime"/> values that the collection is initially capable of storing.</param>
         public DateTimeCollection(int capacity)
         {
             Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
@@ -334,15 +338,17 @@ namespace SaneDevelopment.WPF4.Controls
         #region Override methods
 
         /// <summary>
-        /// Выполняет глубокое копирование коллекции
+        /// Makes the instance a clone (deep copy) of the specified <see cref="System.Windows.Freezable"/>
+        /// using base (non-animated) property values.
         /// </summary>
-        /// <param name="source">Источник</param>
+        /// <param name="source">The object to clone (<see cref="DateTimeCollection"/>)</param>
         protected override void CloneCore(Freezable source)
         {
             Contract.Assume(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.CloneCore(source);
+
             Contract.Assume(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
@@ -353,15 +359,17 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Выполняет глубокое копирование коллекции, делая ее модифицируемой
+        /// Makes the instance a modifiable clone (deep copy) of the specified <see cref="System.Windows.Freezable"/>
+        /// using current property values.
         /// </summary>
-        /// <param name="source">Источник</param>
+        /// <param name="source">The <see cref="System.Windows.Freezable"/> to be cloned (<see cref="DateTimeCollection"/>)</param>
         protected override void CloneCurrentValueCore(Freezable source)
         {
             Contract.Assume(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.CloneCurrentValueCore(source);
+
             Contract.Assume(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
@@ -372,24 +380,26 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Новый объект коллекции
+        /// Creates new instance of <see cref="DateTimeCollection"/>
         /// </summary>
-        /// <returns>Новый объект коллекции</returns>
+        /// <returns>New empty instance of <see cref="DateTimeCollection"/></returns>
         protected override Freezable CreateInstanceCore()
         {
             return new DateTimeCollection();
         }
 
         /// <summary>
-        /// Формирует "замороженный" клон коллекции
+        /// Makes the instance a frozen clone of the specified <see cref="System.Windows.Freezable"/>
+        /// using base (non-animated) property values.
         /// </summary>
-        /// <param name="source">Источник</param>
+        /// <param name="source">The instance to copy.</param>
         protected override void GetAsFrozenCore(Freezable source)
         {
             Contract.Assume(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.GetAsFrozenCore(source);
+
             Contract.Assume(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
@@ -400,13 +410,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Формирует "замороженный" клон коллекции
+        /// Makes the current instance a frozen clone of the specified <see cref="System.Windows.Freezable"/>.
+        /// If the object has animated dependency properties, their current animated values are copied.
         /// </summary>
-        /// <param name="source">Источник</param>
+        /// <param name="source">The <see cref="System.Windows.Freezable"/> to copy and freeze.</param>
         protected override void GetCurrentValueAsFrozenCore(Freezable source)
         {
             var doubles = (DateTimeCollection)source;
             base.GetCurrentValueAsFrozenCore(source);
+
             Contract.Assume(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
@@ -417,9 +429,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Преобразует коллекцию в строку
+        /// Returns a string that represents the current object.
         /// </summary>
-        /// <returns>Строковое представление коллекции</returns>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             this.ReadPreamble();
@@ -481,7 +493,7 @@ namespace SaneDevelopment.WPF4.Controls
             set
             {
                 Contract.Assume(value != null);
-                Contract.Assume(value is DateTime, LocalizedStrings.CollectionBadType);
+                Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
                 Contract.Assert(index >= 0);
                 Contract.Assert(index < this.Count);
 
@@ -493,7 +505,7 @@ namespace SaneDevelopment.WPF4.Controls
         {
             Contract.Assume(!this.IsFrozen);
             Contract.Assume(value != null);
-            Contract.Assume(value is DateTime, LocalizedStrings.CollectionBadType);
+            Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
 
             return this.AddHelper(Cast(value));
         }
@@ -516,7 +528,7 @@ namespace SaneDevelopment.WPF4.Controls
         {
             Contract.Assume(index <= this.Count);
             Contract.Assume(value != null);
-            Contract.Assume(value is DateTime, LocalizedStrings.CollectionBadType);
+            Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
 
             this.Insert(index, Cast(value));
         }
@@ -545,9 +557,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Удаляет из коллекции элемент по заданному индексу
+        /// Removes the <see cref="System.Collections.IList"/> item at the specified index.
         /// </summary>
-        /// <param name="index">Индекс удаляемого элемента</param>
+        /// <param name="index">The zero-based index of the item to remove.</param>
         public void RemoveAt(int index)
         {
             ((IList)this).RemoveAt(index);
@@ -558,7 +570,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region ICollection implementation
 
         /// <summary>
-        /// Размер коллекции
+        /// Gets the number of elements actually contained in the collection.
         /// </summary>
         public int Count
         {
@@ -603,7 +615,7 @@ namespace SaneDevelopment.WPF4.Controls
             }
             if (array.Rank != 1)
             {
-                throw new ArgumentException(LocalizedStrings.CollectionBadRank);
+                throw new ArgumentException(LocalizationResource.CollectionBadRank);
             }
             int count = this.m_Collection.Count;
             try
@@ -617,7 +629,7 @@ namespace SaneDevelopment.WPF4.Controls
             }
             catch (InvalidCastException exception)
             {
-                throw new ArgumentException(LocalizedStrings.CollectionBadDestArray, exception);
+                throw new ArgumentException(LocalizationResource.CollectionBadDestArray, exception);
             }
         }
 
@@ -626,10 +638,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region IList<DateTime> implementation
 
         /// <summary>
-        /// Элемент коллекции по заданному индексу
+        /// Gets or sets the element at the specified index.
         /// </summary>
-        /// <param name="index">Индекс</param>
-        /// <returns>Дата</returns>
+        /// <param name="index">The zero-based index of the element to get or set.</param>
+        /// <returns><see cref="DateTime"/></returns>
         public DateTime this[int index]
         {
             get
@@ -655,10 +667,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Индекс первого вхождения заданной даты в коллекции
+        /// Searches for the specified object and returns the zero-based index of the first occurrence within the entire collection.
         /// </summary>
-        /// <param name="item">Искомая дата</param>
-        /// <returns>Индекс найденной даты, начиная с нуля</returns>
+        /// <param name="item">The item to locate in the collection.</param>
+        /// <returns>The zero-based index of the first occurrence of item within the entire collection, if found; otherwise, –1.</returns>
         public int IndexOf(DateTime item)
         {
             this.ReadPreamble();
@@ -666,10 +678,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Выставляет дату в заданную позицию
+        /// Inserts an element into the collection at the specified index.
         /// </summary>
-        /// <param name="index">Позиция</param>
-        /// <param name="item">Дата</param>
+        /// <param name="index">The zero-based index at which item should be inserted.</param>
+        /// <param name="item">The <see cref="DateTime"/> to insert</param>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCount")]
         public void Insert(int index, DateTime item)
         {
@@ -705,9 +717,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Добавляет дату в конец коллекции
+        /// Adds an item to the collection.
         /// </summary>
-        /// <param name="item">Дата</param>
+        /// <param name="item">The <see cref="DateTime"/> to add to the collection.</param>
         public void Add(DateTime item)
         {
             Contract.Assume(!this.IsFrozen);
@@ -716,7 +728,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Очищает коллекцию
+        /// Removes all items from the collection.
         /// </summary>
         public void Clear()
         {
@@ -735,10 +747,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Ищет в коллекции дату
+        /// Determines whether the collection contains a specific value.
         /// </summary>
-        /// <param name="item">Искомая дата</param>
-        /// <returns>Найдена ли заданная дата в коллекции</returns>
+        /// <param name="item">The <see cref="DateTime"/> to locate in the collection.</param>
+        /// <returns><c>true</c> if item is found in the collection; otherwise, <c>false</c>.</returns>
         public bool Contains(DateTime item)
         {
             Contract.Ensures(!Contract.Result<bool>() || this.Count > 0);
@@ -748,10 +760,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Копирует даты из коллекции в массив
+        /// Copies the elements of the collection to an <see cref="System.Array"/>, starting at a particular <see cref="System.Array "/> index.
         /// </summary>
-        /// <param name="array">Массив-приемник</param>
-        /// <param name="arrayIndex">Начальный индекс в массиве для копирования</param>
+        /// <param name="array">The one-dimensional <see cref="System.Array"/> that is the destination of the elements
+        /// copied from collection. The <see cref="System.Array"/> must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than 0
+        /// or the number of elements in the source collection is greater than the available space from <paramref name="arrayIndex"/>
+        /// to the end of the destination <paramref name="array"/>.</exception>
         public void CopyTo(DateTime[] array, int arrayIndex)
         {
             this.ReadPreamble();
@@ -767,10 +784,11 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Удаляет из коллекции первое вхождение заданной даты
+        /// Removes the first occurrence of a specific date from the collection.
         /// </summary>
-        /// <param name="item">Дата</param>
-        /// <returns>Был ли реально удален элемент</returns>
+        /// <param name="item">The date to remove from the collection.</param>
+        /// <returns><c>true</c> if item was successfully removed from the collection; otherwise, <c>false</c>.
+        /// This method also returns <c>false</c> if item is not found in the original collection.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCount")]
         public bool Remove(DateTime item)
         {
@@ -862,36 +880,40 @@ namespace SaneDevelopment.WPF4.Controls
         private static DateTime Cast(object value)
         {
             Contract.Requires<ArgumentNullException>(value != null);
-            Contract.Requires<ArgumentException>(value is DateTime, LocalizedStrings.CollectionBadType);
+            Contract.Requires<ArgumentException>(value is DateTime, LocalizationResource.CollectionBadType);
 
             return (DateTime)value;
         }
 
         /// <summary>
-        /// Вызывает одноименный базовый метод
+        /// Calls base <see cref="Freezable.Clone"/> method.
+        /// 
+        /// <remarks>Created to prevent type casting.</remarks>
         /// </summary>
-        /// <returns>Коллекция дат</returns>
+        /// <returns><see cref="DateTimeCollection"/></returns>
         public new DateTimeCollection Clone()
         {
             return (DateTimeCollection)base.Clone();
         }
 
         /// <summary>
-        /// Вызывает одноименный базовый метод
+        /// Calls base <see cref="Freezable.CloneCurrentValue"/> method.
+        /// 
+        /// <remarks>Created to prevent type casting.</remarks>
         /// </summary>
-        /// <returns>Коллекция дат</returns>
+        /// <returns><see cref="DateTimeCollection"/></returns>
         public new DateTimeCollection CloneCurrentValue()
         {
             return (DateTimeCollection)base.CloneCurrentValue();
         }
 
         /// <summary>
-        /// Выполняет синтаксический рабор строки <paramref name="source"/>, извлекая коллекцию дат
+        /// Converts a <c>string</c> representation of a collection of dates into an equivalent <see cref="DateTimeCollection"/>.
         /// </summary>
-        /// <param name="source">Исходная строка</param>
+        /// <param name="source">The <c>string</c> representation of the collection of dates.</param>
         /// <param name="itemFormat">Format string for <see cref="DateTime"/> item in collection</param>
         /// <param name="separator">Separator (delimiter) for items in string</param>
-        /// <returns>Коллекция дат</returns>
+        /// <returns>Returns the equivalent <see cref="DateTimeCollection"/>.</returns>
         public static DateTimeCollection Parse(
             string source,
             string itemFormat = DateTimeCollectionConverter.DefaultFormatString,
@@ -903,10 +925,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Преобразует объект в строку
+        /// Creates a <c>string</c> representation of this collection.
         /// </summary>
-        /// <param name="provider">Формат-провайдер</param>
-        /// <returns>Строковое представление коллекции дат</returns>
+        /// <param name="provider">Culture-specific formatting information.</param>
+        /// <returns>Returns a <see cref="System.String"/> containing the values of this collection.</returns>
         public string ToString(IFormatProvider provider)
         {
             this.ReadPreamble();
@@ -919,9 +941,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод возвращает новый перечислитель коллекции
+        /// Returns an enumerator that can iterate through the collection.
         /// </summary>
-        /// <returns>Новый перечислитель коллекции</returns>
+        /// <returns>An <see cref="DateTimeCollection.Enumerator"/> that can iterate through the collection.</returns>
         public Enumerator GetEnumerator()
         {
             this.ReadPreamble();
@@ -929,7 +951,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Тип-перечислитель для колекции дат
+        /// Enumerates <see cref="DateTime"/> items in a <see cref="DateTimeCollection"/>.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct Enumerator : IEnumerator<DateTime>
@@ -950,21 +972,21 @@ namespace SaneDevelopment.WPF4.Controls
             }
 
             /// <summary>
-            /// Выполняет освобождение ресурсов
+            /// Disposes resources
             /// </summary>
             public void Dispose()
             { }
 
             /// <summary>
-            /// Выполняет переход к следующему элементу последовательности
+            /// Advances the enumerator to the next element in the collection.
             /// </summary>
-            /// <returns></returns>
+            /// <returns><c>true</c> if the enumerator successfully advanced to the next element; otherwise, <c>false</c>.</returns>
             public bool MoveNext()
             {
                 this.m_List.ReadPreamble();
                 if (this.m_Version != this.m_List.m_Version)
                 {
-                    throw new InvalidOperationException(LocalizedStrings.EnumeratorCollectionChanged);
+                    throw new InvalidOperationException(LocalizationResource.EnumeratorCollectionChanged);
                 }
                 Contract.Assume(this.m_List.m_Collection != null);
                 if ((this.m_Index > -2) && (this.m_Index < (this.m_List.m_Collection.Count - 1)))
@@ -977,14 +999,14 @@ namespace SaneDevelopment.WPF4.Controls
             }
 
             /// <summary>
-            /// Сбрасывает перечислитель в начальное неинициализированное состояние
+            /// Resets the enumerator to its initial position, which is before the first element in the collection.
             /// </summary>
             public void Reset()
             {
                 this.m_List.ReadPreamble();
                 if (this.m_Version != this.m_List.m_Version)
                 {
-                    throw new InvalidOperationException(LocalizedStrings.EnumeratorCollectionChanged);
+                    throw new InvalidOperationException(LocalizationResource.EnumeratorCollectionChanged);
                 }
                 this.m_Index = -1;
             }
@@ -998,7 +1020,7 @@ namespace SaneDevelopment.WPF4.Controls
             }
 
             /// <summary>
-            /// Возвращает текущий элемент последовательности
+            /// Gets the current element in the collection.
             /// </summary>
             public DateTime Current
             {
@@ -1010,9 +1032,9 @@ namespace SaneDevelopment.WPF4.Controls
                     }
                     if (this.m_Index == -1)
                     {
-                        throw new InvalidOperationException(LocalizedStrings.EnumeratorNotStarted);
+                        throw new InvalidOperationException(LocalizationResource.EnumeratorNotStarted);
                     }
-                    throw new InvalidOperationException(LocalizedStrings.EnumeratorReachedEnd);
+                    throw new InvalidOperationException(LocalizationResource.EnumeratorReachedEnd);
                 }
             }
 

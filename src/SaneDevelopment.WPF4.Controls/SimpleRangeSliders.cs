@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -47,32 +47,37 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using SaneDevelopment.WPF4.Controls.Properties;
 
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Интерфейс для преобразования значения в строку.
-    /// Объекты, реализующие этот интерфейс, используются для преобразования значений <see cref="SimpleRangeSlider{T, TInterval}"/>
-    /// в их строковые представления для отображения пользователю (например, во всплывающий подсказках соответствующих ползунков).
+    /// Describes operation of conversion some range slider value to string.
+    /// 
+    /// Objects that implement this interface supposed to use for conversion values of <see cref="SimpleRangeSlider{T, TInterval}"/>
+    /// into their string representation for showing in UI to user
+    /// (e.g. in tooltips etc.)
     /// </summary>
-    /// <typeparam name="T">Тип значений</typeparam>
+    /// <typeparam name="T">Range slider value type</typeparam>
     public interface IRangeValueToStringConverter<in T>
     {
         /// <summary>
-        /// Функция преобразует значение <paramref name="value"/> в строку
+        /// Converts <paramref name="value"/> to <c>string</c>.
         /// </summary>
-        /// <param name="value">Значение для преобразования</param>
-        /// <param name="thumbType">Тип ползунка, значение которого задано в <paramref name="value"/>.</param>
-        /// <param name="parameter">Дополнительный произвольный параметер для преобразования</param>
-        /// <returns>Строковое представление числа</returns>
+        /// <param name="value">Value to convert</param>
+        /// <param name="thumbType">Type of the thumb, which value is <paramref name="value"/>.</param>
+        /// <param name="parameter">Additional parameter for convertion.</param>
+        /// <returns>String representation of <paramref name="value"/></returns>
         string Convert(T value, RangeThumbType thumbType, object parameter);
     }
 
     /// <summary>
-    /// Базовый класс для интервальных слайдеров (ползунков)
+    /// Common class for range sliders.
+    /// 
+    /// Separated to decrease code duplication.
     /// </summary>
-    /// <typeparam name="T">Тип значений</typeparam>
-    /// <typeparam name="TInterval">Тип интервала</typeparam>
+    /// <typeparam name="T">Values type</typeparam>
+    /// <typeparam name="TInterval">Interval type</typeparam>
     public abstract class SimpleRangeSlider<T, TInterval> : RangeBaseControl<T, TInterval>
     {
         #region Constructors
@@ -109,11 +114,11 @@ namespace SaneDevelopment.WPF4.Controls
         #region IRangeTrackTemplatedParent
 
         /// <summary>
-        /// Метод выполняет обработку <see cref="FrameworkElement.OnApplyTemplate"/>, а именно,
-        /// связывает некоторые свойства зависимостей с шаблонным родителем.
+        /// Method handles <see cref="FrameworkElement.OnApplyTemplate"/>,
+        /// notably bind some dependency properties with templated parent.
         /// </summary>
-        /// <param name="templatedParent">Шаблонный родитель</param>
-        /// <param name="track">Интервальный трэк</param>
+        /// <param name="templatedParent">Templated parent</param>
+        /// <param name="track">Any range track</param>
         public override void OnApplyRangeTrackTemplate(DependencyObject templatedParent, RangeTrack<T, TInterval> track)
         {
             if (track == null)
@@ -136,113 +141,155 @@ namespace SaneDevelopment.WPF4.Controls
 
         #region Commands
 
+        #region Large increasing
+
         /// <summary>
-        /// Команда для сдвига интервала в большую сторону на большую величину
+        /// Routed command for large increasing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseRangeLarge { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в большую сторону на большую величину
+        /// Routed command for large increasing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseStartLarge { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в большую сторону на большую величину
+        /// Routed command for large increasing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseEndLarge { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand IncreaseLargeByKey { get; set; }
 
+        #endregion Large increasing
+
+        #region Large decreasing
+
         /// <summary>
-        /// Команда для сдвига интервала в меньшую сторону на большую величину
+        /// Routed command for large decreasing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseRangeLarge { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в меньшую сторону на большую величину
+        /// Routed command for large decreasing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseStartLarge { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в меньшую сторону на большую величину
+        /// Routed command for large decreasing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseEndLarge { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand DecreaseLargeByKey { get; set; }
 
+        #endregion Large decreasing
+
+        #region Small increasing
+
         /// <summary>
-        /// Команда для сдвига интервала в большую сторону на маленькую величину
+        /// Routed command for small increasing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseRangeSmall { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в большую сторону на маленькую величину
+        /// Routed command for small increasing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseStartSmall { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в большую сторону на маленькую величину
+        /// Routed command for small increasing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand IncreaseEndSmall { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand IncreaseSmallByKey { get; set; }
 
+        #endregion Small increasing
+
+        #region Small decreasing
+
         /// <summary>
-        /// Команда для сдвига интервала в меньшую сторону на маленькую величину
+        /// Routed command for small decreasing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseRangeSmall { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в меньшую сторону на маленькую величину
+        /// Routed command for small decreasing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseStartSmall { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в меньшую сторону на маленькую величину
+        /// Routed command for small decreasing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand DecreaseEndSmall { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand DecreaseSmallByKey { get; set; }
 
+        #endregion Small decreasing
+
+        #region Minimize
+
         /// <summary>
-        /// Команда для сдвига интервала в положение минимума
+        /// Routed command for minimizing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MinimizeRangeValue { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в положение минимума
+        /// Routed command for minimizing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MinimizeStartValue { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в положение минимума
+        /// Routed command for minimizing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MinimizeEndValue { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand MinimizeValueByKey { get; set; }
 
+        #endregion Minimize
+
+        #region Maximize
+
         /// <summary>
-        /// Команда для сдвига интервала в положение максимума
+        /// Routed command for maximizing of interval (range) value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MaximizeRangeValue { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения начала интервала в положение максимума
+        /// Routed command for maximizing of start value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MaximizeStartValue { get; private set; }
+        
         /// <summary>
-        /// Команда для сдвига значения конца интервала в положение максимума
+        /// Routed command for maximizing of end value
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static RoutedCommand MaximizeEndValue { get; private set; }
+        
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         private static RoutedCommand MaximizeValueByKey { get; set; }
+
+        #endregion Maximize
 
         static void InitializeCommands()
         {
@@ -278,18 +325,17 @@ namespace SaneDevelopment.WPF4.Controls
             MaximizeEndValue = new RoutedCommand(c_MaximizeEndValueCommandName, thisType);
             MaximizeValueByKey = new RoutedCommand(c_MaximizeValueByKeyCommandName, thisType);
 
-            // Команды public регистрируются без горячих клавиш, т.к. для идентификации того или иного ползунка надо знать
-            // какой именно Ctrl был нажат - правый или левый, что при задании KeyGesture невозможно (есть только ModifierKeys.Control).
-            // Такие команды предназначены исключительно для вызова через Execute.
-            // Команды, которые могут вызываться через сочетание клавиш объявлены как private,
-            // чтобы их нельзя было вызвать из внешнего кода.
-            // Эти команды обрабатываются внутри закрытого обработчика и анализируют, какой из Ctrl был нажат.
+            // Commands with "public" specification registers without hot keys,
+            // because for identifying the thumb we need to know what <Ctrl> was pressed - left or right.
+            // But we can't know it, because KeyGesture has only ModifierKeys.Control modifier (i.e. there's no LeftControl or RightControl).
+            // Such commands can be invoked only via Execute method.
+            // Commands, that can be invoked via key gestures, declared as "private", to prevent invoking them from external code.
+            // Such commands handles in some private method, analizes what <Ctrl> was pressed and invokes appropriate "public" command.
             //
-            // Сделано это из-за того, что сочетание клавиш <Ctrl>+<кнопка> можно назначить только одной команде
-            // и именно ее _CanExecute будет вызываться при нажатии на указанное сочетание.
-            // Однако, условия возможности выполнения той или иной команды для левого и правого ползунка разные,
-            // поэтому какое-то из сочетаний клавиш не будет работать из-за того, что запрещено выполнение команды,
-            // привязанной к другому сочетанию.
+            // We did that way because we can associate every <Ctrl>+<key> to only one command,
+            // and only for that command will be called ..._CanExecute method (while pressing mentioned keys).
+            // Though, the conditions of "execution-ability" are different for left and right thumbs,
+            // therefore some combination won't be involved because of "disabling" of another combination - this is wrong.
 
             // Increase Large
             CommandHelpers.RegisterCommandHandler(
@@ -447,25 +493,33 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в большую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected abstract bool IncreaseStartValueCommandCanExecute();
+        
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в большую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected abstract bool IncreaseEndValueCommandCanExecute();
+        
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в меньшую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected abstract bool DecreaseStartValueCommandCanExecute();
+        
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в меньшую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected abstract bool DecreaseEndValueCommandCanExecute();
+
 
         private static void IncreaseStartValueCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -861,7 +915,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Orientation Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.Orientation"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.Orientation"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -872,7 +926,7 @@ namespace SaneDevelopment.WPF4.Controls
                                           DependencyPropertyUtil.IsValidOrientation);
 
         /// <summary>
-        /// Ориентация
+        /// Control orientation
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public Orientation Orientation
@@ -891,7 +945,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsDragRangeEnabled Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.IsDragRangeEnabled"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.IsDragRangeEnabled"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -901,7 +955,7 @@ namespace SaneDevelopment.WPF4.Controls
                                           new FrameworkPropertyMetadata(true));
 
         /// <summary>
-        /// Разрешено ли перетаскивание интервала соответствующим ползунком
+        /// Whether enabled the whole range dragging by appropriate thumb.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool IsDragRangeEnabled
@@ -920,9 +974,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsRangeDragging
 
         /// <summary>
-        /// Находится ли контрол в состоянии изменения значения области выделения путем перетаскивания любого из ползунков.
-        /// Позволяет узнать о том, что пользователь находится в процессе выбора величины области выделения,
-        /// захватив и перемещая в данный момент один из ползунков.
+        /// Gets the value that indicates whether the control is in process of changing some value via dragging a thumb.
+        /// Lets to know that user is moving the one of the thumbs right now.
         /// </summary>
         [Category("Common")]
         public bool IsRangeDragging
@@ -949,7 +1002,7 @@ namespace SaneDevelopment.WPF4.Controls
                     OnIsRangeDraggingChanged));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -974,10 +1027,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик изменения значения свойства <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/>
+        /// Handler of changing the <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/> property.
         /// </summary>
-        /// <param name="oldValue">Предыдущее значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The previous value of the property as reported by a property changed event.</param>
+        /// <param name="newValue">The new value of a property as reported by a property changed event.</param>
         protected virtual void OnIsRangeDraggingChanged(bool oldValue, bool newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
@@ -992,7 +1045,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsRaiseValueChangedWhileDragging Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.IsRaiseValueChangedWhileDragging"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.IsRaiseValueChangedWhileDragging"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1006,9 +1059,9 @@ namespace SaneDevelopment.WPF4.Controls
                 DependencyPropertyUtil.IsValidBoolValue);
 
         /// <summary>
-        /// Генерировать событие <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/>,
-        /// когда элемент находится в состоянии изменения значения области выделения путем перетаскивания любого из ползунков,
-        /// иными словами, когда <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/> <c>== true</c>.
+        /// Whether to raise <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/> event,
+        /// when control is in process of dragging some thumb,
+        /// in other words, when <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/> is <c>true</c>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool IsRaiseValueChangedWhileDragging
@@ -1027,7 +1080,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Delay Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.Delay"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.Delay"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1047,8 +1100,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Определяет величину ожидания в милисекундах до того, как начинается повторение.
-        /// Должно быть неотрицательной.
+        /// Gets or sets the amount of time, in milliseconds, the <see cref="System.Windows.Controls.Primitives.RepeatButton"/>
+        /// waits while it is pressed before it starts repeating.
+        /// The value must be non-negative.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public int Delay
@@ -1070,7 +1124,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Interval Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.Interval"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.Interval"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1090,8 +1144,8 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Определяет величину времени в милисекундах между повторениями, когда повторения начато.
-        /// Должна быть неотрицательной.
+        /// Gets or sets the amount of time, in milliseconds, between repeats once repeating starts.
+        /// The value must be non-negative.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public int Interval
@@ -1114,7 +1168,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipValueConverter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1127,8 +1181,8 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Конвертер значений в их строковые представления для отображения во всплывающих подсказках.
-        /// Если задано это значение, то <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> игнорируется.
+        /// Converter of values into their string representations for showing in the tooltips in UI.
+        /// If not <c>null</c>, then <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> ignores.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public IRangeValueToStringConverter<T> AutoToolTipValueConverter
@@ -1142,7 +1196,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipValueConverterParameter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1155,7 +1209,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Параметр конвертера числовых значений в их строковые представления
+        /// Additional parameter for <see cref="AutoToolTipValueConverter"/>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public object AutoToolTipValueConverterParameter
@@ -1169,7 +1223,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipFormat Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1179,8 +1233,8 @@ namespace SaneDevelopment.WPF4.Controls
                                           new FrameworkPropertyMetadata());
 
         /// <summary>
-        /// Формат отображения числа во всплывающей подсказке.
-        /// Используется только, если не задан <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>.
+        /// Format string for showing values in the tooltips in UI.
+        /// Ignores if <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/> is not <c>null</c>.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public string AutoToolTipFormat
@@ -1200,7 +1254,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipPlacement Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipPlacement"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipPlacement"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1211,7 +1265,7 @@ namespace SaneDevelopment.WPF4.Controls
                                           DependencyPropertyUtil.IsValidAutoToolTipPlacement);
 
         /// <summary>
-        /// Относительное метоположение отображения всплывающей подсказки
+        /// The placement where automatic <see cref="System.Windows.Controls.ToolTip"/> is positioned on the control.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public AutoToolTipPlacement AutoToolTipPlacement
@@ -1242,7 +1296,7 @@ namespace SaneDevelopment.WPF4.Controls
             new FrameworkPropertyMetadata(0.0d, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.StartReservedSpace"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.StartReservedSpace"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1250,8 +1304,8 @@ namespace SaneDevelopment.WPF4.Controls
 // ReSharper restore StaticFieldInGenericType
 
         /// <summary>
-        /// Слайдер использует <see cref="SimpleRangeSlider{T, TInterval}.StartReservedSpaceProperty"/>
-        /// для вычисления отступа шкалы делений (<see cref="TickBar"/>) слева/снизу
+        /// Slider uses <see cref="SimpleRangeSlider{T, TInterval}.StartReservedSpaceProperty"/>
+        /// for evaluation of indent of <see cref="TickBar"/> to the left/bottom
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public double StartReservedSpace
@@ -1278,7 +1332,7 @@ namespace SaneDevelopment.WPF4.Controls
             new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.EndReservedSpace"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.EndReservedSpace"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1286,8 +1340,8 @@ namespace SaneDevelopment.WPF4.Controls
 // ReSharper restore StaticFieldInGenericType
 
         /// <summary>
-        /// Слайдер использует <see cref="SimpleRangeSlider{T, TInterval}.EndReservedSpaceProperty"/>
-        /// для вычисления отступа шкалы делений (<see cref="TickBar"/>) справа/сверху
+        /// Slider uses <see cref="SimpleRangeSlider{T, TInterval}.EndReservedSpaceProperty"/>
+        /// for evaluation of indent of <see cref="TickBar"/> to the right/top.
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public double EndReservedSpace
@@ -1309,7 +1363,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsSnapToTickEnabled property
 
         /// <summary>
-        /// Если <c>true</c>, то слайдер будет автоматически смещать ползунок к ближайшей метке на шкале
+        /// Gets or sets a value that indicates whether the slider automatically moves
+        /// the <see cref="System.Windows.Controls.Primitives.Track.Thumb"/> to the closest tick mark.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool IsSnapToTickEnabled
@@ -1327,7 +1382,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1355,26 +1410,25 @@ namespace SaneDevelopment.WPF4.Controls
             var newValue = (bool)args.NewValue;
             if (newValue)
             {
-                // если перемещение ползунков возможно только по меткам на шкале,
-                // то проверка на минимальный размер интервала отключается из-за сложности вычисления этого размера
-                // для неравномерных меток.
-                // Теоретически эту проверку можно не отключать,
-                // но для этого нужно принудительно сделать минимальный размер кратным шагу меток (для равномерных),
-                // либо равным минимальному из расстояний между метками на шкале (для неравномерных). Т.е. так или иначе
-                // отслеживание свойства MinRangeValue становится трудоемким и неочевидным.
+                // if movements of thumbs available only over tick marks,
+                // then validation of min range value is OFF, because of difficalty of such validations for irregular ticks.
+                // in theory, we may not switch OFF that validation,
+                // but for that we have to compulsory set the minimum range value to multiple to ticks step (for regular),
+                // or to equal to minimum interval (distance) value between tick marks (for irregular).
+                // Anyway, validation of MinRangeValue property become difficult and laborious.
                 element.MinRangeValueEnabled = false;
 
-                // если флажок взводится (теперь ползунки могут быть только на метках шкалы),
-                // то надо принудительно выравнять текущее положение ползунков до ближайших меток.
-                // Минус этого шага: изменяются положения ползунков и, как следствие, размер интервала
-                // (но иногда этого может и не происходить).
+                // if IsSnapToTickEnabled goes to ON (from now thumbs can be only over tick marks),
+                // then we have to align current values (thumbs) to nearest ticks.
+                // shortcoming of that way: thumbs positions can be changed, therefore interval (range) value can be changed too
+                // (but not necessarily).
                 element.AlignValuesToTicks();
             }
             else
             {
-                // если для слайдера отключается режим единого (одного) значения,
-                // то проверка на минимальный размер интервала можно включить, а можно и не включать -
-                // все зависит от значения этого признака по умолчанию в элементе управления.
+                // if IsSnapToTickEnabled mode is OFF,
+                // then we turns ON the validation over min range value.
+                // or may be not - it depends of default value of appropriate dependency property.
                 element.MinRangeValueEnabled = element.DefaultMinRangeValueEnabled;
             }
         }
@@ -1384,7 +1438,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region TickPlacement property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.TickPlacement"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.TickPlacement"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1395,7 +1449,7 @@ namespace SaneDevelopment.WPF4.Controls
                                           IsValidTickPlacement);
 
         /// <summary>
-        /// Местоположение шкалы делений относительно ползунков
+        /// Position of tick marks in a slider control with respect to the track that the control implements.
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public TickPlacement TickPlacement
@@ -1429,10 +1483,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region TickFrequency property
 
         /// <summary>
-        /// Частота (или расстояние между ближайшими метками) на шкале делений.
-        /// Когда <see cref="SimpleRangeSlider{T, TInterval}.TypedTicksCollection"/> не равен <c>null</c>
-        /// слайдер игнорирует <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
-        /// и рисует только те метки, которые заданы в коллекции <see cref="SimpleRangeSlider{T, TInterval}.TypedTicksCollection"/>.
+        /// Gets or sets the interval between tick marks.
+        /// Ignores if <see cref="SimpleRangeSlider{T, TInterval}.TypedTicksCollection"/> is not <c>null</c>.
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public TInterval TickFrequency
@@ -1450,7 +1502,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1476,10 +1528,10 @@ namespace SaneDevelopment.WPF4.Controls
 
             if (element.IsSnapToTickEnabled)
             {
-                // если местоположение меток меняется и при этом включена привязка к ближайшей метке,
-                // то надо принудительно выравнять текущее положение ползунков до ближайших меток.
-                // Минус этого шага: изменяются положения ползунков и, как следствие, размер интервала
-                // (но иногда этого может и не происходить).
+                // if tick's positions change and IsSnapToTickEnabled is ON,
+                // then we have to align current values (thumbs) to nearest ticks.
+                // shortcoming of that way: thumbs positions can be changed, therefore interval (range) value can be changed too
+                // (but not necessarily).
                 element.AlignValuesToTicks();
             }
 
@@ -1487,10 +1539,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда изменяется значение <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
+        /// Calls whenever the effective value of the <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> changes.
         /// </summary>
-        /// <param name="oldTickFrequency">Предыдущее значение</param>
-        /// <param name="newTickFrequency">Новое значение</param>
+        /// <param name="oldTickFrequency">Gets the value of the <see cref="TickFrequency"/> before the change.</param>
+        /// <param name="newTickFrequency">Gets the value of the <see cref="TickFrequency"/> after the change.</param>
         protected virtual void OnTickFrequencyChanged(TInterval oldTickFrequency, TInterval newTickFrequency)
         { }
 
@@ -1533,7 +1585,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region TickLabelConverter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.TickLabelConverter"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.TickLabelConverter"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1546,7 +1598,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Конвертер числовых значений меток шкалы делений в их строковые представления для отображения пользователю.
+        /// Gets or sets the converter of tick values to their string representations for showing in UI.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public IDoubleToStringConverter TickLabelConverter
@@ -1560,7 +1612,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region TickLabelConverterParameter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.TickLabelConverterParameter"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.TickLabelConverterParameter"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1573,7 +1625,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Параметр конвертера числовых значений меток шкалы делений в их строковые представления для отображения пользователю.
+        /// Additional parameter for <see cref="TickLabelConverter"/>
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public object TickLabelConverterParameter
@@ -1586,12 +1638,12 @@ namespace SaneDevelopment.WPF4.Controls
 
         #endregion TickMark support
 
-        #endregion // Dependency Properties
+        #endregion Dependency Properties
 
         #region Public Events
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDraggingChanged"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDraggingChanged"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1604,7 +1656,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(SimpleRangeSlider<T, TInterval>));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/>
+        /// Occurs when <see cref="SimpleRangeSlider{T, TInterval}.IsRangeDragging"/> changed.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<bool> IsRangeDraggingChanged
         {
@@ -1614,7 +1666,7 @@ namespace SaneDevelopment.WPF4.Controls
 
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleRangeSlider{T, TInterval}.RangeDragCompleted"/>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.RangeDragCompleted"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -1627,7 +1679,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(SimpleRangeSlider<T, TInterval>));
 
         /// <summary>
-        /// Событие завершения перетаскивания одного из ползунков
+        /// Occurs when the process of dragging of any of thumbs completed.
         /// </summary>
         public event EventHandler<RangeDragCompletedEventArgs<T>> RangeDragCompleted
         {
@@ -1636,14 +1688,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда пользователь прекращает перетаскивать ползунок.
-        /// Здесь просто инициируется событие <see cref="SimpleRangeSlider{T, TInterval}.RangeDragCompleted"/>.
+        /// Calls when user stops dragging of thumb.
+        /// Here we simply raise <see cref="SimpleRangeSlider{T, TInterval}.RangeDragCompleted"/>.
         /// </summary>
-        /// <param name="oldStartValue">Предыдущее значение начала интервала</param>
-        /// <param name="oldEndValue">Предыдущее значение конца интервала</param>
-        /// <param name="newStartValue">Новое значение начала интервала</param>
-        /// <param name="newEndValue">Новое значение конца интервала</param>
-        protected virtual void OnRangeDragCompleted(T oldStartValue, T oldEndValue,
+        /// <param name="oldStartValue">The value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> property before the drag started.</param>
+        /// <param name="oldEndValue">The value of the <see cref="RangeBaseControl{T, TInterval}.EndValue"/> property before the drag started.</param>
+        /// <param name="newStartValue">The value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> property after the drag completed.</param>
+        /// <param name="newEndValue">The value of the <see cref="RangeBaseControl{T, TInterval}.EndValue"/> property after the drag completed.</param>
+        protected virtual void OnRangeDragCompleted(
+            T oldStartValue, T oldEndValue,
             T newStartValue, T newEndValue)
         {
             var newEventArgs = new RangeDragCompletedEventArgs<T>(oldStartValue, oldEndValue, newStartValue, newEndValue)
@@ -1686,9 +1739,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда пользователь начинает перетаскивать ползунок
+        /// Calls when user starts dragging the thumb.
         /// </summary>
-        /// <param name="e">Параметры события</param>
+        /// <param name="e">Information about event.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragStarted(DragStartedEventArgs e)
         {
@@ -1702,6 +1755,7 @@ namespace SaneDevelopment.WPF4.Controls
                 return;
             }
 
+            // remember range values on the moment when drag started
             Contract.Assume(!m_RangeValueData.IsRangeDragging);
             m_RangeValueData.IsRangeDragging = true;
             m_RangeValueData.RangeStart = StartValue;
@@ -1740,17 +1794,18 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда пользователь смещает захваченный мышкой ползунок
+        /// Calls when user moves the captured thumb.
         /// </summary>
-        /// <param name="e">Параметры события</param>
+        /// <param name="e">Information about event.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragDelta(DragDeltaEventArgs e)
         {
             Contract.Requires<ArgumentNullException>(e != null);
             Contract.Requires<ArgumentException>(e.OriginalSource is Thumb);
 
-            IsRangeDragging = true; // сделано здесь для того, чтобы не выставлять зря этот признак в обработчике DragStarted,
-            // т.к. в DragStarted он будет выставлен даже если реального смещения не произошло, а был только лишь щелчок мышкой на элементе (захват)
+            IsRangeDragging = true; // do it here in order to not useless set this indicator in handler of DragStarted,
+            // because in DragStarted this indicator will be set up even there was no real movement,
+            // but was only mouse click over element (capture).
 
             var thumb = e.OriginalSource as Thumb;
             RangeThumbType thumbType = GetThumbType(thumb);
@@ -1790,9 +1845,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда пользователь прекращает перетаскивать ползунок
+        /// Calls when user completed dragging the thumb.
         /// </summary>
-        /// <param name="e">Параметры события</param>
+        /// <param name="e">Information about event.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragCompleted(DragCompletedEventArgs e)
         {
@@ -1813,9 +1868,11 @@ namespace SaneDevelopment.WPF4.Controls
             {
                 IsRangeDragging = false;
                 OnRangeDragCompleted(oldRangeValueData.RangeStart, oldRangeValueData.RangeEnd,
-                    StartValue, EndValue);
-                // если генерация события ValueChanged была отключена,
-                // то это событие надо сгенерить вручную по окончании перетаскивания ползунков, иначе оно будет "проглочено".
+                                     StartValue, EndValue);
+
+                // if raising of ValueChanged event was OFF,
+                // then we need to manually generate that event when drag completed,
+                // otherwise it will be lost ("swallowed")
                 if (!IsRaiseValueChangedWhileDragging &&
                     (!DoubleUtil.AreClose(ValueToDouble(oldRangeValueData.RangeStart), ValueToDouble(StartValue)) ||
                      !DoubleUtil.AreClose(ValueToDouble(oldRangeValueData.RangeEnd), ValueToDouble(EndValue))))
@@ -1843,10 +1900,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region Override Functions
 
         /// <summary>
-        /// Обработчик события <see cref="Mouse.MouseDownEvent"/>.
-        /// Его назначение перенести фокус ввода на <see cref="SimpleRangeSlider{T, TInterval}"/>,
-        /// когда пользователь нажимает левую кнопку мыши на любой части данного слайдера, которая не может иметь фокус ввода
-        /// (is not focusable).
+        /// The handler for <see cref="Mouse.MouseDownEvent"/> event.
+        /// Its purpose is to move input focus to <see cref="SimpleRangeSlider{T, TInterval}"/>,
+        /// when user presses left mouse button over any part (element) of this slider,
+        /// which is not focusable.
         /// </summary>
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -1864,10 +1921,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Выполняет расположение контрола <see cref="SimpleRangeSlider{T, TInterval}" />.
+        /// Called to arrange and size the content of a <see cref="SimpleRangeSlider{T, TInterval}" />.
         /// </summary>
-        /// <param name="finalSize">Область, доступная для <see cref="SimpleRangeSlider{T, TInterval}" />.</param>
-        /// <returns>Размер <see cref="Size"/>, который будет использоваться для содержимого <see cref="SimpleRangeSlider{T, TInterval}" />.</returns>
+        /// <param name="finalSize">The computed size that is used to arrange the content.</param>
+        /// <returns>The size, which will be used for the content of a <see cref="SimpleRangeSlider{T, TInterval}" />.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             Size size = base.ArrangeOverride(finalSize);
@@ -1878,9 +1935,12 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда изменяется значение свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/>.
-        /// Перегружено здесь для того, чтобы обновить расположение и размер элемента <see cref="SimpleRangeSlider{T, TInterval}.TrackBackground"/>.
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> changes.
+        /// 
+        /// Overridden here for purpose of updating the position and size of <see cref="SimpleRangeSlider{T, TInterval}.TrackBackground"/>.
         /// </summary>
+        /// <param name="oldValue">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newValue">The value of the property after the change reported by the relevant event or state change.</param>
         protected override void OnStartValueChanged(T oldValue, T newValue)
         {
             base.OnStartValueChanged(oldValue, newValue);
@@ -1888,8 +1948,9 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик <see cref="FrameworkElement.OnApplyTemplate"/>.
-        /// Вызывается, когда создано визуальное дерева элемента.
+        /// Is invoked whenever application code or internal processes call <see cref="System.Windows.FrameworkElement.ApplyTemplate"/>().
+        /// 
+        /// Invoked when visual tree of an element is created.
         /// </summary>
         public override void OnApplyTemplate()
         {
@@ -1960,14 +2021,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется хотя бы одно из значений <see cref="RangeBaseControl{T, TInterval}.StartValue"/>,
-        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/> или <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
-        /// Перегружено здесь для того, чтобы учесть <see cref="SimpleRangeSlider{T, TInterval}.IsRaiseValueChangedWhileDragging"/>.
+        /// Calls whenever the effective value of any of following properties changes: <see cref="RangeBaseControl{T, TInterval}.StartValue"/>,
+        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/> or <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
+        /// 
+        /// Overridden here to treat with <see cref="SimpleRangeSlider{T, TInterval}.IsRaiseValueChangedWhileDragging"/>.
         /// </summary>
-        /// <param name="oldStartValue">Старое значение начала интервала</param>
-        /// <param name="oldEndValue">Старое значение конца интервала</param>
-        /// <param name="newStartValue">Новое значение начала интервала</param>
-        /// <param name="newEndValue">Новое значение конца интервала</param>
+        /// <param name="oldStartValue">The value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> property before the change reported by the relevant event or state change.</param>
+        /// <param name="oldEndValue">The value of the <see cref="RangeBaseControl{T, TInterval}.EndValue"/> property before the change reported by the relevant event or state change.</param>
+        /// <param name="newStartValue">The value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> property after the change reported by the relevant event or state change.</param>
+        /// <param name="newEndValue">The value of the <see cref="RangeBaseControl{T, TInterval}.EndValue"/> property after the change reported by the relevant event or state change.</param>
         protected override void OnValueChanged(T oldStartValue, T oldEndValue, T newStartValue, T newEndValue)
         {
             if (!IsRangeDragging || IsRaiseValueChangedWhileDragging)
@@ -1981,18 +2043,20 @@ namespace SaneDevelopment.WPF4.Controls
         #region Abstract Functions
 
         /// <summary>
-        /// Свойство возвращает коллекцию значений меток соответствующего типа для шкалы делений.
-        /// Должно быть реализовано в наследниках.
+        /// Gets the collection of tick marks of appropriate type.
+        /// 
+        /// Must be implemented in derived classes.
         /// </summary>
         protected abstract ITicksCollection<T> TypedTicksCollection { get; }
 
         /// <summary>
-        /// Метод возвращает строку для отображения во всплывающей подсказке.
-        /// Должен быть реализован в наследниках.
+        /// Gets the string representation of <paramref name="value"/> for showing in tooltips.
+        /// 
+        /// Must be implemented in derived classes.
         /// </summary>
-        /// <param name="value">Текущее значение</param>
-        /// <param name="thumbType">Тип ползунка, значение которого <paramref name="value"/>.</param>
-        /// <returns>Строковое представление значения <paramref name="value"/> для ползунка, заданного <paramref name="thumbType"/>.</returns>
+        /// <param name="value">Current value</param>
+        /// <param name="thumbType">The type of thumb which value is <paramref name="value"/>.</param>
+        /// <returns>String representation of <paramref name="value"/> for thumb, which type is <paramref name="thumbType"/>.</returns>
         [Pure]
         protected abstract string GetAutoToolTipString(T value, RangeThumbType thumbType);
 
@@ -2001,7 +2065,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Virtual Functions
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseRangeLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseRangeLarge"/>
         /// </summary>
         protected virtual void OnIncreaseRangeLarge()
         {
@@ -2009,7 +2073,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseStartLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseStartLarge"/>
         /// </summary>
         protected virtual void OnIncreaseStartLarge()
         {
@@ -2017,7 +2081,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseEndLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseEndLarge"/>
         /// </summary>
         protected virtual void OnIncreaseEndLarge()
         {
@@ -2025,7 +2089,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseRangeLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseRangeLarge"/>
         /// </summary>
         protected virtual void OnDecreaseRangeLarge()
         {
@@ -2033,7 +2097,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseStartLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseStartLarge"/>
         /// </summary>
         protected virtual void OnDecreaseStartLarge()
         {
@@ -2041,7 +2105,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseEndLarge"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseEndLarge"/>
         /// </summary>
         protected virtual void OnDecreaseEndLarge()
         {
@@ -2049,7 +2113,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseRangeSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseRangeSmall"/>
         /// </summary>
         protected virtual void OnIncreaseRangeSmall()
         {
@@ -2057,7 +2121,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseStartSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseStartSmall"/>
         /// </summary>
         protected virtual void OnIncreaseStartSmall()
         {
@@ -2065,7 +2129,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.IncreaseEndSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.IncreaseEndSmall"/>
         /// </summary>
         protected virtual void OnIncreaseEndSmall()
         {
@@ -2073,7 +2137,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseRangeSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseRangeSmall"/>
         /// </summary>
         protected virtual void OnDecreaseRangeSmall()
         {
@@ -2081,7 +2145,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseStartSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseStartSmall"/>
         /// </summary>
         protected virtual void OnDecreaseStartSmall()
         {
@@ -2089,7 +2153,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.DecreaseEndSmall"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.DecreaseEndSmall"/>
         /// </summary>
         protected virtual void OnDecreaseEndSmall()
         {
@@ -2097,7 +2161,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MaximizeRangeValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MaximizeRangeValue"/>
         /// </summary>
         protected virtual void OnMaximizeRangeValue()
         {
@@ -2128,7 +2192,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MaximizeStartValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MaximizeStartValue"/>
         /// </summary>
         protected virtual void OnMaximizeStartValue()
         {
@@ -2136,7 +2200,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MaximizeEndValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MaximizeEndValue"/>
         /// </summary>
         protected virtual void OnMaximizeEndValue()
         {
@@ -2144,7 +2208,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MinimizeRangeValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MinimizeRangeValue"/>
         /// </summary>
         protected virtual void OnMinimizeRangeValue()
         {
@@ -2175,7 +2239,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MinimizeStartValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MinimizeStartValue"/>
         /// </summary>
         protected virtual void OnMinimizeStartValue()
         {
@@ -2183,7 +2247,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обработчик вызова команды <see cref="SimpleRangeSlider{T, TInterval}.MinimizeEndValue"/>
+        /// Handler for <see cref="SimpleRangeSlider{T, TInterval}.MinimizeEndValue"/>
         /// </summary>
         protected virtual void OnMinimizeEndValue()
         {
@@ -2262,7 +2326,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод изменяет размер и местоположение элемента <see cref="SimpleRangeSlider{T, TInterval}.TrackBackground"/>
+        /// Method changes the size and position of element <see cref="SimpleRangeSlider{T, TInterval}.TrackBackground"/>.
         /// </summary>
         private void UpdateTrackBackgroundPositionAndSize()
         {
@@ -2288,20 +2352,22 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вычисляет ближайшее к переданному значению <paramref name="value"/> значение метки на шкале делений.
-        /// Если входное значение находится точно посередине между двумя соседними метками, то ближайшей принимается с большим значением.
+        /// Evaluates nearest to the <paramref name="value"/> tick value on the tick bar.
+        /// If <paramref name="value"/> located exactly in the middle of the neighboring ticks,
+        /// then the nearest assume equal to the greatest value.
         /// </summary>
-        /// <param name="value">Входное значение, для которого необходимо вычислить ближайшую метку.</param>
-        /// <param name="isStartThumb">Входное значение представляет собой позицию начала интервала</param>
-        /// <param name="useFullScale">Если <c>true</c>, то ближайшая метка ищется на всей шкале,
-        /// независимо от значения соседнего ползунка -
-        /// это означает, что найденная метка может лежать за пределами допустимого для заданного значения интервала.
-        /// Если <c>false</c>, то ближайшая метка ищется в допустимом интервале - в этом случае может возникнуть ситуация,
-        /// когда необходимая (ближайшая) метка находится за пределами допустимого интервала, тогда возвращается одна из границ интервала
-        /// и если эта граница допустимого интервала сама не выровнена по шкале, то и возвращенное значение будет не лежать на метке.</param>
-        /// <returns>Если <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> равно <c>true</c>,
-        /// то рассчитанное ближайшее значение метки на шкале делений.
-        /// Иначе просто возвращается переданное <paramref name="value"/>.</returns>
+        /// <param name="value">Income value which have to be snaped to the nearest tick mark.</param>
+        /// <param name="isStartThumb">Whether income value is value of start thumb.</param>
+        /// <param name="useFullScale">If <c>true</c>, then the nearest value searches over the whole tick bar's scale,
+        /// independently of value of the other thumb -
+        /// that means, that evaluated value can be placed outside of available for that value interval.
+        /// If <c>false</c>, then the nearest value searches inside of available interval -
+        /// in that case needed nearest tick mark can be outside of available interval,
+        /// but this function returns one of the bounds and if that bound not snaped to tick mark,
+        /// then returned value wont be snaped too.</param>
+        /// <returns>If <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> is <c>true</c>,
+        /// then evaluated nearest tick mark value on the tick bar.
+        /// Otherwise, <paramref name="value"/> itself.</returns>
         private double SnapToTick(double value, bool isStartThumb, bool useFullScale)
         {
             if (IsSnapToTickEnabled)
@@ -2349,11 +2415,11 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Если <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> равно <c>true</c>, то
-        /// функция выравнивает значения <see cref="RangeBaseControl{T, TInterval}.StartValue"/> и
-        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/> смещая их к ближайшей метке на шкале.
-        /// Есть вероятность того, что будет изменено значение интервала <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
-        /// Если <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> равно <c>false</c>, то функция ничего не делает.
+        /// If <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> is <c>true</c>,
+        /// then method aligns values <see cref="RangeBaseControl{T, TInterval}.StartValue"/> and
+        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/>, moving them to the nearest tick mark.
+        /// There is probability that will be changed value of interval <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
+        /// If <see cref="SimpleRangeSlider{T, TInterval}.IsSnapToTickEnabled"/> is <c>false</c>, then method do nothing.
         /// </summary>
         protected void AlignValuesToTicks()
         {
@@ -2376,7 +2442,7 @@ namespace SaneDevelopment.WPF4.Controls
 
                 if (snappedStartValue < endValue)
                 {
-                    // сначала смело смещаем левый ползунок, т.к. при смещении он не "упрется" в правый
+                    // at first safely move the left thumb, because it wont thrust to the right thumb.
                     if (!DoubleUtil.AreClose(snappedStartValue, startValue))
                     {
                         this.SetCurrentValue(StartValueProperty, DoubleToValue(snappedStartValue));
@@ -2388,7 +2454,7 @@ namespace SaneDevelopment.WPF4.Controls
                 }
                 else
                 {
-                    // сначала смещаем правый ползунок, т.к. он "мешает" сдвинуться левому
+                    // at first safely move the right thumb, because it is in the way of the left thumb ("hampers" it).
                     if (!DoubleUtil.AreClose(snappedEndValue, endValue))
                     {
                         this.SetCurrentValue(EndValueProperty, DoubleToValue(snappedEndValue));
@@ -2417,17 +2483,16 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод выполняет реальный сдвиг одного из ползунков (и выставляет значение соответствующего свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/> 
-        /// или <see cref="RangeBaseControl{T, TInterval}.EndValue"/>) на величину <paramref name="direction"/> относительно текущего положения,
-        /// если измененное положение отличается от текущего.
-        /// При этом сдвиг происходит к соответствующей метке на шкале делений, если в этом есть необходимость.
-        /// В результате вызова этой функции параметр <paramref name="direction"/> получает значение величины реального сдвига ползунка,
-        /// т.к. он может отличаться от переданного в функцию.
+        /// Method performs real move of one of the thumbs (and changes value of appropriate property: <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// or <see cref="RangeBaseControl{T, TInterval}.EndValue"/>) on the value of <paramref name="direction"/> relatively to the current position, 
+        /// if new position differ to the current.
+        /// Herewith, move performs to appropriate tick mark if needed.
+        /// When method returns, the value of parameter <paramref name="direction"/> goes to the real value of movement,
+        /// because in fact it can be different from initial parameter value.
         /// </summary>
-        /// <param name="direction">Величина сдвига. Может быть меньше нуля.</param>
-        /// <param name="isStartThumb"><c>true</c>, если выполняется сдвиг ползунка начала интервала, и <c>false</c> - если конца интервала.</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунка
-        /// и изменение значения соответствующего свойства.</returns>
+        /// <param name="direction">Move value. Can be negative.</param>
+        /// <param name="isStartThumb"><c>true</c>, if require move the start thumb, and <c>false</c> - if the end thumb.</param>
+        /// <returns><c>true</c> if real movement happened and appropriate property value changed; otherwise, <c>false</c>.</returns>
         private bool InternalMoveToNextTick(ref double direction, bool isStartThumb)
         {
             Contract.Requires(!double.IsNaN(direction));
@@ -2487,16 +2552,17 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Сдвигает один из ползунков (и выставляет значение соответствующего свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/> 
-        /// или <see cref="RangeBaseControl{T, TInterval}.EndValue"/>) на величину <paramref name="direction"/> относительно текущего положения,
-        /// если измененное положение отличается от текущего.
-        /// При этом сдвиг происходит к соответствующей метке на шкале делений, если в этом есть необходимость.
+        /// Method moves one of the thumbs (and changes value of appropriate property: <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// or <see cref="RangeBaseControl{T, TInterval}.EndValue"/>) on the value of <paramref name="direction"/> relatively to the current position, 
+        /// if new position differ to the current.
+        /// Herewith, move performs to appropriate tick mark if needed.
         /// </summary>
-        /// <param name="direction">Величина сдвига. Должна быть положительной, т.к. "отрицательность" задается параметром <paramref name="isNegativeDirection"/></param>
-        /// <param name="isNegativeDirection">Сдвиг должен происходить в отрицательную сторону (сторону уменьшения)</param>
-        /// <param name="isStartThumb"><c>true</c>, если выполняется сдвиг ползунка начала интервала, и <c>false</c> - если конца интервала.</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунка
-        /// и изменение значения соответствующего свойства.</returns>
+        /// <param name="direction">Move value. <c>double</c> representation of this value must be not negative,
+        /// because "negativeness" controls by <paramref name="isNegativeDirection"/> value.
+        /// Moreover, some interval types <typeparamref name="TInterval"/> may not support negative values at all.</param>
+        /// <param name="isNegativeDirection">Indicates whether move should be performed to "negative" (increasing) direction.</param>
+        /// <param name="isStartThumb"><c>true</c>, if require move the start thumb, and <c>false</c> - if the end thumb.</param>
+        /// <returns><c>true</c> if real movement happened and appropriate property value changed; otherwise, <c>false</c>.</returns>
         public bool MoveToNextTick(TInterval direction, bool isNegativeDirection, bool isStartThumb)
         {
             if (IsSingleValue)
@@ -2514,18 +2580,19 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Сдвигает весь интервал на величину <paramref name="direction"/> относительно текущего положения
-        /// (т.е. одновременно и ползунок начала и ползунок конца интервала)
-        /// если измененное положение отличается от текущего.
-        /// При этом сдвиг происходит к соответствующей метке на шкале делений, если в этом есть необходимость.
-        /// В отличие от последовательного сдвига ползунков на одинаковую величину,
-        /// вызов этой функции не приводит к генерации события <see cref="RangeBaseControl{T, TInterval}.RangeValueChangedEvent"/>,
-        /// т.к. на самом деле величина интервала в результате остается без изменений.
+        /// Method moves the whole interval on the value of <paramref name="direction"/> relatively to the current position
+        /// (i.e. start thumb and end thumb simultaneously),
+        /// if new position differ to the current.
+        /// Herewith, move performs to appropriate tick mark if needed.
+        /// In contrast to sequential move of the thumbs on the same value
+        /// this method doesn't raise <see cref="RangeBaseControl{T, TInterval}.RangeValueChangedEvent"/> event,
+        /// because interval value (distance) remains the same.
         /// </summary>
-        /// <param name="direction">Величина сдвига. Должна быть положительной, т.к. "отрицательность" задается параметром <paramref name="isNegativeDirection"/></param>
-        /// <param name="isNegativeDirection">Сдвиг должен происходить в отрицательную сторону (сторону уменьшения)</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунков
-        /// и изменение значений соответствующих свойств.</returns>
+        /// <param name="direction">Move value. <c>double</c> representation of this value must be not negative,
+        /// because "negativeness" controls by <paramref name="isNegativeDirection"/> value.
+        /// Moreover, some interval types <typeparamref name="TInterval"/> may not support negative values at all.</param>
+        /// <param name="isNegativeDirection">Indicates whether move should be performed to "negative" (increasing) direction.</param>
+        /// <returns><c>true</c> if real movement happened and appropriate properties' values changed; otherwise, <c>false</c>.</returns>
         public bool MoveRangeToNextTick(TInterval direction, bool isNegativeDirection)
         {
             bool changed = false;
@@ -2575,15 +2642,15 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обновляет значение свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/> или
-        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/>, смещая его на величину <paramref name="delta"/>.
-        /// При необходимости выполняется смещение к ближайшей метке на шкале.
+        /// Updates the value of property <see cref="RangeBaseControl{T, TInterval}.StartValue"/> or
+        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/>, shifting it on the value of <paramref name="delta"/>.
+        /// Herewith, shift performs to appropriate tick mark if needed.
         /// </summary>
-        /// <param name="delta">Величина смещения.
-        /// Если 0, то либо ничего не делается, либо выполняется выравнивание заданного ползунка к ближайшей метке на шкале делений.</param>
-        /// <param name="isStartThumb"><c>true</c>, если смещается начало интервала, <c>false</c> - если конца.</param>
-        /// <returns>Возвращается величина реально выполненного смещения,
-        /// т.к. она может отличаться от переданного в параметре <paramref name="delta"/> из-за наличия ограничений.</returns>
+        /// <param name="delta">Shift value.
+        /// If 0, either do nothing or snap appropriate thumb to the nearest tick mark.</param>
+        /// <param name="isStartThumb"><c>true</c>, if require shift the start thumb, and <c>false</c> - if the end thumb.</param>
+        /// <returns>Real value of shift, because it can be different from parameter <paramref name="delta"/> value
+        /// due to range limitations.</returns>
         protected double UpdateValueByDelta(double delta, bool isStartThumb)
         {
             double realDelta = 0d; // actually worked delta
@@ -2613,13 +2680,13 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Обновляет значение свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/> или
-        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/>, смещая его на величину <paramref name="delta"/>.
-        /// При необходимости выполняется смещение к ближайшей метке на шкале.
+        /// Updates the value of property <see cref="RangeBaseControl{T, TInterval}.StartValue"/> or
+        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/>, shifting it on the value of <paramref name="delta"/>.
+        /// Herewith, shift performs to appropriate tick mark if needed.
         /// </summary>
-        /// <param name="thumbType">Тип ползунка, в зависимости от которого изменяются значения</param>
-        /// <param name="delta">Величина смещения.
-        /// Если 0, то либо ничего не делается, либо выполняется выравнивание заданного ползунка к ближайшей метке на шкале делений.</param>
+        /// <param name="thumbType">Thumb type, which value updates.</param>
+        /// <param name="delta">Shift value.
+        /// If 0, either do nothing or snap appropriate thumb to the nearest tick mark.</param>
         protected void UpdateValueByThumbTypeAndDelta(RangeThumbType thumbType, double delta)
         {
             switch (thumbType)
@@ -2699,7 +2766,7 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion Helper Functions
 
         /// <summary>
-        /// Ссылка на интервальный трэк <see cref="RangeTrack{T, TInterval}"/> ползунка
+        /// Reference to the range track <see cref="RangeTrack{T, TInterval}"/> of this slider.
         /// </summary>
         public RangeTrack<T, TInterval> Track { get; private set; }
 
@@ -2745,25 +2812,32 @@ namespace SaneDevelopment.WPF4.Controls
         private ToolTip m_AutoToolTip;
         private object m_ThumbOriginalToolTip;
 
+        /// <summary>
+        /// Store here the range value data when dragging started
+        /// </summary>
         private RangeValueData<T> m_RangeValueData;
 
         #endregion Private Fields
     }
 
     /// <summary>
-    /// Интервальный ползунок, использующий в качестве значений и интервалов числа типа <see cref="double"/>.
+    /// Range slider, that uses <see cref="double"/> as type for values and interval.
     /// </summary>
     [TemplatePart(Name = "PART_Track", Type = typeof(NumericRangeTrack))]
     [TemplatePart(Name = "PART_TrackBackground", Type = typeof(FrameworkElement))]
     [Description("Simple Numeric Range Slider")]
     public class SimpleNumericRangeSlider : SimpleRangeSlider<double, double>
     {
+        #region Private fields
+
         private const double c_DefaultTickFrequency = 1.0,
                              c_DefaultSmallChange = 0.1,
                              c_DefaultLargeChange = 1.0;
 
         private const double c_DefaultMinimum = 0.0,
                              c_DefaultMaximum = 10.0;
+
+        #endregion Private fields
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static SimpleNumericRangeSlider()
@@ -2802,48 +2876,50 @@ namespace SaneDevelopment.WPF4.Controls
         #region override functions
 
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Converts number to value type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double DoubleToValue(double value)
         {
             return value;
         }
+        
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Converts value to number
         /// </summary>
-        /// <param name="value">Значение</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double ValueToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Метод преобразования числа в интервал
+        /// Converts number to interval type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Value to convert</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double DoubleToInterval(double value)
         {
             return value;
         }
+        
         /// <summary>
-        /// Метод преобразования интервала в число
+        /// Converts interval value to number
         /// </summary>
-        /// <param name="value">Интервал</param>
-        /// <returns>Всегда <paramref name="value"/></returns>
+        /// <param name="value">Interval value</param>
+        /// <returns>Always <paramref name="value"/></returns>
         protected override double IntervalToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected override object CoerceMinRangeValue(object value)
         {
             double newValue =
@@ -2868,11 +2944,12 @@ namespace SaneDevelopment.WPF4.Controls
 
             return newValue;
         }
+
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected override object CoerceMaximum(object value)
         {
             double newValue =
@@ -2893,7 +2970,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Текущая величина интервала
+        /// Current interval (range) value
         /// </summary>
         protected override double CurrentRangeValue
         {
@@ -2904,7 +2981,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство возвращает коллекцию значений числовых меток типа <see cref="double"/> для шкалы делений.
+        /// Gets the collection of tick marks of <see cref="double"/> type.
         /// </summary>
         protected override ITicksCollection<double> TypedTicksCollection
         {
@@ -2916,18 +2993,20 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод возвращает строку для отображения во всплывающей подсказке.
-        /// Для преобразования значения в строку метод использует конвертер <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
-        /// с параметром <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>,
-        /// либо формат, заданный в <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
-        /// и точность отображения чисел, заданную в <see cref="SimpleNumericRangeSlider.AutoToolTipPrecision"/>,
-        /// если конвертер <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/> не задан (либо равен <c>null</c>).
-        /// Если ни <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>,
-        /// ни <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> не заданы, то используется общий числовой формат.
+        /// Gets the string representation of <paramref name="value"/> for showing in tooltips.
+        /// 
+        /// For conversion uses either <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
+        /// with parameter <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>,
+        /// or a format string from <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
+        /// and numeric precision from <see cref="SimpleNumericRangeSlider.AutoToolTipPrecision"/>
+        /// (if converter <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/> is <c>null</c>).
+        /// If neither <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
+        /// nor <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is set (not <c>null</c>),
+        /// then uses gerenal nimeric format (<see cref="DefaultAutoToolTipFormat"/>).
         /// </summary>
-        /// <param name="value">Текущее значение</param>
-        /// <param name="thumbType">Тип ползунка, значение которого <paramref name="value"/>.</param>
-        /// <returns>Строковое представление значения <paramref name="value"/> для ползунка, заданного <paramref name="thumbType"/>.</returns>
+        /// <param name="value">Current value</param>
+        /// <param name="thumbType">The type of thumb which value is <paramref name="value"/>.</param>
+        /// <returns>String representation of <paramref name="value"/> for thumb, which type is <paramref name="thumbType"/>.</returns>
         protected override string GetAutoToolTipString(double value, RangeThumbType thumbType)
         {
             string res;
@@ -2948,7 +3027,7 @@ namespace SaneDevelopment.WPF4.Controls
                 }
                 catch (FormatException)
                 {
-                    res = LocalizedStrings.BadAutoToolTipFormat;
+                    res = LocalizationResource.BadAutoToolTipFormat;
                 }
             }
             else
@@ -2960,9 +3039,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в большую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected override bool IncreaseStartValueCommandCanExecute()
         {
             bool res = IsSingleValue ?
@@ -2970,26 +3050,32 @@ namespace SaneDevelopment.WPF4.Controls
                 DoubleUtil.LessThan(StartValue, EndValue);
             return res;
         }
+
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в большую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected override bool IncreaseEndValueCommandCanExecute()
         {
             return DoubleUtil.LessThan(EndValue, Maximum);
         }
+
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в меньшую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected override bool DecreaseStartValueCommandCanExecute()
         {
             return DoubleUtil.LessThan(Minimum, StartValue);
         }
+
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в меньшую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected override bool DecreaseEndValueCommandCanExecute()
         {
             bool res = IsSingleValue ?
@@ -3005,7 +3091,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region AutoToolTipPrecision Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleNumericRangeSlider.AutoToolTipPrecision"/>
+        /// Dependency property for <see cref="SimpleNumericRangeSlider.AutoToolTipPrecision"/>
         /// </summary>
         public static readonly DependencyProperty AutoToolTipPrecisionProperty = DependencyProperty.Register(
             "AutoToolTipPrecision",
@@ -3015,7 +3101,7 @@ namespace SaneDevelopment.WPF4.Controls
             DependencyPropertyUtil.IsValidAutoToolTipPrecision);
 
         /// <summary>
-        /// Точность отображения чисел с плавающей точкой во всплывающей подсказке, используемой по умолчанию.
+        /// Floating-point precision of numbers for showing in the auto tooltips in UI.
         /// </summary>
         [Bindable(true), Category("Appearance")]
         public int AutoToolTipPrecision
@@ -3037,7 +3123,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Ticks Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleNumericRangeSlider.Ticks"/>
+        /// Dependency property for <see cref="SimpleNumericRangeSlider.Ticks"/>
         /// </summary>
         public static readonly DependencyProperty TicksProperty
             = DependencyProperty.Register(
@@ -3047,10 +3133,10 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata((new DoubleCollection()).GetAsFrozen(), OnTicksChanged));
 
         /// <summary>
-        /// Коллекция значений меток на шкале делений.
-        /// Когда <see cref="SimpleNumericRangeSlider.Ticks"/> не равен <c>null</c>
-        /// слайдер игнорирует <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
-        /// и рисует только те метки, которые заданы в коллекции <see cref="SimpleNumericRangeSlider.Ticks"/>.
+        /// Gets or sets collection of numeric tick marks.
+        /// If <see cref="SimpleNumericRangeSlider.Ticks"/> is not <c>null</c>
+        /// slider ignores <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
+        /// and draws only tick marks from this collection.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Bindable(true), Category("Appearance")]
@@ -3073,10 +3159,10 @@ namespace SaneDevelopment.WPF4.Controls
             var element = (SimpleNumericRangeSlider)d;
             if (element.IsSnapToTickEnabled)
             {
-                // если местоположение меток меняется и при этом включена привязка к ближайшей метке,
-                // то надо принудительно выравнять текущее положение ползунков до ближайших меток.
-                // Минус этого шага: изменяются положения ползунков и, как следствие, размер интервала
-                // (но иногда этого может и не происходить).
+                // if tick's positions change and IsSnapToTickEnabled is ON,
+                // then we have to align current values (thumbs) to nearest ticks.
+                // shortcoming of that way: thumbs positions can be changed, therefore interval (range) value can be changed too
+                // (but not necessarily).
                 element.AlignValuesToTicks();
             }
         }
@@ -3087,18 +3173,22 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Интервальный ползунок, использующий в качестве значений <see cref="DateTime"/>, а интервалов <see cref="TimeSpan"/>.
+    /// Range slider, that uses <see cref="DateTime"/> as type for values and <see cref="TimeSpan"/> for interval.
     /// </summary>
     [TemplatePart(Name = "PART_Track", Type = typeof(DateTimeRangeTrack))]
     [TemplatePart(Name = "PART_TrackBackground", Type = typeof(FrameworkElement))]
     [Description("Simple Date&Time Range Slider")]
     public class SimpleDateTimeRangeSlider : SimpleRangeSlider<DateTime, TimeSpan>
     {
+        #region Private fields
+
         private static readonly TimeSpan s_DefaultTickFrequency = TimeSpan.FromDays(365),
                                          s_DefaultLargeChange = TimeSpan.FromDays(365);
 
         private static readonly DateTime s_DefaultMinimum = new DateTime(1900, 1, 1),
                                          s_DefaultMaximum = new DateTime(9999, 12, 31);
+
+        #endregion Private fields
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static SimpleDateTimeRangeSlider()
@@ -3146,48 +3236,52 @@ namespace SaneDevelopment.WPF4.Controls
         #region override functions
 
         /// <summary>
-        /// Метод преобразования числа в дату
+        /// Converts number to date
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Дата, сформированная на основе <paramref name="value"/> тактов.</returns>
+        /// <param name="value">NUmber to convert</param>
+        /// <returns>Date initialized to a <paramref name="value"/> number of ticks.</returns>
         protected override DateTime DoubleToValue(double value)
         {
             return (value > 10.0) ? new DateTime((long)value) : DateTime.MinValue;
         }
+        
         /// <summary>
-        /// Метод преобразования даты в число
+        /// Converts date to number.
         /// </summary>
-        /// <param name="value">Дата</param>
-        /// <returns>Число тактов даты <paramref name="value"/></returns>
+        /// <param name="value">Date to convert</param>
+        /// <returns>The number of ticks that represent the date and time of <paramref name="value"/>.</returns>
         protected override double ValueToDouble(DateTime value)
         {
             return value.Ticks;
         }
 
         /// <summary>
-        /// Метод преобразования числа в интервал
+        /// Converts number to interval
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объкт <see cref="TimeSpan"/>, сформированный на основе <paramref name="value"/> тактов.</returns>
+        /// <param name="value">Number to convert</param>
+        /// <returns>Returns a <see cref="System.TimeSpan"/> that represents <paramref name="value"/> time,
+        /// where the <paramref name="value"/> is in units of ticks.
+        /// For very small <paramref name="value"/> returns <see cref="TimeSpan.Zero"/>.</returns>
         protected override TimeSpan DoubleToInterval(double value)
         {
             return (value > 10.0) ? TimeSpan.FromTicks((long)value) : TimeSpan.Zero;
         }
+        
         /// <summary>
-        /// Метод преобразования интервала в число
+        /// Converts interval to number
         /// </summary>
-        /// <param name="value">Объект типа <see cref="TimeSpan"/></param>
-        /// <returns>Число тактов в <paramref name="value"/></returns>
+        /// <param name="value">Interval value as a <see cref="TimeSpan"/></param>
+        /// <returns>The number of ticks that represent <paramref name="value"/>.</returns>
         protected override double IntervalToDouble(TimeSpan value)
         {
             return value.Ticks;
         }
 
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected override object CoerceMinRangeValue(object value)
         {
             TimeSpan newValue = TimeSpan.Zero;
@@ -3211,11 +3305,12 @@ namespace SaneDevelopment.WPF4.Controls
 
             return newValue;
         }
+
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected override object CoerceMaximum(object value)
         {
             DateTime newValue = DateTime.MinValue;
@@ -3233,7 +3328,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Текущая величина интервала
+        /// Current interval (range) value
         /// </summary>
         protected override TimeSpan CurrentRangeValue
         {
@@ -3244,7 +3339,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство возвращает коллекцию значений меток типа <see cref="DateTime"/> для шкалы делений.
+        /// Gets the collection of tick marks of <see cref="DateTime"/> type.
         /// </summary>
         protected override ITicksCollection<DateTime> TypedTicksCollection
         {
@@ -3256,17 +3351,20 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод возвращает строку для отображения во всплывающей подсказке.
-        /// Для преобразования значения в строку метод использует конвертер <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
-        /// с параметром <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>,
-        /// либо формат, заданный в <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>,
-        /// если конвертер <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/> не задан (либо равен <c>null</c>).
-        /// Если ни <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>,
-        /// ни <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> не заданы, то используется формат "dd-MM-yyyy HH:mm:ss".
+        /// Gets the string representation of <paramref name="value"/> for showing in tooltips.
+        /// 
+        /// For conversion uses either <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
+        /// with parameter <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>,
+        /// or a format string from <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
+        /// and numeric precision from <see cref="SimpleNumericRangeSlider.AutoToolTipPrecision"/>
+        /// (if converter <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/> is <c>null</c>).
+        /// If neither <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
+        /// nor <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is set (not <c>null</c>),
+        /// then uses "dd-MM-yyyy HH:mm:ss" (<see cref="DefaultAutoToolTipFormat"/>).
         /// </summary>
-        /// <param name="value">Текущее значение</param>
-        /// <param name="thumbType">Тип ползунка, значение которого <paramref name="value"/>.</param>
-        /// <returns>Строковое представление значения <paramref name="value"/> для ползунка, заданного <paramref name="thumbType"/>.</returns>
+        /// <param name="value">Current value</param>
+        /// <param name="thumbType">The type of thumb which value is <paramref name="value"/>.</param>
+        /// <returns>String representation of <paramref name="value"/> for thumb, which type is <paramref name="thumbType"/>.</returns>
         protected override string GetAutoToolTipString(DateTime value, RangeThumbType thumbType)
         {
             string res;
@@ -3283,7 +3381,7 @@ namespace SaneDevelopment.WPF4.Controls
                 }
                 catch (FormatException)
                 {
-                    res = LocalizedStrings.BadAutoToolTipFormat;
+                    res = LocalizationResource.BadAutoToolTipFormat;
                 }
             }
             else
@@ -3295,50 +3393,58 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в большую сторону
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
         protected override bool IncreaseStartValueCommandCanExecute()
         {
-            bool res = IsSingleValue ?
-                StartValue < Maximum :
-                StartValue < EndValue;
-            return res;
-        }
-        /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в большую сторону
-        /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
-        protected override bool IncreaseEndValueCommandCanExecute()
-        {
-            return EndValue < Maximum;
-        }
-        /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения начала интервала в меньшую сторону
-        /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
-        protected override bool DecreaseStartValueCommandCanExecute()
-        {
-            return Minimum < StartValue;
-        }
-        /// <summary>
-        /// Метод проверяет возможность выполнения команды сдвига значения конца интервала в меньшую сторону
-        /// </summary>
-        /// <returns><c>true</c>, если выполнение команды возможно, иначе <c>false</c></returns>
-        protected override bool DecreaseEndValueCommandCanExecute()
-        {
-            bool res = IsSingleValue ?
-                Minimum < EndValue :
-                StartValue < EndValue;
+            bool res = IsSingleValue
+                           ? StartValue < Maximum
+                           : StartValue < EndValue;
             return res;
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.Minimum"/>.
-        /// Перегружено здесь для изменения значения свойства <see cref="SimpleDateTimeRangeSlider.MinimumAsDouble"/>.
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the increasing of end value routed command.
         /// </summary>
-        /// <param name="oldMinimum">Старое значение</param>
-        /// <param name="newMinimum">Новое значение</param>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        protected override bool IncreaseEndValueCommandCanExecute()
+        {
+            return EndValue < Maximum;
+        }
+
+        /// <summary>
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of start value routed command.
+        /// </summary>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        protected override bool DecreaseStartValueCommandCanExecute()
+        {
+            return Minimum < StartValue;
+        }
+
+        /// <summary>
+        /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
+        /// on the decreasing of end value routed command.
+        /// </summary>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        protected override bool DecreaseEndValueCommandCanExecute()
+        {
+            bool res = IsSingleValue
+                           ? Minimum < EndValue
+                           : StartValue < EndValue;
+            return res;
+        }
+
+        /// <summary>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.Minimum"/> changes.
+        /// 
+        /// Overridden here to update the value in <see cref="SimpleDateTimeRangeSlider.MinimumAsDouble"/>.
+        /// </summary>
+        /// <param name="oldMinimum">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newMinimum">The value of the property after the change reported by the relevant event or state change.</param>
         protected override void OnMinimumChanged(DateTime oldMinimum, DateTime newMinimum)
         {
             this.MinimumAsDouble = ValueToDouble(this.Minimum);
@@ -3347,11 +3453,12 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
-        /// Перегружено здесь для изменения значения свойства <see cref="SimpleDateTimeRangeSlider.MaximumAsDouble"/>.
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.Maximum"/> changes.
+        /// 
+        /// Overridden here to update the value in <see cref="SimpleDateTimeRangeSlider.MaximumAsDouble"/>.
         /// </summary>
-        /// <param name="oldMaximum">Старое значение</param>
-        /// <param name="newMaximum">Новое значение</param>
+        /// <param name="oldMaximum">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newMaximum">The value of the property after the change reported by the relevant event or state change.</param>
         protected override void OnMaximumChanged(DateTime oldMaximum, DateTime newMaximum)
         {
             this.MaximumAsDouble = ValueToDouble(this.Maximum);
@@ -3360,11 +3467,12 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда изменяется значение <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>.
-        /// Перегружено здесь для того, чтобы обновить значение свойства <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>.
+        /// Calls whenever the effective value of the <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> changes.
+        /// 
+        /// Overridden here to update the value in <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>.
         /// </summary>
-        /// <param name="oldTickFrequency">Предыдущее значение</param>
-        /// <param name="newTickFrequency">Новое значение</param>
+        /// <param name="oldTickFrequency">Gets the value of the <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> before the change.</param>
+        /// <param name="newTickFrequency">Gets the value of the <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> after the change.</param>
         protected override void OnTickFrequencyChanged(TimeSpan oldTickFrequency, TimeSpan newTickFrequency)
         {
             this.TickFrequencyAsDouble = IntervalToDouble(this.TickFrequency);
@@ -3379,9 +3487,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region MinimumAsDouble
 
         /// <summary>
-        /// Значение свойства <see cref="RangeBaseControl{T, TInterval}.Minimum"/>, представленное в виде числа с плавающей точкой.
-        /// Используется для связи с другими элементами управления, использующими значения типа <see cref="double"/>,
-        /// например, с <see cref="Slider"/>.
+        /// Gets the value of <see cref="RangeBaseControl{T, TInterval}.Minimum"/> interpreted as <c>double</c>.
+        /// 
+        /// Can be used for binding with framework elements that works with <see cref="double"/> values,
+        /// e.g. <see cref="Slider"/>.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public double MinimumAsDouble
@@ -3407,7 +3516,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata((double)s_DefaultMinimum.Ticks));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleDateTimeRangeSlider.MinimumAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.MinimumAsDouble"/>
         /// </summary>
         public static readonly DependencyProperty MinimumAsDoubleProperty = MinimumAsDoublePropertyKey.DependencyProperty;
 
@@ -3416,9 +3525,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region MaximumAsDouble
 
         /// <summary>
-        /// Значение свойства <see cref="RangeBaseControl{T, TInterval}.Maximum"/>, представленное в виде числа с плавающей точкой.
-        /// Используется для связи с другими элементами управления, использующими значения типа <see cref="double"/>,
-        /// например, с <see cref="Slider"/>.
+        /// Gets the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/> interpreted as <c>double</c>.
+        /// 
+        /// Can be used for binding with framework elements that works with <see cref="double"/> values,
+        /// e.g. <see cref="Slider"/>.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public double MaximumAsDouble
@@ -3444,7 +3554,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata((double)s_DefaultMaximum.Ticks));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleDateTimeRangeSlider.MaximumAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.MaximumAsDouble"/>
         /// </summary>
         public static readonly DependencyProperty MaximumAsDoubleProperty = MaximumAsDoublePropertyKey.DependencyProperty;
 
@@ -3453,10 +3563,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region Ticks
 
         /// <summary>
-        /// Коллекция значений меток на шкале делений.
-        /// Когда <see cref="SimpleDateTimeRangeSlider.Ticks"/> не равен <c>null</c>
-        /// слайдер игнорирует <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
-        /// и рисует только те метки, которые заданы в коллекции <see cref="SimpleDateTimeRangeSlider.Ticks"/>.
+        /// Gets or sets collection of numeric tick marks.
+        /// If <see cref="SimpleDateTimeRangeSlider.Ticks"/> is not <c>null</c>
+        /// slider ignores <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
+        /// and draws only tick marks from this collection.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Bindable(true), Category("Appearance")]
@@ -3473,7 +3583,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleDateTimeRangeSlider.Ticks"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.Ticks"/>
         /// </summary>
         public static readonly DependencyProperty TicksProperty
             = DependencyProperty.Register(
@@ -3491,13 +3601,15 @@ namespace SaneDevelopment.WPF4.Controls
             var element = (SimpleDateTimeRangeSlider)d;
             if (element.IsSnapToTickEnabled)
             {
-                // если местоположение меток меняется и при этом включена привязка к ближайшей метке,
-                // то надо принудительно выравнять текущее положение ползунков до ближайших меток.
-                // Минус этого шага: изменяются положения ползунков и, как следствие, размер интервала
-                // (но иногда этого может и не происходить).
+                // if tick's positions change and IsSnapToTickEnabled is ON,
+                // then we have to align current values (thumbs) to nearest ticks.
+                // shortcoming of that way: thumbs positions can be changed, therefore interval (range) value can be changed too
+                // (but not necessarily).
                 element.AlignValuesToTicks();
             }
-            element.TicksAsDouble = element.Ticks == null ? null : new DoubleCollection(from tick in element.Ticks select (double)tick.Ticks);
+            element.TicksAsDouble = element.Ticks == null
+                                        ? null
+                                        : new DoubleCollection(element.Ticks.Select(tick => (double) tick.Ticks));
         }
 
         #endregion
@@ -3505,9 +3617,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region TicksAsDouble
 
         /// <summary>
-        /// Значение свойства <see cref="SimpleDateTimeRangeSlider.Ticks"/>, представленное в виде коллекции чисел с плавающей точкой.
-        /// Используется для связи с другими элементами управления, использующими значения типа <see cref="double"/>,
-        /// например, с <see cref="TickBar"/>.
+        /// Gets the value of <see cref="SimpleDateTimeRangeSlider.Ticks"/> interpreted as <c>double</c>.
+        /// 
+        /// Can be used for binding with framework elements that works with <see cref="double"/> values,
+        /// e.g. <see cref="TickBar"/>.
         /// </summary>
         [Category("Appearance"), Bindable(true)]
         public DoubleCollection TicksAsDouble
@@ -3528,7 +3641,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata((new DoubleCollection()).GetAsFrozen()));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleDateTimeRangeSlider.TicksAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TicksAsDouble"/>
         /// </summary>
         public static readonly DependencyProperty TicksAsDoubleProperty = TicksAsDoublePropertyKey.DependencyProperty;
 
@@ -3537,9 +3650,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region TickFrequencyAsDouble
 
         /// <summary>
-        /// Значение свойства <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>, представленное в виде коллекции чисел с плавающей точкой.
-        /// Используется для связи с другими элементами управления, использующими значения типа <see cref="double"/>,
-        /// например, с <see cref="TickBar"/>.
+        /// Gets the value of <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> interpreted as collection of <c>double</c> numbers.
+        /// 
+        /// Can be used for binding with framework elements that works with <see cref="double"/> values,
+        /// e.g. <see cref="TickBar"/>.
         /// </summary>
         [Category("Appearance"), Bindable(true)]
         public double TickFrequencyAsDouble
@@ -3565,7 +3679,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata((double)s_DefaultTickFrequency.Ticks));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>
         /// </summary>
         public static readonly DependencyProperty TickFrequencyAsDoubleProperty = TickFrequencyAsDoublePropertyKey.DependencyProperty;
 
@@ -3575,38 +3689,53 @@ namespace SaneDevelopment.WPF4.Controls
     }
 
     /// <summary>
-    /// Класс для преобразования дат в строку, используемый по умолчанию в <see cref="SimpleDateTimeRangeSlider"/>
+    /// Class for converting <see cref="DateTime"/> value to <c>string</c> using its ticks value.
+    /// 
+    /// Uses as default converter for <see cref="SimpleDateTimeRangeSlider"/>.
     /// </summary>
     public sealed class DefaultDateTimeTickLabelToStringConverter : IDoubleToStringConverter
     {
         /// <summary>
-        /// Выполняет преобразование даты, представленной числом тактов, в строку.
+        /// Converts date's ticks value to the string representation of that date.
         /// </summary>
-        /// <param name="value">Число тактов</param>
-        /// <param name="parameter">Дополнительный произвольный параметер для преобразования</param>
-        /// <returns>Строковое представление полученной даты,
-        /// либо строка, сигнализирующая о некорректном значении <paramref name="value"/> (зависит от версии и используемого языка).</returns>
+        /// <param name="value">Number of ticks</param>
+        /// <param name="parameter">If set, used as a format string in <see cref="DateTime.ToString(string,IFormatProvider)"/> method.</param>
+        /// <returns>String representation of date
+        /// or string indicates wrong <paramref name="value"/> or <paramref name="parameter"/> value
+        /// (depends on version and culture settings).</returns>
         public string Convert(double value, object parameter)
         {
             var longTicks = (long)value;
             if (longTicks < DateTime.MinValue.Ticks || longTicks > (DateTime.MaxValue.Ticks + 1))
             {
                 // allow minimum excess over DateTime.MaxValue.Ticks because of loss of accuracy while casting from double
-                return LocalizedStrings.BadDateTimeTicksValue;
+                return LocalizationResource.BadDateTimeTicksValue;
             }
             if (longTicks == DateTime.MaxValue.Ticks + 1)
                 longTicks = DateTime.MaxValue.Ticks;
 
             if (parameter != null && !(parameter is string))
             {
-                return LocalizedStrings.BadDateTimeTicksValue;
+                return LocalizationResource.BadDateTimeTicksValue;
             }
             var frmt = parameter as string;
 
             Contract.Assume(longTicks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
             var dt = new DateTime(longTicks);
 
-            return (frmt == null) ? dt.ToString(CultureInfo.CurrentCulture) : dt.ToString(frmt, CultureInfo.CurrentCulture);
+            if (frmt == null)
+            {
+                return dt.ToString(CultureInfo.CurrentCulture);
+            }
+
+            try
+            {
+                return dt.ToString(frmt, CultureInfo.CurrentCulture);
+            }
+            catch (FormatException)
+            {
+                return LocalizationResource.BadDateTimeTicksFormat;
+            }
         }
     }
 

@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -48,83 +48,90 @@ namespace SaneDevelopment.WPF4.Controls
     #region Range interfaces
 
     /// <summary>
-    /// Интерфейс для полиморфного вызова метода OnApplyTemplate,
-    /// в отличие от жестко зашитой реализации этого метода в CLR
+    /// Interface for polymorphous call of <see cref="FrameworkElement.OnApplyTemplate"/>,
+    /// in contrast to hardcoded implementation of that method inside of CLR.
     /// </summary>
     public interface IRangeTrackTemplatedParent<T, TInterval>
     {
         /// <summary>
-        /// Метод выполняет обработку <see cref="FrameworkElement.OnApplyTemplate"/>
+        /// Method should handle <see cref="FrameworkElement.OnApplyTemplate"/>
         /// </summary>
-        /// <param name="templatedParent">Шаблонный родитель</param>
-        /// <param name="track">Интервальный трэк</param>
+        /// <param name="templatedParent">Templated parent</param>
+        /// <param name="track">Any range track</param>
         void OnApplyRangeTrackTemplate(DependencyObject templatedParent, RangeTrack<T, TInterval> track);
     }
 
     /// <summary>
-    /// Интерфейс описывает класс, реализующий логику интервального объекта,
+    /// Describes classes of interval (ranged) objects
     /// </summary>
-    /// <typeparam name="T">Тип значений</typeparam>
-    /// <typeparam name="TInterval">Тип интервала между значениями</typeparam>
+    /// <typeparam name="T">Value type</typeparam>
+    /// <typeparam name="TInterval">Interval (distance) type</typeparam>
     public interface IRanged<T, TInterval>
     {
         /// <summary>
-        /// Минимально допустимое значение
+        /// Gets minimum available value
         /// </summary>
         T Minimum { get; }
+
         /// <summary>
-        /// Максимально допустимое значение
+        /// Gets maximum available value
         /// </summary>
         T Maximum { get; }
+        
         /// <summary>
-        /// Значение начала интервала
+        /// Gets start interval value
         /// </summary>
         T StartValue { get; }
+        
         /// <summary>
-        /// Значение конца интервала
+        /// Gets end interval value
         /// </summary>
         T EndValue { get; }
+        
         /// <summary>
-        /// Минимально допустимая величина интервала
+        /// Gets minimum available interval (range) value
         /// </summary>
         TInterval MinRangeValue { get; }
+        
         /// <summary>
-        /// Для данного объекта реализуется логика единого значения, когда начало интевала совпадает с его концом,
-        /// а величина самого интервала, соответственно, равна нулю.
+        /// Gets the indicator that this object behaves like a single value object, i.e. start value equals to end value,
+        /// so interval (range) value equals to zero.
         /// </summary>
         bool IsSingleValue { get; }
 
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Method for converting <c>double</c> to value type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объект типа <typeparamref name="T"/></returns>
+        /// <param name="value">Value to convert from</param>
+        /// <returns>Value of type <typeparamref name="T"/></returns>
         T DoubleToValue(double value);
+        
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Method for converting value type to <c>double</c>
         /// </summary>
-        /// <param name="value">Объект типа <typeparamref name="T"/></param>
-        /// <returns>Число</returns>
+        /// <param name="value">Value of type <typeparamref name="T"/></param>
+        /// <returns><c>double</c> value, converted from <paramref name="value"/></returns>
         double ValueToDouble(T value);
 
         /// <summary>
-        /// Метод преобразования числа в интервал
+        /// Method for converting <c>double</c> to interval type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объект типа <typeparamref name="TInterval"/></returns>
+        /// <param name="value">Value to convert from</param>
+        /// <returns>Value of type <typeparamref name="TInterval"/></returns>
         TInterval DoubleToInterval(double value);
+        
         /// <summary>
-        /// Метод преобразования интервала в число
+        /// Method for converting interval value to <c>double</c>
         /// </summary>
-        /// <param name="value">Объект типа <typeparamref name="TInterval"/></param>
-        /// <returns>Число</returns>
+        /// <param name="value">Value of type <typeparamref name="TInterval"/></param>
+        /// <returns><c>double</c> value, converted from <paramref name="value"/></returns>
         double IntervalToDouble(TInterval value);
     }
 
     #endregion
 
     /// <summary>
-    /// Представляет собой элемент, имеющий пару значений в заданном интервале.
+    /// Control, that provides a pair of values inside some interval
     /// </summary>
     public abstract class RangeBaseControl<T, TInterval>
         : Control, IRangeTrackTemplatedParent<T, TInterval>, IRanged<T, TInterval>
@@ -133,89 +140,102 @@ namespace SaneDevelopment.WPF4.Controls
         private bool m_MinRangeValueEnabled = c_DefaultMinRangeValueEnabled;
 
         /// <summary>
-        /// Инициализирует новый объект
+        /// Initializes a new instance of the class.
         /// </summary>
         protected RangeBaseControl()
         {
             IsRangeValueChanging = false;
         }
 
+        #region Abstract methods
+
         /// <summary>
-        /// Метод преобразования числа в значение
+        /// Method for converting a number to value type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объект типа <typeparamref name="T"/></returns>
+        /// <param name="value">Number to convert</param>
+        /// <returns>Value of type <typeparamref name="T"/> - representation of <paramref name="value"/></returns>
         protected abstract T DoubleToValue(double value);
+        
         /// <summary>
-        /// Метод преобразования значения в число
+        /// Method for converting a value type to number
         /// </summary>
-        /// <param name="value">Объект типа <typeparamref name="T"/></param>
-        /// <returns>Число</returns>
+        /// <param name="value">Value of type <typeparamref name="T"/></param>
+        /// <returns><c>double</c> representation of <paramref name="value"/></returns>
         protected abstract double ValueToDouble(T value);
 
         /// <summary>
-        /// Метод преобразования числа в интервал
+        /// Method for converting a number to interval type
         /// </summary>
-        /// <param name="value">Число</param>
-        /// <returns>Объект типа <typeparamref name="TInterval"/></returns>
+        /// <param name="value">Number to convert</param>
+        /// <returns>Value of type <typeparamref name="TInterval"/> - representation of <paramref name="value"/></returns>
         protected abstract TInterval DoubleToInterval(double value);
+        
         /// <summary>
-        /// Метод преобразования интервала в число
+        /// Method for converting an interval type to number
         /// </summary>
-        /// <param name="value">Объект типа <typeparamref name="TInterval"/></param>
-        /// <returns>Число</returns>
+        /// <param name="value">Value of type <typeparamref name="TInterval"/></param>
+        /// <returns><c>double</c> representation of <paramref name="value"/></returns>
         protected abstract double IntervalToDouble(TInterval value);
 
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected abstract object CoerceMinRangeValue(object value);
+        
         /// <summary>
-        /// Метод выполняет корректировку устанавливаемого значения свойства <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
         /// </summary>
-        /// <param name="value">Устанавливаемое значение</param>
-        /// <returns>Скорректированное (если необходимо) значение</returns>
+        /// <param name="value">Value to coerce</param>
+        /// <returns>Coerced (if needed) value</returns>
         protected abstract object CoerceMaximum(object value);
 
         /// <summary>
-        /// Текущая величина интервала
+        /// Current interval (range) value
         /// </summary>
         protected abstract TInterval CurrentRangeValue { get; }
+
+        #endregion Abstract methods
+
+        #region IRanged<T, TInterval> implementation
 
         T IRanged<T, TInterval>.DoubleToValue(double value)
         {
             return DoubleToValue(value);
         }
+        
         double IRanged<T, TInterval>.ValueToDouble(T value)
         {
             return ValueToDouble(value);
         }
+        
         TInterval IRanged<T, TInterval>.DoubleToInterval(double value)
         {
             return DoubleToInterval(value);
         }
+        
         double IRanged<T, TInterval>.IntervalToDouble(TInterval value)
         {
             return IntervalToDouble(value);
         }
 
+        #endregion IRanged<T, TInterval>
+
         /// <summary>
-        /// Признак того, что в данный момент происходит изменение всего интервала (т.е. значений начала и конца),
-        /// а не отдельного значения.
-        /// Если этот признак взведен (<c>true</c>), то метод <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/> не вызывается,
-        /// и, как следствие, событие <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/> не генерируется.
-        /// При этом, функции, устанавливающие признак <see cref="RangeBaseControl{T, TInterval}.IsRangeValueChanging"/>,
-        /// должны самостоятельно следить за его изменением и в нужный момент вызывать <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/>.
+        /// Indicator of changing the value of the whole interval (i.e. start and end values together), but not the one of the values.
+        /// If it is ON (<c>true</c>), then method <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/> never invokes,
+        /// and therefore event <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/> never raises.
+        /// Also, methods, that can change <see cref="RangeBaseControl{T, TInterval}.IsRangeValueChanging"/>
+        /// must trace these changes and call <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/> in appropriate moment.
         /// </summary>
         protected bool IsRangeValueChanging { get; set; }
 
         /// <summary>
-        /// Разрешено или нет в текущий момент выполнять проверку на минимальную величину интервала.
-        /// По умолчанию <c>true</c>, но в наследниках это свойство можно отключать.
-        /// Так же это свойство отключается, когда выполнять указанную проверку невозможно по объективным причинам,
-        /// например, если включен режим единственного значения <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>.
+        /// Whether or not is enabled validation over min range value.
+        /// By default it is <c>true</c>, but in derived classes it can be turned OFF.
+        /// Also, it turns OFF when such validation can't be performed by objective reasons,
+        /// e.g. when <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/> mode is ON.
         /// </summary>
         protected bool MinRangeValueEnabled
         {
@@ -231,11 +251,12 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство возвращает значение свойства <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
-        /// которое оно получает, когда механизм выполнения проверки на минимальную величину интервала становится возможным в принципе,
-        /// например, если отключается режим единственного значения <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>.
-        /// В наследниках это свойство можно перегружать, чтобы контролировать указанный механизм,
-        /// заданный по умолчанию для того или иного элемента управления.
+        /// Default value of property <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
+        /// which will be set to when such validation become available.
+        /// E.g. when <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/> mode comes to OFF (<c>false</c>).
+        /// 
+        /// In derived classes this property can be overridden to control mentioned mechanism,
+        /// suitable for every control individually by default.
         /// </summary>
         protected virtual bool DefaultMinRangeValueEnabled
         {
@@ -243,13 +264,13 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется хотя бы одно из значений <see cref="RangeBaseControl{T, TInterval}.StartValue"/>,
-        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/> или <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
+        /// Calls whenever the effective value of any of following properties changes: <see cref="RangeBaseControl{T, TInterval}.StartValue"/>,
+        /// <see cref="RangeBaseControl{T, TInterval}.EndValue"/> or <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
         /// </summary>
-        /// <param name="oldStartValue">Старое значение начала интервала</param>
-        /// <param name="oldEndValue">Старое значение конца интервала</param>
-        /// <param name="newStartValue">Новое значение начала интервала</param>
-        /// <param name="newEndValue">Новое значение конца интервала</param>
+        /// <param name="oldStartValue">The value of the <see cref="StartValue"/> property before the change reported by the relevant event or state change.</param>
+        /// <param name="oldEndValue">The value of the <see cref="EndValue"/> property before the change reported by the relevant event or state change.</param>
+        /// <param name="newStartValue">The value of the <see cref="StartValue"/> property after the change reported by the relevant event or state change.</param>
+        /// <param name="newEndValue">The value of the <see cref="EndValue"/> property after the change reported by the relevant event or state change.</param>
         protected virtual void OnValueChanged(T oldStartValue, T oldEndValue, T newStartValue, T newEndValue)
         {
             var e = new RangeDragCompletedEventArgs<T>(oldStartValue, oldEndValue, newStartValue, newEndValue)
@@ -262,11 +283,11 @@ namespace SaneDevelopment.WPF4.Controls
         #region IRangeTrackTemplatedParent<T>
 
         /// <summary>
-        /// Метод выполняет обработку <see cref="FrameworkElement.OnApplyTemplate"/>, а именно,
-        /// связывает некоторые свойства зависимостей с шаблонным родителем.
+        /// Method handles <see cref="FrameworkElement.OnApplyTemplate"/>,
+        /// notably bind some dependency properties with templated parent.
         /// </summary>
-        /// <param name="templatedParent">Шаблонный родитель</param>
-        /// <param name="track">Интервальный трэк</param>
+        /// <param name="templatedParent">Templated parent</param>
+        /// <param name="track">Any range track</param>
         public virtual void OnApplyRangeTrackTemplate(DependencyObject templatedParent, RangeTrack<T, TInterval> track)
         {
             if (track == null)
@@ -289,8 +310,8 @@ namespace SaneDevelopment.WPF4.Controls
         #region IsSingleValue Property
 
         /// <summary>
-        /// Для данного объекта реализуется логика единого значения, когда начало интевала совпадает с его концом,
-        /// а величина самого интервала, соответственно, равна нулю.
+        /// This object behaves like a single value object, i.e. start value equals to end value,
+        /// so interval (range) value equals to zero.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool IsSingleValue
@@ -305,7 +326,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -332,35 +353,33 @@ namespace SaneDevelopment.WPF4.Controls
             var newValue = (bool)args.NewValue;
             if (newValue)
             {
-                // если для слайдера включается режим единого (одного) значения,
-                // то проверка на минимальный размер интервала отключается, т.к. теперь он заведомо должен быть равен нулю.
+                // if IsSingleValue mode is ON,
+                // then validation over min range value turns OFF, because range value must be always zero from now.
                 element.MinRangeValueEnabled = false;
 
-                // если флажок взводится (теперь ползунки могут быть только на одном значении),
-                // то надо принудительно выравнять текущее положение правого ползунка до левого.
+                // if IsSingleValue mode is on (now thumbs must be on the same position),
+                // then force to move end thumb to start thumb position.
                 element.EndValue = element.StartValue;
-                // принудительно выставляем значению RangeValue ноль,
-                // т.к. значение интервала из-за наличия флага IsSingleValue теперь пересчитываться не будет,
-                // чтобы всегда держать значение, равным нулю.
-                // Здесь мы просто принудительно выбрасываем событие об обнулении величины интервала.
+                // forcibly set RangeValue to zero, because interval value won't be recalculated from now,
+                // for purpose of hold it equal to zero.
+                // here we just manualy raise event about interval zeroing.
                 element.RangeValue = element.DoubleToInterval(0.0);
             }
             else
             {
-                // если для слайдера отключается режим единого (одного) значения,
-                // то проверка на минимальный размер интервала можно включить, а можно и не включать -
-                // все зависит от значения этого признака по умолчанию в элементе управления.
+                // if IsSingleValue mode is OFF,
+                // then we turns ON the validation over min range value.
+                // or may be not - it depends of default value of appropriate dependency property.
                 element.MinRangeValueEnabled = element.DefaultMinRangeValueEnabled;
             }
         }
 
         #endregion
 
-
         #region Minimum
 
         /// <summary>
-        /// Минимально допустимое значение
+        /// Minimum available value
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public T Minimum
@@ -378,7 +397,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.Minimum"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Minimum"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -391,10 +410,10 @@ namespace SaneDevelopment.WPF4.Controls
             IsValidValue);
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.Minimum"/>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.Minimum"/> changes.
         /// </summary>
-        /// <param name="oldMinimum">Старое значение</param>
-        /// <param name="newMinimum">Новое значение</param>
+        /// <param name="oldMinimum">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newMinimum">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnMinimumChanged(T oldMinimum, T newMinimum)
         { }
 
@@ -417,7 +436,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region Maximum
 
         /// <summary>
-        /// Максимально допустимое значение
+        /// Maximum available value
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T Maximum
@@ -435,7 +454,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -460,10 +479,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.Maximum"/> changes.
         /// </summary>
-        /// <param name="oldMaximum">Старое значение</param>
-        /// <param name="newMaximum">Новое значение</param>
+        /// <param name="oldMaximum">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newMaximum">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnMaximumChanged(T oldMaximum, T newMaximum)
         { }
 
@@ -485,7 +504,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region StartValue
 
         /// <summary>
-        /// Значение начала интервала
+        /// Start interval value
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T StartValue
@@ -503,7 +522,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -538,10 +557,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.StartValue"/> changes.
         /// </summary>
-        /// <param name="oldValue">Старое значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newValue">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnStartValueChanged(T oldValue, T newValue)
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
@@ -579,7 +598,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region EndValue
 
         /// <summary>
-        /// Значение конца интервала
+        /// End interval value
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T EndValue
@@ -597,7 +616,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -633,10 +652,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.EndValue"/> changes.
         /// </summary>
-        /// <param name="oldValue">Старое значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newValue">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnEndValueChanged(T oldValue, T newValue)
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
@@ -674,7 +693,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region MinRangeValue
 
         /// <summary>
-        /// Минимально допустимая величина интервала
+        /// Minimum available interval (range) value
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public TInterval MinRangeValue
@@ -689,7 +708,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -742,7 +761,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region RangeValue
 
         /// <summary>
-        /// Текущая величина интервала
+        /// Current interval (range) value
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public TInterval RangeValue
@@ -768,7 +787,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(OnRangeValueChanged));
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -796,10 +815,10 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Вызывается, когда меняется значение <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
+        /// Calls whenever the effective value of the <see cref="RangeBaseControl{T, TInterval}.RangeValue"/> changes.
         /// </summary>
-        /// <param name="oldValue">Старое значение</param>
-        /// <param name="newValue">Новое значение</param>
+        /// <param name="oldValue">The value of the property before the change reported by the relevant event or state change.</param>
+        /// <param name="newValue">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnRangeValueChanged(TInterval oldValue, TInterval newValue)
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<TInterval>(oldValue, newValue)
@@ -811,12 +830,13 @@ namespace SaneDevelopment.WPF4.Controls
 
         #endregion
 
-
         #region SmallChange
 
         /// <summary>
-        /// Величина маленького смещения значения или интервала. Используется при смещении при помощи стрелок.
+        /// Gets or sets a value to be added to or subtracted from the <see cref="StartValue"/> or <see cref="EndValue"/> of control.
+        /// Uses when change by arrows keys.
         /// </summary>
+        /// <returns>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</returns>
         [Bindable(true), Category("Behavior")]
         public TInterval SmallChange
         {
@@ -833,7 +853,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.SmallChange"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.SmallChange"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -850,8 +870,10 @@ namespace SaneDevelopment.WPF4.Controls
         #region LargeChange
 
         /// <summary>
-        /// Величина большого смещения значения или интервала. Используется при смещении при помощи клавиш Page Up и Page Down.
+        /// Gets or sets a value to be added to or subtracted from the <see cref="StartValue"/> or <see cref="EndValue"/> of control.
+        /// Uses when change by Page Up or Page Down.
         /// </summary>
+        /// <returns>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</returns>
         [Category("Behavior"), Bindable(true)]
         public TInterval LargeChange
         {
@@ -868,7 +890,7 @@ namespace SaneDevelopment.WPF4.Controls
         }
 
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.LargeChange"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.LargeChange"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -886,8 +908,10 @@ namespace SaneDevelopment.WPF4.Controls
 
         #region Public Events
 
+        #region StartValueChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.StartValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.StartValueChanged"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -899,7 +923,7 @@ namespace SaneDevelopment.WPF4.Controls
             typeof(RangeBaseControl<T, TInterval>));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// Occurs when <see cref="RangeBaseControl{T, TInterval}.StartValue"/> changed
         /// </summary>
         [Category("Behavior")]
         public event RoutedPropertyChangedEventHandler<T> StartValueChanged
@@ -914,8 +938,12 @@ namespace SaneDevelopment.WPF4.Controls
             }
         }
 
+        #endregion StartValueChanged
+
+        #region EndValueChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.EndValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.EndValueChanged"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -927,7 +955,7 @@ namespace SaneDevelopment.WPF4.Controls
             typeof(RangeBaseControl<T, TInterval>));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
+        /// Occurs when <see cref="RangeBaseControl{T, TInterval}.EndValue"/> changed
         /// </summary>
         [Category("Behavior")]
         public event RoutedPropertyChangedEventHandler<T> EndValueChanged
@@ -942,8 +970,12 @@ namespace SaneDevelopment.WPF4.Controls
             }
         }
 
+        #endregion EndValueChanged
+
+        #region RangeValueChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -956,7 +988,7 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(RangeBaseControl<T, TInterval>));
 
         /// <summary>
-        /// Событие изменения значения свойства <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
+        /// Occurs when <see cref="RangeBaseControl{T, TInterval}.RangeValue"/> changed
         /// </summary>
         [Category("Behavior")]
         public event RoutedPropertyChangedEventHandler<TInterval> RangeValueChanged
@@ -965,8 +997,12 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(RangeValueChangedEvent, value); }
         }
 
+        #endregion RangeValueChanged
+
+        #region ValueChanged
+
         /// <summary>
-        /// Свойство зависимости для <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 // ReSharper disable StaticFieldInGenericType
@@ -979,8 +1015,8 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(RangeBaseControl<T, TInterval>));
 
         /// <summary>
-        /// Событие изменения любого из свойств <see cref="RangeBaseControl{T, TInterval}.StartValue"/>, <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
-        /// или <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
+        /// Occurs when changed any of propeties: <see cref="RangeBaseControl{T, TInterval}.StartValue"/>, <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
+        /// or <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
         /// </summary>
         public event EventHandler<RangeDragCompletedEventArgs<T>> ValueChanged
         {
@@ -988,6 +1024,7 @@ namespace SaneDevelopment.WPF4.Controls
             remove { RemoveHandler(ValueChangedEvent, value); }
         }
 
+        #endregion ValueChanged
 
         #endregion
 

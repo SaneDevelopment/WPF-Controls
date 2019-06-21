@@ -5,7 +5,7 @@
 //
 //   The BSD 3-Clause License
 //
-//   Copyright (c) 2011-2019, Sane Development
+//   Copyright (c) Sane Development
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without modification,
@@ -43,27 +43,28 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using SaneDevelopment.WPF4.Controls.Properties;
 
 namespace SaneDevelopment.WPF4.Controls
 {
     /// <summary>
-    /// Интерфейс для преобразования числа с плавающей точкой в строку.
-    /// Объекты, реализующие этот интерфейс, используются для преобразования числовых значений делений контрола <see cref="TickBar"/>
-    /// в их строковые представления для отображения пользователю.
+    /// Interface for converting <c>double</c> value to <c>string</c>.
+    /// Classes which implements this interface uses for converting <c>double</c> tick values in <see cref="TickBar"/> control
+    /// to <c>string</c> representations for showing in UI.
     /// </summary>
     public interface IDoubleToStringConverter
     {
         /// <summary>
-        /// Функция преобразует значение <paramref name="value"/> в строку
+        /// Convert <paramref name="value"/> to <c>string</c>
         /// </summary>
-        /// <param name="value">Число для преобразования</param>
-        /// <param name="parameter">Дополнительный произвольный параметер для преобразования</param>
-        /// <returns>Строковое представление числа</returns>
+        /// <param name="value">Value to convert</param>
+        /// <param name="parameter">Additional parameter for conversion</param>
+        /// <returns>String representation of <paramref name="value"/></returns>
         string Convert(double value, object parameter);
     }
 
     /// <summary>
-    /// Элемент управления, который рисует набор делений с текстовыми подписями
+    /// Represents a control that draws a set of tick marks with text labels for any slider control.
     /// </summary>
     public class LabeledTickBar : TickBar
     {
@@ -72,7 +73,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region EliminateOverlapping Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="LabeledTickBar.EliminateOverlapping"/>
+        /// Dependency property for <see cref="LabeledTickBar.EliminateOverlapping"/>
         /// </summary>
         public static readonly DependencyProperty EliminateOverlappingProperty =
             DependencyProperty.Register(
@@ -82,7 +83,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-        /// Избегать ли перекрытия (наложения) текстовых подписей делений путем сокрытия непомещающихся
+        /// Whether eliminate overlapping of text labels by hiding overlapped.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public bool EliminateOverlapping
@@ -101,7 +102,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region StartLabelSpace Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="LabeledTickBar.StartLabelSpace"/>
+        /// Dependency property for <see cref="LabeledTickBar.StartLabelSpace"/>
         /// </summary>
         public static readonly DependencyProperty StartLabelSpaceProperty =
             DependencyProperty.Register(
@@ -112,8 +113,7 @@ namespace SaneDevelopment.WPF4.Controls
                 IsValidSpace);
 
         /// <summary>
-        /// Доступное для вывода надписей пространство за пределами этого элемента управления,
-        /// расположенное в начале (слева/внизу)
+        /// Space (in pixels) avaliable for drawing text labels beyond this control area at the "start" side (left/bottom)
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double StartLabelSpace
@@ -132,7 +132,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region EndLabelSpace Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="LabeledTickBar.EndLabelSpace"/>
+        /// Dependency property for <see cref="LabeledTickBar.EndLabelSpace"/>
         /// </summary>
         public static readonly DependencyProperty EndLabelSpaceProperty =
             DependencyProperty.Register(
@@ -143,8 +143,7 @@ namespace SaneDevelopment.WPF4.Controls
                 IsValidSpace);
 
         /// <summary>
-        /// Доступное для вывода надписей пространство за пределами этого элемента управления,
-        /// расположенное в конце (справа/вверху)
+        /// Space (in pixels) avaliable for drawing text labels beyond this control area at the "end" side (right/top)
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public double EndLabelSpace
@@ -189,7 +188,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region ValueConverter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="LabeledTickBar.ValueConverter"/>
+        /// Dependency property for <see cref="LabeledTickBar.ValueConverter"/>
         /// </summary>
         public static readonly DependencyProperty ValueConverterProperty =
             DependencyProperty.Register(
@@ -199,7 +198,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-        /// Конвертер числовых значений делений в их строковые представления
+        /// Converter of <c>double</c> ticks values to <c>string</c>
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public IDoubleToStringConverter ValueConverter
@@ -213,7 +212,7 @@ namespace SaneDevelopment.WPF4.Controls
         #region ValueConverterParameter Property
 
         /// <summary>
-        /// Свойство зависимости для <see cref="LabeledTickBar.ValueConverterParameter"/>
+        /// Dependency property for <see cref="LabeledTickBar.ValueConverterParameter"/>
         /// </summary>
         public static readonly DependencyProperty ValueConverterParameterProperty =
             DependencyProperty.Register(
@@ -223,7 +222,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-        /// Параметр конвертера числовых значений делений в их строковые представления
+        /// Parameter for converter of <c>double</c> ticks values to <c>string</c>
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public object ValueConverterParameter
@@ -235,9 +234,9 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion
 
         /// <summary>
-        /// Рисует деления с подписями
+        /// Draws the tick marks for some slider control.
         /// </summary>
-        /// <param name="dc">Контекст рисования</param>
+        /// <param name="dc">The <see cref="System.Windows.Media.DrawingContext"/> that is used to draw the ticks.</param>
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
             Justification = "Based on Microsoft realisation")]
         protected override void OnRender(DrawingContext dc)
@@ -508,11 +507,19 @@ namespace SaneDevelopment.WPF4.Controls
             IDoubleToStringConverter valueConverter,
             object valueConverterParameter)
         {
-            string text = (valueConverter == null)
-                              ? (string.IsNullOrEmpty(valueFormat)
-                                     ? value.ToString(CultureInfo.CurrentCulture.NumberFormat)
-                                     : value.ToString(valueFormat, CultureInfo.CurrentCulture.NumberFormat))
-                              : valueConverter.Convert(value, valueConverterParameter);
+            string text;
+            try
+            {
+                text = (valueConverter == null)
+                                   ? (string.IsNullOrEmpty(valueFormat)
+                                          ? value.ToString(CultureInfo.CurrentCulture.NumberFormat)
+                                          : value.ToString(valueFormat, CultureInfo.CurrentCulture.NumberFormat))
+                                   : valueConverter.Convert(value, valueConverterParameter);
+            }
+            catch (FormatException)
+            {
+                text = LocalizationResource.BadLabeledTickFormat;
+            }
 
             var formattedText = new FormattedText(
                 text,

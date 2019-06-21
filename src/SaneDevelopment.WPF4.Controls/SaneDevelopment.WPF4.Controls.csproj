@@ -152,8 +152,12 @@
     <Compile Include="LabeledTickBar.cs" />
     <Compile Include="LinqToVisualTree\Extensions.cs" />
     <Compile Include="LinqToVisualTree\VisualTreeAdapter.cs" />
-    <Compile Include="Localization.cs" />
     <Compile Include="Interactivity\ParameterizedCallMethodAction.cs" />
+    <Compile Include="Properties\LocalizationResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LocalizationResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -177,6 +181,10 @@
     <Compile Include="ValidationHelper.cs" />
     <Compile Include="ValueConverters.cs" />
     <Compile Include="ZoomBar.cs" />
+    <EmbeddedResource Include="Properties\LocalizationResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
