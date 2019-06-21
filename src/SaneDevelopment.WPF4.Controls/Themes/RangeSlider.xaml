@@ -570,6 +570,7 @@
                                      StartLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=StartReservedSpace}"
                                      EndLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EndReservedSpace}"
                                      Height="11"
+                                                  ValueNumericFormat="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelNumericFormat}"
                                      ValueConverter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverter}"
                                      ValueConverterParameter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverterParameter}"
                                      Visibility="Collapsed">
@@ -665,6 +666,7 @@
                                      Placement="Bottom"
                                      Height="11"
                                      Visibility="Collapsed"
+                                                  ValueNumericFormat="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelNumericFormat}"
                                      ValueConverter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverter}"
                                      ValueConverterParameter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverterParameter}"
                                      Grid.Row="4">
@@ -774,6 +776,7 @@
                                              StartLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=StartReservedSpace}"
                                              EndLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EndReservedSpace}"
                                              Width="11"
+                                                          ValueNumericFormat="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelNumericFormat}"
                                              ValueConverter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverter}"
                                              ValueConverterParameter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverterParameter}"
                                              Visibility="Collapsed">
@@ -870,6 +873,7 @@
                                              Placement="Right"
                                              Width="11"
                                              Visibility="Collapsed"
+                                                          ValueNumericFormat="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelNumericFormat}"
                                              ValueConverter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverter}"
                                              ValueConverterParameter="{TemplateBinding local:SimpleNumericRangeSlider.TickLabelConverterParameter}"
                                              Grid.Column="4">
@@ -988,6 +992,7 @@
                                      StartLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=StartReservedSpace}"
                                      EndLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EndReservedSpace}"
                                      Height="11"
+                                                  ValueNumericFormat="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelNumericFormat}"
                                      ValueConverter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverter}"
                                      ValueConverterParameter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverterParameter}"
                                      Visibility="Collapsed">
@@ -1083,6 +1088,7 @@
                                      Placement="Bottom"
                                      Height="11"
                                      Visibility="Collapsed"
+                                                  ValueNumericFormat="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelNumericFormat}"
                                      ValueConverter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverter}"
                                      ValueConverterParameter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverterParameter}"
                                      Grid.Row="4">
@@ -1192,6 +1198,7 @@
                                              StartLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=StartReservedSpace}"
                                              EndLabelSpace="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EndReservedSpace}"
                                              Width="11"
+                                                          ValueNumericFormat="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelNumericFormat}"
                                              ValueConverter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverter}"
                                              ValueConverterParameter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverterParameter}"
                                              Visibility="Collapsed">
@@ -1288,6 +1295,7 @@
                                              Placement="Right"
                                              Width="11"
                                              Visibility="Collapsed"
+                                                          ValueNumericFormat="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelNumericFormat}"
                                              ValueConverter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverter}"
                                              ValueConverterParameter="{TemplateBinding local:SimpleDateTimeRangeSlider.TickLabelConverterParameter}"
                                              Grid.Column="4">

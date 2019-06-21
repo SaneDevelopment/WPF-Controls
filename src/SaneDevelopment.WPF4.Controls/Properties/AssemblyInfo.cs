@@ -59,7 +59,7 @@ using System.Windows.Markup;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: NeutralResourcesLanguageAttribute("ru")]
+[assembly: NeutralResourcesLanguageAttribute("en-US")]
 [assembly: CLSCompliant(true)]
 
 //In order to begin building localizable applications, set 

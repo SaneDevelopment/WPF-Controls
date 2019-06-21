@@ -1,0 +1,2452 @@
+﻿<!--
+<copyright file="MainWindow.xaml" company="Sane Development">
+
+  Sane Development WPF Controls Library
+
+  The BSD 3-Clause License
+
+  Copyright (c) Sane Development
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  - Neither the name of the Sane Development nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+</copyright>
+-->
+<Window x:Class="SaneDevelopment.WPF4.Controls.Samples.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:saneDev="uri://schemas.sane-development.com/wpf/2012/xaml"
+        xmlns:eventManagers="clr-namespace:SaneDevelopment.WPF4.Controls.Samples"
+        mc:Ignorable="d"
+        Title="Sane Development WPF Controls Library Samples"
+        >
+    <Window.Resources>
+
+        <eventManagers:SamplesEventManager x:Key="SamplesEventManager"/>
+        <eventManagers:NegateDoubleConverter x:Key="NegateDoubleConverter"/>
+        <eventManagers:DoubleRangeValueToStringConverter x:Key="DoubleRangeValueToStringConverter"/>
+        <eventManagers:UniversalConverter x:Key="UniversalConverter"/>
+        <eventManagers:StringToDateTimeCollectionConverter x:Key="StringToDateTimeCollectionConverter"/>
+
+        <saneDev:ThicknessMultiConverter x:Key="ThicknessConverter" />
+        <saneDev:SolidColorBrushToColorConverter x:Key="SolidColorBrushToColorConverter" />
+
+        <saneDev:DoubleToDateTimeStringConverter x:Key="DoubleToDateTimeStringConverter"/>
+        <saneDev:DoubleToTimeSpanStringConverter x:Key="DoubleToTimeSpanStringConverter" />
+        <saneDev:NullableDateTimeToStringConverter x:Key="NullableDateTimeToStringConverter"/>
+        <saneDev:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter"/>
+        <saneDev:NullableDateTimeToDoubleConverter x:Key="NullableDateTimeToDoubleConverter"/>
+        <saneDev:NullableTimeSpanToDoubleConverter x:Key="NullableTimeSpanToDoubleConverter"/>
+        <saneDev:NullableInt64ToTimeSpanConverter x:Key="NullableInt64ToTimeSpanConverter" />
+
+        <!-- Double zero -->
+        <s:Double x:Key="Zero">0</s:Double>
+
+        <!-- Source for initial DateTime collection -->
+        <saneDev:DateTimeCollection x:Key="InitialDateTimeCollection">
+            <s:DateTime>1-1-1999</s:DateTime>
+            <s:DateTime>1-1-1900</s:DateTime>
+        </saneDev:DateTimeCollection>
+
+        <!-- Source for TickPlacement values -->
+        <x:Array x:Key="TickPlacementArray" Type="{x:Type TickPlacement}">
+            <TickPlacement>None</TickPlacement>
+            <TickPlacement>TopLeft</TickPlacement>
+            <TickPlacement>BottomRight</TickPlacement>
+            <TickPlacement>Both</TickPlacement>
+        </x:Array>
+
+        <!-- Source for AutoToolTipPlacement values -->
+        <x:Array x:Key="AutoToolTipPlacementArray" Type="{x:Type AutoToolTipPlacement}">
+            <AutoToolTipPlacement>None</AutoToolTipPlacement>
+            <AutoToolTipPlacement>TopLeft</AutoToolTipPlacement>
+            <AutoToolTipPlacement>BottomRight</AutoToolTipPlacement>
+        </x:Array>
+
+        <!-- Source for strings -->
+        <x:Array x:Key="StringsArray" Type="{x:Type s:String}">
+            <s:String>String one</s:String>
+            <s:String>String two</s:String>
+            <s:String>String three</s:String>
+            <s:String>String four</s:String>
+        </x:Array>
+
+        <!-- Source for rows in DataGrid -->
+        <x:Array x:Key="MessagesArrayForDataGrid" Type="{x:Type s:String}">
+            <s:String>Place mouse cursor over here and try to roll the wheel</s:String>
+            <s:String>For Framework's DataGrid nothing happens</s:String>
+        </x:Array>
+
+        <!-- Source for rows in SaneDataGrid -->
+        <x:Array x:Key="MessagesArrayForSaneDataGrid" Type="{x:Type s:String}">
+            <s:String>Place mouse cursor over here and try to roll the wheel</s:String>
+            <s:String>The whole data grid is scrolling now</s:String>
+        </x:Array>
+
+        <!-- Most common style for DataGrids to show in samples -->
+        <Style x:Key="SaneDataGridSampleStyle" TargetType="{x:Type DataGrid}">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserResizeRows" Value="False" />
+            <Setter Property="CanUserSortColumns" Value="False" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="FontStyle" Value="Normal" />
+
+            <Setter Property="RowDetailsVisibilityMode" Value="Visible" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="FontStyle" Value="Normal" />
+        </Style>
+
+        <!-- Style for buttons that invoke commands over slider -->
+        <Style x:Key="SliderCommandButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="2,2" />
+            <Setter Property="MinWidth" Value="120" />
+        </Style>
+
+        <!-- Most common style for check boxes -->
+        <Style x:Key="CheckBoxCommonStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="IsThreeState" Value="False" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5,0" />
+        </Style>
+
+        <!-- Style for border around expanders -->
+        <Style x:Key="ExpanderBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+        </Style>
+
+        <!-- Brush for ZoomBar content background -->
+        <DrawingBrush x:Key="GridBrush"
+                      Viewport="0,0,10,10"
+                      ViewportUnits="Absolute"
+                      TileMode="Tile">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="White">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,10,10" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#CCCCFF" Geometry="M0,10 L 0,0 10,0 10,1 1,1 1,10Z">
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+    </Window.Resources>
+
+    <TabControl>
+        <TabItem Header="LabeledTickBar">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for Framework's TickBar and SaneDevelopments's LabeledTickBar
+                                with the same parameters.
+                            </Paragraph>
+                            <Paragraph>
+                                Change width of the window to see label text overlapping effects.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox
+                                x:Name="CheckBoxEliminateOverlapping"
+                                Content="Eliminate overlapping"
+                                IsThreeState="False" />
+                        </StackPanel>
+                        <Separator Margin="0,10"/>
+
+                        <Label Content="Framework's TickBar:" Target="{Binding ElementName=TickBar}" />
+                        <TickBar
+                            x:Name="TickBar"
+                            Fill="{Binding ElementName=LabeledTickBar, Path=Fill}"
+                            TickFrequency="{Binding ElementName=LabeledTickBar, Path=TickFrequency}"
+                            Minimum="{Binding ElementName=LabeledTickBar, Path=Minimum}"
+                            Maximum="{Binding ElementName=LabeledTickBar, Path=Maximum}"
+                            ReservedSpace="{Binding ElementName=LabeledTickBar, Path=ReservedSpace}"
+                            Placement="{Binding ElementName=LabeledTickBar, Path=Placement}"
+                            Height="{Binding ElementName=LabeledTickBar, Path=Height}"
+                            Visibility="Visible" />
+
+                        <Label Content="LabeledTickBar:" Target="{Binding ElementName=LabeledTickBar}" />
+                        <saneDev:LabeledTickBar
+                            x:Name="LabeledTickBar"
+                            Fill="Black"
+                            EliminateOverlapping="{Binding ElementName=CheckBoxEliminateOverlapping, Path=IsChecked}"
+                            ReservedSpace="0"
+                            Placement="Bottom"
+                            TickFrequency="500"
+                            Minimum="0"
+                            Maximum="10000"
+                            Height="12"
+                            Visibility="Visible"/>
+
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+        </TabItem>
+        <TabItem Header="SaneDataGrid">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument>
+                            <Paragraph>
+                                Here you can see examples for Framework's DataGrid and SaneDevelopments's SaneDataGrid
+                                with the same parameters.
+                            </Paragraph>
+                            <Paragraph>
+                                Each example consists of two datagrids, one inside other as a row details.
+                                If you place mouse cursor over the outer datagrid and try to roll the wheel, then scrolling happen.
+                                Otherwise, if you place mouse cursor over the inner Framework's datagrid and roll the wheel, then nothing happen.
+                                But SaneDataGrid works properly.
+                                See hints below.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <GroupBox Header="Framework's DataGrid:" Grid.Row="1">
+                    <DataGrid
+                        Style="{StaticResource SaneDataGridSampleStyle}"
+                        ItemsSource="{StaticResource StringsArray}"
+                        ScrollViewer.CanContentScroll="False">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="String" Binding="{Binding}" Width="*"/>
+                            <DataGridTextColumn Header="Length" Binding="{Binding Path=Length}"/>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                    HorizontalAlignment="Left">
+
+                                    <DataGrid
+                                        Style="{StaticResource SaneDataGridSampleStyle}"
+                                        ItemsSource="{StaticResource MessagesArrayForDataGrid}"
+                                        Margin="20,0,5,5">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Message" Binding="{Binding}" Width="*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+
+                </GroupBox>
+
+                <GroupBox Header="SaneDataGrid:" Grid.Row="2">
+                    <DataGrid
+                        Style="{StaticResource SaneDataGridSampleStyle}"
+                        ItemsSource="{StaticResource StringsArray}"
+                        ScrollViewer.CanContentScroll="False">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="String" Binding="{Binding}" Width="*"/>
+                            <DataGridTextColumn Header="Length" Binding="{Binding Path=Length}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                    HorizontalAlignment="Left">
+
+                                    <saneDev:SaneDataGrid
+                                        Style="{StaticResource SaneDataGridSampleStyle}"
+                                        ItemsSource="{StaticResource MessagesArrayForSaneDataGrid}"
+                                        Margin="20,0,5,5">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Message" Binding="{Binding}" Width="*"/>
+                                        </DataGrid.Columns>
+                                    </saneDev:SaneDataGrid>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+
+                </GroupBox>
+            </Grid>
+
+        </TabItem>
+        <TabItem Header="UncheckableRadioButton">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for Framework's RadioButton and SaneDevelopments's UncheckableRadioButton.
+                            </Paragraph>
+                            <Paragraph>
+                                Try to check different items inside every group,
+                                try to uncheck them by clicking on the same control twice.
+                                As you see, RadioButton can be selected, but not cleared - there is always one selected item within a group.
+                                UncheckableRadioButton can be cleared at any time thus none of the items is selected.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <GroupBox Grid.Row="1">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="RadioButton (selected value=" />
+                            <TextBlock Text="{Binding ElementName=RadioButton1, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton1, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ElementName=RadioButton2, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton2, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ElementName=RadioButton3, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton3, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="NULL">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton1, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton2, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=RadioButton3, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="):" />
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <StackPanel Orientation="Vertical">
+                        <RadioButton GroupName="RadioButtons" Content="Value 1" x:Name="RadioButton1" />
+                        <RadioButton GroupName="RadioButtons" Content="Value 2" x:Name="RadioButton2" />
+                        <RadioButton GroupName="RadioButtons" Content="Value 3" x:Name="RadioButton3" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="2">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="UncheckableRadioButton (selected value=" />
+                            <TextBlock Text="{Binding ElementName=UncheckableRadioButton1, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton1, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ElementName=UncheckableRadioButton2, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton2, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ElementName=UncheckableRadioButton3, Path=Content}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton3, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="NULL">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton1, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton2, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=UncheckableRadioButton3, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="):" />
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <StackPanel Orientation="Vertical">
+                        <saneDev:UncheckableRadioButton GroupName="UncheckableRadioButtons" Content="Value 1" x:Name="UncheckableRadioButton1" />
+                        <saneDev:UncheckableRadioButton GroupName="UncheckableRadioButtons" Content="Value 2" x:Name="UncheckableRadioButton2" />
+                        <saneDev:UncheckableRadioButton GroupName="UncheckableRadioButtons" Content="Value 3" x:Name="UncheckableRadioButton3" />
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Numeric Range Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Description -->
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for SimpleNumericRangeSlider, vertical and horizontal.
+                            </Paragraph>
+                            <Paragraph>
+                                You can change any property of slider, invoke any command, handle any event.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <!-- Limitations -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+
+                        <!-- Boundary value. I.e. restrictions for Minimum, Maximum and MinRangeValue sliders. -->
+                        <Border Style="{StaticResource ExpanderBorderStyle}">
+                            <Expander Header="Boundary">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="New boundaries value:" Target="{Binding ElementName=SimpleNumericRangeSliderBoundaryValue}" />
+
+                                    <xctk:IntegerUpDown
+                        x:Name="SimpleNumericRangeSliderBoundaryValue"
+                                    ToolTip="Enter new boundaries value and press next button. New value will limit the Minimum, Maximum and MinRangeValue of sliders."
+                        Minimum="0"
+                        MinWidth="100"
+                        Value="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Maximum, Mode=OneTime}"/>
+
+                                    <Button
+                                    Content="Set boundary"
+                                    Margin="10,0">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleNumericRangeSliderMinimum}"
+                        PropertyName="Minimum"
+                            Value="{Binding ElementName=SimpleNumericRangeSliderBoundaryValue, Path=Value, Converter={StaticResource NegateDoubleConverter}}"/>
+                                                <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleNumericRangeSliderMinimum}"
+                        PropertyName="Maximum"
+                            Value="{Binding ElementName=SimpleNumericRangeSliderBoundaryValue, Path=Value}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+
+                            </Expander>
+                        </Border>
+
+                        <!-- Minimum, Maximum-->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Minimum [" Margin="3,0,0,0"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Minimum}" />
+                                    <TextBlock Text=".."/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Maximum}" />
+                                    <TextBlock Text="]:"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Value, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                </StackPanel>
+                                <Slider
+                                x:Name="SimpleNumericRangeSliderMinimum"
+                                Minimum="-100"
+                                        Maximum="100"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Maximum [" Margin="3,0,0,0"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMaximum, Path=Minimum}" />
+                                    <TextBlock Text=".."/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMaximum, Path=Maximum}" />
+                                    <TextBlock Text="]:"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMaximum, Path=Value, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                </StackPanel>
+                                <Slider
+                                    x:Name="SimpleNumericRangeSliderMaximum"
+                                    Minimum="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Minimum}"
+                                        Maximum="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Maximum}"
+                                    Value="100"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- MinRangeValue -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Min range value [" Margin="3,0,0,0"/>
+                            <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinRangeValue, Path=Minimum}" />
+                            <TextBlock Text=".."/>
+                            <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinRangeValue, Path=Maximum}" />
+                            <TextBlock Text="]:"/>
+                            <TextBlock Text="{Binding ElementName=SimpleNumericRangeSliderMinRangeValue, Path=Value, StringFormat=\{0:F4\}}" Margin="3,0"/>
+
+                            <TextBlock Text="Current range value:" Margin="3,0"/>
+                            <TextBlock Text="{Binding ElementName=SimpleNumericRangeSlider, Path=RangeValue, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                        </StackPanel>
+                        <Slider
+                            x:Name="SimpleNumericRangeSliderMinRangeValue"
+                            Minimum="0"
+                                Maximum="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Maximum}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Commands -->
+                <Grid Grid.Row="2">
+                    <Border Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Commands">
+                            <StackPanel Orientation="Vertical">
+
+                                <!-- Change values -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="SmallChange:" Target="{Binding ElementName=SimpleNumericRangeSliderSmallChange}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleNumericRangeSliderSmallChange"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="1"/>
+
+                                    <Label Content="LargeChange:" Target="{Binding ElementName=SimpleNumericRangeSliderLargeChange}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleNumericRangeSliderLargeChange"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="5"/>
+                                </StackPanel>
+
+                                <!-- Small changes -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Range Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseRangeSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- Start Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseStartSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- End Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseEndSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+
+                                    <Button Content="Range Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseRangeSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="Start Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseStartSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="End Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseEndSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                </StackPanel>
+
+                                <!-- Large changes -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Range Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseRangeLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- Start Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseStartLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- End Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.DecreaseEndLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+
+                                    <Button Content="Range Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseRangeLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="Start Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseStartLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="End Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.IncreaseEndLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                </StackPanel>
+
+                                <!-- Maximize/Minimize -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Minimize Range"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MinimizeRangeValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- Minimize Start"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MinimizeStartValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="&lt;- Minimize End"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MinimizeEndValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+
+                                    <Button Content="Maximize Range -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MaximizeRangeValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="Maximize Start -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MaximizeStartValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                    <Button Content="Maximize End -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleNumericRangeSlider.MaximizeEndValue}"
+                                    CommandTarget="{Binding ElementName=SimpleNumericRangeSlider}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+                </Grid>
+
+                <!-- Properties -->
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- StartValue -->
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="Start Value:" Margin="3,0"/>
+                                <TextBlock Text="{Binding ElementName=SimpleNumericRangeSlider, Path=StartValue, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                            </StackPanel>
+                            <Slider Minimum="{Binding ElementName=SimpleNumericRangeSlider, Path=Minimum}"
+                                        Maximum="{Binding ElementName=SimpleNumericRangeSlider, Path=Maximum}"
+                                        Value="{Binding ElementName=SimpleNumericRangeSlider, Path=StartValue, Mode=TwoWay}"/>
+                        </StackPanel>
+
+                        <!-- EndValue -->
+                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="End Value:" Margin="3,0"/>
+                                <TextBlock Text="{Binding ElementName=SimpleNumericRangeSlider, Path=EndValue, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                            </StackPanel>
+                            <Slider Minimum="{Binding ElementName=SimpleNumericRangeSlider, Path=Minimum}"
+                                        Maximum="{Binding ElementName=SimpleNumericRangeSlider, Path=Maximum}"
+                                        Value="{Binding ElementName=SimpleNumericRangeSlider, Path=EndValue, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1" Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Properties">
+                            <StackPanel Orientation="Vertical">
+                                <!-- Ticks -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <Label Content="TickPlacement:" Target="{Binding ElementName=SimpleNumericRangeSliderTickPlacement}" />
+                                    <ComboBox
+                                    x:Name="SimpleNumericRangeSliderTickPlacement"
+                                    ItemsSource="{StaticResource TickPlacementArray}">
+                                        <ComboBox.SelectedItem>
+                                            <TickPlacement>BottomRight</TickPlacement>
+                                        </ComboBox.SelectedItem>
+                                    </ComboBox>
+
+                                    <Label Content="TickFrequency:" Target="{Binding ElementName=SimpleNumericRangeSliderTickFrequency}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleNumericRangeSliderTickFrequency"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="5"/>
+
+                                    <CheckBox Content="IsSnapToTickEnabled"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleNumericRangeSlider, Path=IsSnapToTickEnabled}"/>
+
+                                    <CheckBox Content="Irregular ticks"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      x:Name="SimpleNumericRangeSliderIrregularTicks"/>
+
+                                    <Label Content="TickLabelNumericFormat:" Target="{Binding ElementName=SimpleNumericRangeSliderTickLabelNumericFormat}" />
+                                    <TextBox
+                                        x:Name="SimpleNumericRangeSliderTickLabelNumericFormat"
+                                        MinWidth="100"/>
+                                    <Button
+                                    Content="Set TickLabelNumericFormat"
+                                    Margin="10,0">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleNumericRangeSlider}"
+                        PropertyName="TickLabelNumericFormat"
+                            Value="{Binding ElementName=SimpleNumericRangeSliderTickLabelNumericFormat, Path=Text}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+
+                                </StackPanel>
+
+                                <!-- Range -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <CheckBox Content="IsDragRangeEnabled"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleNumericRangeSlider, Path=IsDragRangeEnabled}"/>
+                                    <CheckBox Content="IsSingleValue"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleNumericRangeSlider, Path=IsSingleValue}"/>
+                                </StackPanel>
+
+                                <!-- Tooltips -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <Label Content="AutoToolTipPlacement:" Target="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipPlacement}" />
+                                    <ComboBox
+                                    x:Name="SimpleNumericRangeSliderAutoToolTipPlacement"
+                                    ItemsSource="{StaticResource AutoToolTipPlacementArray}">
+                                        <ComboBox.SelectedItem>
+                                            <AutoToolTipPlacement>BottomRight</AutoToolTipPlacement>
+                                        </ComboBox.SelectedItem>
+                                    </ComboBox>
+
+                                    <Label Content="AutoToolTipPrecision:" Target="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipPrecision}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleNumericRangeSliderAutoToolTipPrecision"
+                                    Minimum="{Binding Source={x:Static saneDev:DependencyPropertyUtil.MinimumAutoToolTipPrecision}}"
+                                    Maximum="{Binding Source={x:Static saneDev:DependencyPropertyUtil.MaximumAutoToolTipPrecision}}"
+                                    MinWidth="100"
+                                    Value="4"/>
+
+                                    <Label Content="AutoToolTipFormat:" Target="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipFormat}" />
+                                    <TextBox
+                                        x:Name="SimpleNumericRangeSliderAutoToolTipFormat"
+                                        MinWidth="100"
+                                        Text="{Binding Source={x:Static saneDev:SimpleNumericRangeSlider.DefaultAutoToolTipFormat}, Mode=OneTime}"/>
+                                    <Button
+                                    Content="Set AutoToolTipFormat"
+                                    Margin="10,0">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleNumericRangeSlider}"
+                        PropertyName="AutoToolTipFormat"
+                            Value="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipFormat, Path=Text}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+                </Grid>
+
+                <!-- Horizontal slider -->
+                <Grid Grid.Row="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+                        <Separator/>
+                        <TextBlock Text="Numeric Range Slider:"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,10">
+                        <saneDev:SimpleNumericRangeSlider
+                            x:Name="SimpleNumericRangeSlider"
+                            
+                                Minimum="{Binding ElementName=SimpleNumericRangeSliderMinimum, Path=Value}"
+                                Maximum="{Binding ElementName=SimpleNumericRangeSliderMaximum, Path=Value}"
+                            MinRangeValue="{Binding ElementName=SimpleNumericRangeSliderMinRangeValue, Path=Value}"
+                            
+                                StartValue="20"
+                                EndValue="80"
+                            
+                            SmallChange="{Binding ElementName=SimpleNumericRangeSliderSmallChange, Path=Value}"
+                            LargeChange="{Binding ElementName=SimpleNumericRangeSliderLargeChange, Path=Value}"
+                            
+                            TickPlacement="{Binding ElementName=SimpleNumericRangeSliderTickPlacement, Path=SelectedItem}"
+                            TickFrequency="{Binding ElementName=SimpleNumericRangeSliderTickFrequency, Path=Value}"
+                            
+                            AutoToolTipPrecision="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipPrecision, Path=Value}"
+                            AutoToolTipPlacement="{Binding ElementName=SimpleNumericRangeSliderAutoToolTipPlacement, Path=SelectedItem}"
+                            >
+                            <saneDev:SimpleNumericRangeSlider.Style>
+                                <Style TargetType="saneDev:SimpleNumericRangeSlider">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=SimpleNumericRangeSliderIrregularTicks, Path=IsChecked}" Value="True">
+                                            <Setter Property="Ticks" Value="0, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 90, 100" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </saneDev:SimpleNumericRangeSlider.Style>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger EventName="StartValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleStartValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="StartValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="EndValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleEndValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="EndValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="RangeValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleRangeValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="RangeValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="ValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleRangeDragCompleted"
+                                        Parameter="ValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="RangeDragCompleted">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleRangeDragCompleted, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleRangeDragCompleted"
+                                        Parameter="RangeDragCompleted"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="IsRangeDraggingChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleNumericRangeSliderHandleIsRangeDraggingChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnBoolProperyValueChanged"
+                                        Parameter="IsRangeDraggingChanged"
+                                        Parameter2="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </saneDev:SimpleNumericRangeSlider>
+                    </Grid>
+
+                </Grid>
+
+                <!-- Bottom -->
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Vertical slider -->
+                    <Grid Grid.Column="0">
+                        <saneDev:SimpleNumericRangeSlider
+                                Orientation="Vertical"
+                            Margin="10,0"
+                                Minimum="{Binding ElementName=SimpleNumericRangeSlider, Path=Minimum}"
+                                Maximum="{Binding ElementName=SimpleNumericRangeSlider, Path=Maximum}"
+                                MinRangeValue="{Binding ElementName=SimpleNumericRangeSlider, Path=MinRangeValue}"
+                                StartValue="{Binding ElementName=SimpleNumericRangeSlider, Path=StartValue}"
+                                EndValue="{Binding ElementName=SimpleNumericRangeSlider, Path=EndValue}"
+                                SmallChange="{Binding ElementName=SimpleNumericRangeSlider, Path=SmallChange}"
+                                LargeChange="{Binding ElementName=SimpleNumericRangeSlider, Path=LargeChange}"
+                                IsSnapToTickEnabled="{Binding ElementName=SimpleNumericRangeSlider, Path=IsSnapToTickEnabled}"
+                                IsDragRangeEnabled="{Binding ElementName=SimpleNumericRangeSlider, Path=IsDragRangeEnabled}"
+                                IsRaiseValueChangedWhileDragging="{Binding ElementName=SimpleNumericRangeSlider, Path=IsRaiseValueChangedWhileDragging}"
+                                IsSingleValue="{Binding ElementName=SimpleNumericRangeSlider, Path=IsSingleValue}"
+                            
+                            TickLabelNumericFormat="{Binding ElementName=SimpleNumericRangeSlider, Path=TickLabelNumericFormat}"
+                            TickLabelConverter="{Binding ElementName=SimpleNumericRangeSlider, Path=TickLabelConverter}"
+                            TickLabelConverterParameter="{Binding ElementName=SimpleNumericRangeSlider, Path=TickLabelConverterParameter}"
+                            
+                                TickPlacement="{Binding ElementName=SimpleNumericRangeSlider, Path=TickPlacement}"
+                                TickFrequency="{Binding ElementName=SimpleNumericRangeSlider, Path=TickFrequency}"
+                                Ticks="{Binding ElementName=SimpleNumericRangeSlider, Path=Ticks}"
+                                AutoToolTipPrecision="{Binding ElementName=SimpleNumericRangeSlider, Path=AutoToolTipPrecision}"
+                            AutoToolTipFormat="{Binding ElementName=SimpleNumericRangeSlider, Path=AutoToolTipFormat}"
+                            AutoToolTipPlacement="{Binding ElementName=SimpleNumericRangeSlider, Path=AutoToolTipPlacement}"/>
+                    </Grid>
+
+                    <!-- Events logging -->
+                    <Grid Grid.Column="1">
+                        <Expander Header="Events log" IsExpanded="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <CheckBox Content="Handle IsRangeDraggingChanged"
+                                  x:Name="SimpleNumericRangeSliderHandleIsRangeDraggingChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <CheckBox Content="Handle RangeDragCompleted"
+                                  x:Name="SimpleNumericRangeSliderHandleRangeDragCompleted"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Handle ValueChanged"
+                                      x:Name="SimpleNumericRangeSliderHandleValueChanged"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="False"/>
+                                        <CheckBox Content="IsRaiseValueChangedWhileDragging"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                          IsChecked="{Binding ElementName=SimpleNumericRangeSlider, Path=IsRaiseValueChangedWhileDragging}"
+                                          Margin="50, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                    <CheckBox Content="Handle StartValueChanged"
+                                  x:Name="SimpleNumericRangeSliderHandleStartValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle EndValueChanged"
+                                  x:Name="SimpleNumericRangeSliderHandleEndValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle RangeValueChanged"
+                                  x:Name="SimpleNumericRangeSliderHandleRangeValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <Button Content="Clear log">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:CallMethodAction
+                                    TargetObject="{Binding ElementName=SimpleNumericRangeSliderTxtLog}"
+                                    MethodName="Clear"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                                <TextBox  Grid.Row="2" x:Name="SimpleNumericRangeSliderTxtLog" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
+                            </Grid>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="DateTime Range Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Description -->
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for SimpleDateTimeRangeSlider, vertical and horizontal.
+                            </Paragraph>
+                            <Paragraph>
+                                You can change any property of slider, invoke any command, handle any event, etc.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <!-- Limitations -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+
+                        <!-- Boundary values. I.e. restrictions for Minimum, Maximum and MinRangeValue sliders. -->
+                        <Border Style="{StaticResource ExpanderBorderStyle}">
+                            <Expander Header="Boundaries">
+                                <!-- Margin equals to half of border corner radius: -->
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Min boundary -->
+                                    <Label Grid.Row="0"
+                                           Grid.Column="0"
+                                           HorizontalAlignment="Right"
+                                           Content="New min boundary value:"
+                                           Target="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue}" />
+                                    <DatePicker x:Name="SimpleDateTimeRangeSliderMinBoundaryValue"
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                            DisplayDate="{Binding Source={x:Static s:DateTime.MinValue}, Mode=OneTime}"
+                                            DisplayDateStart="{Binding Source={x:Static s:DateTime.MinValue}, Mode=OneTime}"
+                                            DisplayDateEnd="{Binding Source={x:Static s:DateTime.MaxValue}, Mode=OneTime}"
+                                            SelectedDate="{Binding Source={x:Static s:DateTime.MinValue}, Mode=OneTime}"
+                                            MinWidth="200"
+                                            SelectedDateFormat="Long"/>
+                                    <Slider Grid.Row="0"
+                                                Grid.Column="2"
+                                            Margin="5,0"
+                                                SmallChange="{Binding Source={x:Static s:TimeSpan.TicksPerDay}, Mode=OneTime}"
+                                                LargeChange="{Binding Source={x:Static s:TimeSpan.TicksPerDay}, Mode=OneTime}"
+                                                Minimum="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=DisplayDateStart, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"
+                                                Maximum="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=DisplayDateEnd, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"
+                                                Value="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=SelectedDate, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=TwoWay}">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="ValueChanged">
+                                                <!-- Adjust max boundary value manually,
+                                                     because we cant limit DatePicker.SelectedDate by binding DisplayDateStart to anything:
+                                                     user always can type any date beyond DisplayDate... range
+                                                -->
+                                                <behaviors:Interaction.Behaviors>
+                                                    <behaviors:ConditionBehavior>
+                                                        <behaviors:ConditionalExpression>
+                                                            <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue, Path=SelectedDate}"
+                                                Operator="LessThan"
+                                                RightOperand="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=SelectedDate}" />
+                                                        </behaviors:ConditionalExpression>
+                                                    </behaviors:ConditionBehavior>
+                                                </behaviors:Interaction.Behaviors>
+
+                                                <behaviors:ChangePropertyAction
+                                                    TargetObject="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue}"
+                                                    PropertyName="SelectedDate"
+                                                    Value="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=SelectedDate}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Slider>
+
+                                    <!-- Max boundary -->
+                                    <Label Grid.Row="1"
+                                           Grid.Column="0"
+                                           HorizontalAlignment="Right"
+                                           Content="New max boundary value:"
+                                           Target="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue}" />
+                                    <DatePicker x:Name="SimpleDateTimeRangeSliderMaxBoundaryValue"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                            DisplayDate="{Binding Source={x:Static s:DateTime.MaxValue}, Mode=OneTime}"
+                                            DisplayDateStart="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=SelectedDate, Mode=OneWay}"
+                                            DisplayDateEnd="{Binding Source={x:Static s:DateTime.MaxValue}, Mode=OneTime}"
+                                            SelectedDate="{Binding Source={x:Static s:DateTime.MaxValue}, Mode=OneTime}"
+                                            MinWidth="200"
+                                            SelectedDateFormat="Long" />
+                                    <Slider Grid.Row="1"
+                                                Grid.Column="2"
+                                            Margin="5,0"
+                                                SmallChange="{Binding Source={x:Static s:TimeSpan.TicksPerDay}, Mode=OneTime}"
+                                                LargeChange="{Binding Source={x:Static s:TimeSpan.TicksPerDay}, Mode=OneTime}"
+                                                Minimum="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue, Path=DisplayDateStart, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"
+                                                Maximum="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue, Path=DisplayDateEnd, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"
+                                                Value="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue, Path=SelectedDate, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=TwoWay}" />
+
+                                    <!-- Propagation -->
+                                    <StackPanel Grid.Row="2"
+                                                Grid.ColumnSpan="3"
+                                                Orientation="Horizontal">
+                                        <Button Content="Set boundaries">
+                                            <!-- TODO check that min boundary <= max boundary-->
+                                            <behaviors:Interaction.Triggers>
+                                                <behaviors:EventTrigger EventName="Click">
+                                                    <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleDateTimeRangeSliderMinimum}"
+                        PropertyName="Minimum"
+                            Value="{Binding ElementName=SimpleDateTimeRangeSliderMinBoundaryValue, Path=SelectedDate, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"/>
+                                                    <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleDateTimeRangeSliderMinimum}"
+                        PropertyName="Maximum"
+                            Value="{Binding ElementName=SimpleDateTimeRangeSliderMaxBoundaryValue, Path=SelectedDate, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=OneWay}"/>
+                                                </behaviors:EventTrigger>
+                                            </behaviors:Interaction.Triggers>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Expander>
+                        </Border>
+
+                        <!-- Minimum, Maximum-->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Minimum [" Margin="3,0,0,0"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinimum, Path=Minimum, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}" />
+                                    <TextBlock Text=".."/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinimum, Path=Maximum, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}" />
+                                    <TextBlock Text="]:"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinimum, Path=Value, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}"
+                                               FontWeight="Bold"
+                                               Margin="3,0"/>
+                                </StackPanel>
+                                <Slider
+                                x:Name="SimpleDateTimeRangeSliderMinimum"
+                                Minimum="0"
+                                    Maximum="{Binding Source={x:Static s:DateTime.MaxValue}, Path=Ticks}"
+                                        Value="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Minimum, Mode=TwoWay, Converter={StaticResource NullableDateTimeToDoubleConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Maximum [" Margin="3,0,0,0"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMaximum, Path=Minimum, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}" />
+                                    <TextBlock Text=".."/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMaximum, Path=Maximum, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}" />
+                                    <TextBlock Text="]:"/>
+                                    <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMaximum, Path=Value, Converter={StaticResource DoubleToDateTimeStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}"
+                                               FontWeight="Bold"
+                                               Margin="3,0"/>
+                                </StackPanel>
+                                <Slider
+                                    x:Name="SimpleDateTimeRangeSliderMaximum"
+                                    Minimum="{Binding ElementName=SimpleDateTimeRangeSliderMinimum, Path=Minimum}"
+                                        Maximum="{Binding ElementName=SimpleDateTimeRangeSliderMinimum, Path=Maximum}"
+                                    Value="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Maximum, Mode=TwoWay, Converter={StaticResource NullableDateTimeToDoubleConverter}}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- MinRangeValue -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Min range value [" Margin="3,0,0,0"/>
+                            <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinRangeValue, Path=Minimum, Converter={StaticResource DoubleToTimeSpanStringConverter}, ConverterParameter='d\\.hh\\:mm\\:ss'}" />
+                            <TextBlock Text=".."/>
+                            <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinRangeValue, Path=Maximum, Converter={StaticResource DoubleToTimeSpanStringConverter}, ConverterParameter='d\\.hh\\:mm\\:ss'}" />
+                            <TextBlock Text="]:"/>
+                            <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSliderMinRangeValue, Path=Value, Converter={StaticResource DoubleToTimeSpanStringConverter}, ConverterParameter='d\\.hh\\:mm\\:ss'}"
+                                       FontWeight="Bold"
+                                       Margin="3,0"/>
+
+                            <TextBlock Text="Current range value:"
+                                       Margin="3,0"/>
+                            <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSlider, Path=RangeValue, Converter={StaticResource NullableTimeSpanToStringConverter}, ConverterParameter='d\\.hh\\:mm\\:ss'}"
+                                       FontWeight="Bold"
+                                       Margin="3,0"/>
+                        </StackPanel>
+                        <Slider
+                            x:Name="SimpleDateTimeRangeSliderMinRangeValue"
+                            Minimum="{Binding Source={x:Static s:TimeSpan.Zero}, Path=Ticks}"
+                                Maximum="{Binding Source={x:Static s:TimeSpan.MaxValue}, Path=Ticks}"
+                            Value="{Binding ElementName=SimpleDateTimeRangeSlider, Path=MinRangeValue, Mode=TwoWay, Converter={StaticResource NullableTimeSpanToDoubleConverter}}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Commands -->
+                <Grid Grid.Row="2">
+                    <Border Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Commands">
+                            <StackPanel Orientation="Vertical">
+
+                                <!-- Change values -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="SmallChange (in days):" Target="{Binding ElementName=SimpleDateTimeRangeSliderSmallChange}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleDateTimeRangeSliderSmallChange"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="1"/>
+
+                                    <Label Content="LargeChange (in days):" Target="{Binding ElementName=SimpleDateTimeRangeSliderLargeChange}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleDateTimeRangeSliderLargeChange"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="365"/>
+                                </StackPanel>
+
+                                <!-- Small changes -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Range Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseRangeSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- Start Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseStartSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- End Small"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseEndSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+
+                                    <Button Content="Range Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseRangeSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="Start Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseStartSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="End Small -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseEndSmall}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                </StackPanel>
+
+                                <!-- Large changes -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Range Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseRangeLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- Start Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseStartLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- End Large"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.DecreaseEndLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+
+                                    <Button Content="Range Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseRangeLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="Start Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseStartLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="End Large -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.IncreaseEndLarge}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                </StackPanel>
+
+                                <!-- Maximize/Minimize -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt;- Minimize Range"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MinimizeRangeValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- Minimize Start"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MinimizeStartValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="&lt;- Minimize End"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MinimizeEndValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+
+                                    <Button Content="Maximize Range -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MaximizeRangeValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="Maximize Start -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MaximizeStartValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                    <Button Content="Maximize End -&gt;"
+                                    Style="{StaticResource SliderCommandButtonStyle}"
+                                    Command="{x:Static saneDev:SimpleDateTimeRangeSlider.MaximizeEndValue}"
+                                    CommandTarget="{Binding ElementName=SimpleDateTimeRangeSlider}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+                </Grid>
+
+                <!-- Properties -->
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- StartValue -->
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="Start Value:" Margin="3,0"/>
+                                <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSlider, Path=StartValue, Converter={StaticResource NullableDateTimeToStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}"
+                                           Margin="3,0"/>
+                            </StackPanel>
+                            <Slider Minimum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Minimum, Converter={StaticResource NullableDateTimeToDoubleConverter}}"
+                                        Maximum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Maximum, Converter={StaticResource NullableDateTimeToDoubleConverter}}"
+                                        Value="{Binding ElementName=SimpleDateTimeRangeSlider, Path=StartValue, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=TwoWay}"/>
+                        </StackPanel>
+
+                        <!-- EndValue -->
+                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="End Value:" Margin="3,0"/>
+                                <TextBlock Text="{Binding ElementName=SimpleDateTimeRangeSlider, Path=EndValue, Converter={StaticResource NullableDateTimeToStringConverter}, ConverterParameter='dd-MM-yyyy HH:mm:ss'}"
+                                           Margin="3,0"/>
+                            </StackPanel>
+                            <Slider Minimum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Minimum, Converter={StaticResource NullableDateTimeToDoubleConverter}}"
+                                        Maximum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Maximum, Converter={StaticResource NullableDateTimeToDoubleConverter}}"
+                                        Value="{Binding ElementName=SimpleDateTimeRangeSlider, Path=EndValue, Converter={StaticResource NullableDateTimeToDoubleConverter}, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1" Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Properties">
+                            <StackPanel Orientation="Vertical">
+                                <!-- Ticks -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <Label Content="TickPlacement:" Target="{Binding ElementName=SimpleDateTimeRangeSliderTickPlacement}" />
+                                    <ComboBox
+                                    x:Name="SimpleDateTimeRangeSliderTickPlacement"
+                                    ItemsSource="{StaticResource TickPlacementArray}">
+                                        <ComboBox.SelectedItem>
+                                            <TickPlacement>BottomRight</TickPlacement>
+                                        </ComboBox.SelectedItem>
+                                    </ComboBox>
+
+                                    <Label Content="TickFrequency (in days):" Target="{Binding ElementName=SimpleDateTimeRangeSliderTickFrequency}" />
+                                    <xctk:IntegerUpDown
+                                    x:Name="SimpleDateTimeRangeSliderTickFrequency"
+                                    Minimum="0"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="365"/>
+
+                                    <CheckBox Content="IsSnapToTickEnabled"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsSnapToTickEnabled}"/>
+
+                                    <CheckBox Content="Irregular ticks"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      x:Name="SimpleDateTimeRangeSliderIrregularTicks"/>
+
+                                    <Label Content="TickLabelConverterParameter:" Target="{Binding ElementName=SimpleDateTimeRangeSliderTickLabelNumericFormat}" />
+                                    <TextBox
+                                        x:Name="SimpleDateTimeRangeSliderTickLabelNumericFormat"
+                                        MinWidth="100"/>
+
+                                </StackPanel>
+
+                                <!-- Range -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <CheckBox Content="IsDragRangeEnabled"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsDragRangeEnabled, Mode=TwoWay}"/>
+                                    <CheckBox Content="IsSingleValue"
+                                          Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsSingleValue, Mode=TwoWay}"/>
+                                </StackPanel>
+
+                                <!-- Tooltips -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <Label Content="AutoToolTipPlacement:" Target="{Binding ElementName=SimpleDateTimeRangeSliderAutoToolTipPlacement}" />
+                                    <ComboBox
+                                    x:Name="SimpleDateTimeRangeSliderAutoToolTipPlacement"
+                                    ItemsSource="{StaticResource AutoToolTipPlacementArray}">
+                                        <ComboBox.SelectedItem>
+                                            <AutoToolTipPlacement>BottomRight</AutoToolTipPlacement>
+                                        </ComboBox.SelectedItem>
+                                    </ComboBox>
+
+                                    <Label Content="AutoToolTipFormat:" Target="{Binding ElementName=SimpleDateTimeRangeSliderAutoToolTipFormat}" />
+                                    <TextBox
+                                        x:Name="SimpleDateTimeRangeSliderAutoToolTipFormat"
+                                        MinWidth="100"
+                                        Text="{Binding Source={x:Static saneDev:SimpleDateTimeRangeSlider.DefaultAutoToolTipFormat}, Mode=OneTime}"/>
+                                    <Button
+                                    Content="Set AutoToolTipFormat"
+                                    Margin="10,0">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=SimpleDateTimeRangeSlider}"
+                        PropertyName="AutoToolTipFormat"
+                            Value="{Binding ElementName=SimpleDateTimeRangeSliderAutoToolTipFormat, Path=Text}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+                </Grid>
+
+                <!-- Horizontal slider -->
+                <Grid Grid.Row="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+                        <Separator/>
+                        <TextBlock Text="DateTime Range Slider:"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,10">
+                        <saneDev:SimpleDateTimeRangeSlider
+                            x:Name="SimpleDateTimeRangeSlider"
+                            
+                                Minimum="2000-1-1"
+                                Maximum="2020-1-1"
+                            
+                                StartValue="2003-1-1"
+                                EndValue="2010-1-1"
+                            
+                            SmallChange="{Binding ElementName=SimpleDateTimeRangeSliderSmallChange, Path=Value, Converter={StaticResource NullableInt64ToTimeSpanConverter}}"
+                            LargeChange="{Binding ElementName=SimpleDateTimeRangeSliderLargeChange, Path=Value, Converter={StaticResource NullableInt64ToTimeSpanConverter}}"
+                            
+                            TickPlacement="{Binding ElementName=SimpleDateTimeRangeSliderTickPlacement, Path=SelectedItem}"
+                            TickFrequency="{Binding ElementName=SimpleDateTimeRangeSliderTickFrequency, Path=Value, Converter={StaticResource NullableInt64ToTimeSpanConverter}}"
+                            TickLabelConverterParameter="{Binding ElementName=SimpleDateTimeRangeSliderTickLabelNumericFormat, Path=Text, Mode=OneWay}"
+                            
+                            AutoToolTipPlacement="{Binding ElementName=SimpleDateTimeRangeSliderAutoToolTipPlacement, Path=SelectedItem}"
+                            >
+                            <saneDev:SimpleDateTimeRangeSlider.Style>
+                                <Style TargetType="saneDev:SimpleDateTimeRangeSlider">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=SimpleDateTimeRangeSliderIrregularTicks, Path=IsChecked}" Value="True">
+                                            <Setter Property="Ticks" Value="1-1-2000 1:0:0, 1-1-2001 1:0:0, 1-1-2002 1:0:0, 1-06-2003 1:0:0, 1-1-2004 1:0:0, 1-1-2008 1:0:0, 1-1-2009 1:0:0, 1-1-2010 1:0:0" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </saneDev:SimpleDateTimeRangeSlider.Style>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger EventName="StartValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleStartValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDateTimeProperyValueChanged"
+                                        Parameter="StartValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="EndValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleEndValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDateTimeProperyValueChanged"
+                                        Parameter="EndValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="RangeValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleRangeValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnTimeSpanProperyValueChanged"
+                                        Parameter="RangeValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="ValueChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleValueChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDateTimeRangeDragCompleted"
+                                        Parameter="ValueChanged"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="RangeDragCompleted">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleRangeDragCompleted, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDateTimeRangeDragCompleted"
+                                        Parameter="RangeDragCompleted"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="IsRangeDraggingChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=SimpleDateTimeRangeSliderHandleIsRangeDraggingChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnBoolProperyValueChanged"
+                                        Parameter="IsRangeDraggingChanged"
+                                        Parameter2="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"/>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </saneDev:SimpleDateTimeRangeSlider>
+                    </Grid>
+
+                </Grid>
+
+                <!-- Bottom -->
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Vertical slider -->
+                    <Grid Grid.Column="0">
+                        <saneDev:SimpleDateTimeRangeSlider
+                                Orientation="Vertical"
+                            Margin="10,0"
+                                Minimum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Minimum}"
+                                Maximum="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Maximum}"
+                                MinRangeValue="{Binding ElementName=SimpleDateTimeRangeSlider, Path=MinRangeValue}"
+                                StartValue="{Binding ElementName=SimpleDateTimeRangeSlider, Path=StartValue}"
+                                EndValue="{Binding ElementName=SimpleDateTimeRangeSlider, Path=EndValue}"
+                                SmallChange="{Binding ElementName=SimpleDateTimeRangeSlider, Path=SmallChange}"
+                                LargeChange="{Binding ElementName=SimpleDateTimeRangeSlider, Path=LargeChange}"
+                                IsSnapToTickEnabled="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsSnapToTickEnabled}"
+                                IsDragRangeEnabled="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsDragRangeEnabled}"
+                                IsRaiseValueChangedWhileDragging="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsRaiseValueChangedWhileDragging}"
+                                IsSingleValue="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsSingleValue}"
+                            
+                            TickLabelNumericFormat="{Binding ElementName=SimpleDateTimeRangeSlider, Path=TickLabelNumericFormat}"
+                            TickLabelConverter="{Binding ElementName=SimpleDateTimeRangeSlider, Path=TickLabelConverter}"
+                            TickLabelConverterParameter="{Binding ElementName=SimpleDateTimeRangeSlider, Path=TickLabelConverterParameter}"
+                            
+                                TickPlacement="{Binding ElementName=SimpleDateTimeRangeSlider, Path=TickPlacement}"
+                                TickFrequency="{Binding ElementName=SimpleDateTimeRangeSlider, Path=TickFrequency}"
+                                Ticks="{Binding ElementName=SimpleDateTimeRangeSlider, Path=Ticks}"
+                            AutoToolTipFormat="{Binding ElementName=SimpleDateTimeRangeSlider, Path=AutoToolTipFormat}"
+                            AutoToolTipPlacement="{Binding ElementName=SimpleDateTimeRangeSlider, Path=AutoToolTipPlacement}"/>
+                    </Grid>
+
+                    <!-- Events logging -->
+                    <Grid Grid.Column="1">
+                        <Expander Header="Events log" IsExpanded="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <CheckBox Content="Handle IsRangeDraggingChanged"
+                                  x:Name="SimpleDateTimeRangeSliderHandleIsRangeDraggingChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <CheckBox Content="Handle RangeDragCompleted"
+                                  x:Name="SimpleDateTimeRangeSliderHandleRangeDragCompleted"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Handle ValueChanged"
+                                      x:Name="SimpleDateTimeRangeSliderHandleValueChanged"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="False"/>
+                                        <CheckBox Content="IsRaiseValueChangedWhileDragging"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                          IsChecked="{Binding ElementName=SimpleDateTimeRangeSlider, Path=IsRaiseValueChangedWhileDragging}"
+                                          Margin="50, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                    <CheckBox Content="Handle StartValueChanged"
+                                  x:Name="SimpleDateTimeRangeSliderHandleStartValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle EndValueChanged"
+                                  x:Name="SimpleDateTimeRangeSliderHandleEndValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle RangeValueChanged"
+                                  x:Name="SimpleDateTimeRangeSliderHandleRangeValueChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <Button Content="Clear log">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:CallMethodAction
+                                    TargetObject="{Binding ElementName=SimpleDateTimeRangeSliderTxtLog}"
+                                    MethodName="Clear"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                                <TextBox  Grid.Row="2" x:Name="SimpleDateTimeRangeSliderTxtLog" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
+                            </Grid>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="ZoomBar">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Description -->
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for ZoomBar, vertical and horizontal.
+                            </Paragraph>
+                            <Paragraph>
+                                You can change any property of zoombar, invoke any command, handle any event, etc.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <!-- Limitations -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Min selection range:" Margin="3,0"/>
+                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=MinSelectionRange, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                        </StackPanel>
+                        <!-- Set Maximum to 1000 because we know, that now ZoomBar.Maximum always equals to 100 -->
+                        <Slider Minimum="0"
+                                Maximum="1000"
+                                Value="{Binding ElementName=ZoomBarSample, Path=MinSelectionRange, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Commands -->
+                <Grid Grid.Row="2">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Shift value:" Target="{Binding ElementName=ZoomBarShiftValue}" />
+                        <xctk:IntegerUpDown
+                                    x:Name="ZoomBarShiftValue"
+                                    Minimum="1"
+                                    MinWidth="100"
+                                    Margin="0,0,5,0"
+                                    Value="1"/>
+
+                        <!-- Shift left using saneDev:ZoomBar.ShiftValue -->
+                        <Button Content="&lt;- shift left"
+                                    Margin="3,0"
+                                    Command="{x:Static saneDev:ZoomBar.ShiftLeftCommand}"
+                                    CommandTarget="{Binding ElementName=ZoomBarSample}"/>
+
+                        <!-- Shift right using CommandParameter -->
+                        <Button Content="shift right -&gt;"
+                                    Margin="3,0"
+                                    Command="{x:Static saneDev:ZoomBar.ShiftRightCommand}"
+                                    CommandTarget="{Binding ElementName=ZoomBarSample}"
+                                    CommandParameter="{Binding ElementName=ZoomBarShiftValue, Path=Value}"/>
+                    </StackPanel>
+
+                </Grid>
+
+                <!-- Properties -->
+                <Grid Grid.Row="3" Margin="0,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Properties">
+                            <!-- Margin equals to half of border corner radius: -->
+                            <StackPanel Orientation="Vertical" Margin="5">
+
+                                <!-- ThumbSize -->
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Thumbs size:" Margin="3,0"/>
+                                    <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=ThumbSize, StringFormat=\{0:F4\}}"
+                                               Margin="3,0"/>
+                                </StackPanel>
+                                <!-- Maximum = 1000 only for the sake of reasonableness. In fact it can have any positive double value. -->
+                                <Slider Minimum="0"
+                                        Maximum="1000"
+                                        Value="{Binding ElementName=ZoomBarSample, Path=ThumbSize, Mode=TwoWay}"/>
+
+                                <!-- Tooltips -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <Label Content="AutoToolTipPlacement:" Target="{Binding ElementName=ZoomBarAutoToolTipPlacement}" />
+                                    <ComboBox x:Name="ZoomBarAutoToolTipPlacement"
+                                              ItemsSource="{StaticResource AutoToolTipPlacementArray}">
+                                        <ComboBox.SelectedItem>
+                                            <AutoToolTipPlacement>BottomRight</AutoToolTipPlacement>
+                                        </ComboBox.SelectedItem>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Colors -->
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- NotSelectedBackground -->
+                                    <Label Grid.Column="0" Grid.Row="0"
+                                           HorizontalAlignment="Right"
+                                           Content="NotSelectedBackground:"
+                                           Target="{Binding ElementName=ZoomBarNotSelectedBackgroundColorPicker}" />
+                                    <xctk:ColorPicker Grid.Column="1" Grid.Row="0"
+                                                      x:Name="ZoomBarNotSelectedBackgroundColorPicker"
+                                                      MinWidth="100"
+                                                      SelectedColor="{Binding ElementName=ZoomBarSample, Path=NotSelectedBackground, Converter={StaticResource SolidColorBrushToColorConverter}, Mode=TwoWay}"
+                                                      DisplayColorAndName="True"/>
+
+                                    <!-- NotSelectedOpacity -->
+                                    <StackPanel Grid.Column="2" Grid.Row="0"
+                                                Margin="5,0"
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right">
+                                        <TextBlock Text="NotSelectedOpacity: " />
+                                        <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=NotSelectedOpacity, StringFormat=F4, Mode=OneWay}" />
+                                    </StackPanel>
+                                    <Slider Grid.Column="3" Grid.Row="0"
+                                            Minimum="0"
+                                        Maximum="1"
+                                            MinWidth="200"
+                                            SmallChange="0.01"
+                                            LargeChange="0.1"
+                                        Value="{Binding ElementName=ZoomBarSample, Path=NotSelectedOpacity, Mode=TwoWay}"/>
+
+                                    <!-- SelectionBorderBackground -->
+                                    <Label Grid.Column="0" Grid.Row="1"
+                                           Content="SelectionBorderBackground:"
+                                           Target="{Binding ElementName=ZoomBarSelectionBorderBackgroundColorPicker}" />
+                                    <xctk:ColorPicker Grid.Column="1" Grid.Row="1"
+                                                      x:Name="ZoomBarSelectionBorderBackgroundColorPicker"
+                                                      MinWidth="100"
+                                                      SelectedColor="{Binding ElementName=ZoomBarSample, Path=SelectionBorderBackground, Converter={StaticResource SolidColorBrushToColorConverter}, Mode=TwoWay}"
+                                                      DisplayColorAndName="True"/>
+
+                                    <!-- SelectionBorderOpacity -->
+                                    <StackPanel Grid.Column="2" Grid.Row="1"
+                                                Margin="5,0"
+                                                Orientation="Horizontal">
+                                        <TextBlock Text="SelectionBorderOpacity: " />
+                                        <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=SelectionBorderOpacity, StringFormat=F4, Mode=OneWay}" />
+                                    </StackPanel>
+                                    <Slider Grid.Column="3" Grid.Row="1"
+                                            Minimum="0"
+                                        Maximum="1"
+                                            MinWidth="200"
+                                            SmallChange="0.01"
+                                            LargeChange="0.1"
+                                        Value="{Binding ElementName=ZoomBarSample, Path=SelectionBorderOpacity, Mode=TwoWay}"/>
+
+                                    <!-- SelectionBorderThickness -->
+                                    <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4"
+                                                Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="SelectionBorderThickness: " />
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=SelectionBorderThickness, StringFormat=F4, Mode=OneWay}" />
+                                        </StackPanel>
+                                        <!-- Maximum of selection border is not limited by 1000, but we restrict it here for the sake of reasonableness -->
+                                        <Slider Minimum="0"
+                                        Maximum="1000"
+                                        Value="{Binding ElementName=ZoomBarSample, Path=SelectionBorderThickness, Mode=TwoWay}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+
+                    <Border Grid.Row="1" Style="{StaticResource ExpanderBorderStyle}">
+                        <Expander Header="Current values">
+                            <!-- Margin equals to half of border corner radius: -->
+                            <Grid Margin="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                
+                                <!-- Current values -->
+                                <Grid Grid.Row="0">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Minimum:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=Minimum, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                            <TextBlock Text="SelectionRange:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=SelectionRange, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                            <TextBlock Text="Maximum:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=Maximum, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Left content indent:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=LeftContentIndent, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                            <TextBlock Text="Content width:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarContent, Path=ActualWidth, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                            <TextBlock Text="Right content indent:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=RightContentIndent, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="IsSelectionDragging:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=IsSelectionDragging}" Margin="3,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- SelectionStart & SelectionEnd -->
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Vertical">
+
+                                        <!-- SelectionStart -->
+                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                            <TextBlock Text="Selection start:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=SelectionStart, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                        </StackPanel>
+                                        <Border BorderThickness="1" BorderBrush="Black">
+                                            <Slider Minimum="{Binding ElementName=ZoomBarSample, Path=Minimum}"
+                                    Maximum="{Binding ElementName=ZoomBarSample, Path=Maximum}"
+                                    Value="{Binding ElementName=ZoomBarSample, Path=SelectionStart, Mode=TwoWay}" />
+                                            <Border.Margin>
+                                                <MultiBinding Converter="{StaticResource ThicknessConverter}">
+                                                    <Binding ElementName="ZoomBarSample" Path="LeftContentIndent"/>
+                                                    <Binding Source="{StaticResource Zero}" />
+                                                    <Binding ElementName="ZoomBarSample" Path="RightContentIndent"/>
+                                                    <Binding Source="{StaticResource Zero}" />
+                                                </MultiBinding>
+                                            </Border.Margin>
+                                        </Border>
+
+                                        <!-- SelectionEnd -->
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Selection end:" Margin="3,0"/>
+                                            <TextBlock Text="{Binding ElementName=ZoomBarSample, Path=SelectionEnd, StringFormat=\{0:F4\}}" Margin="3,0"/>
+                                        </StackPanel>
+                                        <Border BorderThickness="1" BorderBrush="Black">
+                                            <Slider Minimum="{Binding ElementName=ZoomBarSample, Path=Minimum}"
+                                    Maximum="{Binding ElementName=ZoomBarSample, Path=Maximum}"
+                                    Value="{Binding ElementName=ZoomBarSample, Path=SelectionEnd, Mode=TwoWay}" />
+                                            <Border.Margin>
+                                                <MultiBinding Converter="{StaticResource ThicknessConverter}">
+                                                    <Binding ElementName="ZoomBarSample" Path="LeftContentIndent"/>
+                                                    <Binding Source="{StaticResource Zero}" />
+                                                    <Binding ElementName="ZoomBarSample" Path="RightContentIndent"/>
+                                                    <Binding Source="{StaticResource Zero}" />
+                                                </MultiBinding>
+                                            </Border.Margin>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Expander>
+                    </Border>
+                </Grid>
+
+                <!-- Horizontal ZoomBar -->
+                <Grid Grid.Row="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+                        <Separator/>
+                        <TextBlock Text="ZoomBar:"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,10" MinHeight="100">
+                        <saneDev:ZoomBar x:Name="ZoomBarSample"
+                                         SelectionStart="10"
+                                         SelectionEnd="100"
+                                         
+                                         ShiftValue="{Binding ElementName=ZoomBarShiftValue, Path=Value}"
+                                         
+                                         AutoToolTipValueConverter="{StaticResource DoubleRangeValueToStringConverter}"
+                                         AutoToolTipValueConverterParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                         AutoToolTipPlacement="{Binding ElementName=ZoomBarAutoToolTipPlacement, Path=SelectedItem}">
+                            <Grid x:Name="ZoomBarContent" Background="{StaticResource GridBrush}" Margin="0,5,0,5">
+                                <Button Margin="10">Some content</Button>
+                            </Grid>
+                            <behaviors:Interaction.Triggers>
+                                <behaviors:EventTrigger EventName="SelectionStartChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleSelectionStartChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="SelectionStartChanged"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="SelectionEndChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleSelectionEndChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="SelectionEndChanged"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="SelectionRangeChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleSelectionRangeChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnDoubleProperyValueChanged"
+                                        Parameter="SelectionRangeChanged"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="SelectionChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleSelectionChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnSelectionDragCompleted"
+                                        Parameter="SelectionChanged"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="SelectionDragCompleted">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleSelectionDragCompleted, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnSelectionDragCompleted"
+                                        Parameter="SelectionDragCompleted"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                                <behaviors:EventTrigger EventName="IsSelectionDraggingChanged">
+                                    <behaviors:Interaction.Behaviors>
+                                        <behaviors:ConditionBehavior>
+                                            <behaviors:ConditionalExpression>
+                                                <behaviors:ComparisonCondition
+                                                LeftOperand="{Binding ElementName=ZoomBarHandleIsSelectionDraggingChanged, Path=IsChecked}"
+                                                Operator="Equal"
+                                                RightOperand="True" />
+                                            </behaviors:ConditionalExpression>
+                                        </behaviors:ConditionBehavior>
+                                    </behaviors:Interaction.Behaviors>
+
+                                    <saneDev:ParameterizedCallMethodAction
+                                        TargetObject="{StaticResource SamplesEventManager}"
+                                        MethodName="OnBoolProperyValueChanged"
+                                        Parameter="IsSelectionDraggingChanged"
+                                        Parameter2="{Binding ElementName=ZoomBarTxtLog}"/>
+                                </behaviors:EventTrigger>
+                            </behaviors:Interaction.Triggers>
+                        </saneDev:ZoomBar>
+                    </Grid>
+
+                </Grid>
+
+                <!-- Bottom -->
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Vertical ZoomBar -->
+                    <Grid Grid.Column="0">
+                        <saneDev:ZoomBar
+                            Orientation="Vertical"
+                            Margin="10,0"
+                            
+                            ThumbSize="{Binding ElementName=ZoomBarSample, Path=ThumbSize, Mode=OneWay}"
+
+                            IsRaiseSelectionChangedWhileDragging="{Binding ElementName=ZoomBarSample, Path=IsRaiseSelectionChangedWhileDragging}"
+                                ShiftValue="{Binding ElementName=ZoomBarSample, Path=ShiftValue, Mode=OneWay}"
+                                SelectionStart="{Binding ElementName=ZoomBarSample, Path=SelectionStart}"
+                                SelectionEnd="{Binding ElementName=ZoomBarSample, Path=SelectionEnd}"
+                                MinSelectionRange="{Binding ElementName=ZoomBarSample, Path=MinSelectionRange}"
+                            
+                            NotSelectedBackground="{Binding ElementName=ZoomBarSample, Path=NotSelectedBackground}"
+                            NotSelectedOpacity="{Binding ElementName=ZoomBarSample, Path=NotSelectedOpacity}"
+                            SelectionBorderBackground="{Binding ElementName=ZoomBarSample, Path=SelectionBorderBackground}"
+                            SelectionBorderOpacity="{Binding ElementName=ZoomBarSample, Path=SelectionBorderOpacity}"
+                            SelectionBorderThickness="{Binding ElementName=ZoomBarSample, Path=SelectionBorderThickness}"
+                            
+                            AutoToolTipValueConverter="{Binding ElementName=ZoomBarSample, Path=AutoToolTipValueConverter}"
+                            AutoToolTipValueConverterParameter="{Binding ElementName=ZoomBarSample, Path=AutoToolTipValueConverterParameter}"
+                            AutoToolTipPlacement="{Binding ElementName=ZoomBarSample, Path=AutoToolTipPlacement}">
+                            <Grid Background="{StaticResource GridBrush}" Margin="5,0,5,0">
+                                <Button Margin="10" Content="Some content">
+                                    <Button.LayoutTransform>
+                                        <RotateTransform Angle="-90" />
+                                    </Button.LayoutTransform>
+                                </Button>
+                            </Grid>
+                        </saneDev:ZoomBar>
+                    </Grid>
+
+                    <!-- Events logging -->
+                    <Grid Grid.Column="1">
+                        <Expander Header="Events log" IsExpanded="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <CheckBox Content="Handle IsSelectionDraggingChanged"
+                                  x:Name="ZoomBarHandleIsSelectionDraggingChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <CheckBox Content="Handle SelectionDragCompleted"
+                                  x:Name="ZoomBarHandleSelectionDragCompleted"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Handle SelectionChanged"
+                                      x:Name="ZoomBarHandleSelectionChanged"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                      IsChecked="False"/>
+                                        <CheckBox Content="IsRaiseSelectionChangedWhileDragging"
+                                      Style="{StaticResource CheckBoxCommonStyle}"
+                                          IsChecked="{Binding ElementName=ZoomBarSample, Path=IsRaiseSelectionChangedWhileDragging}"
+                                          Margin="50, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                    <CheckBox Content="Handle SelectionStartChanged"
+                                  x:Name="ZoomBarHandleSelectionStartChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle SelectionEndChanged"
+                                  x:Name="ZoomBarHandleSelectionEndChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                    <CheckBox Content="Handle SelectionRangeChanged"
+                                  x:Name="ZoomBarHandleSelectionRangeChanged"
+                                  Style="{StaticResource CheckBoxCommonStyle}"
+                                  IsChecked="False"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <Button Content="Clear log">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <behaviors:CallMethodAction
+                                    TargetObject="{Binding ElementName=ZoomBarTxtLog}"
+                                    MethodName="Clear"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                                <TextBox  Grid.Row="2" x:Name="ZoomBarTxtLog" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
+                            </Grid>
+                        </Expander>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="DateTimeCollection">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Description -->
+                <Grid Grid.Row="0" Margin="0,10">
+                    <RichTextBox IsReadOnly="True">
+                        <FlowDocument Background="Ivory">
+                            <Paragraph>
+                                Here you can see examples for DateTimeCollection.
+                            </Paragraph>
+                            <Paragraph>
+                                You can add or remove items (dates) in collection by clicking a buttons ('Add' and 'Remove')
+                                and see how changes its text representation.
+                                Or you can type the text into a text box and convert it to collection by clicking a button 'Set'.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+
+                <!-- Buttons for manipulating over coleection -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Add 'Now' to list">
+                                <behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="Click">
+                                        <saneDev:ParameterizedCallMethodAction
+                                            TargetObject="{StaticResource SamplesEventManager}"
+                                            MethodName="AddNowToListBox"
+                                            Parameter="{Binding ElementName=DateTimeCollectionListBox}"/>
+                                    </behaviors:EventTrigger>
+                                </behaviors:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- UI view of collection -->
+                <Grid Grid.Row="2" Margin="0,5">
+                    <ListBox x:Name="DateTimeCollectionListBox"
+                         ItemsSource="{StaticResource InitialDateTimeCollection}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="s:DateTime">
+                                <StackPanel Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding ., StringFormat='dd MMM yyyy HH:mm:ss.ff'}"
+                                               VerticalAlignment="Center"/>
+                                    <Button Content="Remove"
+                                            VerticalAlignment="Center"
+                                            Margin="10,0,0,0">
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="Click">
+                                                <saneDev:ParameterizedCallMethodAction
+                                            TargetObject="{StaticResource SamplesEventManager}"
+                                            MethodName="RemoveItemsFromListBox"
+                                            Parameter="{Binding ElementName=DateTimeCollectionListBox}"
+                                                    Parameter2="{Binding .}"/>
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+                
+                <!-- Text views and manipulators of collection -->
+                <Grid Grid.Row="3">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="DateTimeCollection from above converted to string:"/>
+                        <TextBox Text="{Binding ElementName=DateTimeCollectionListBox, Path=ItemsSource, Mode=OneWay, Converter={StaticResource UniversalConverter}, TargetNullValue=NULL}"
+                                 IsReadOnly="True"/>
+
+                        <Separator Margin="0,15"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Enter DateTimeCollection as string here:"
+                                   Target="{Binding ElementName=DateTimeCollectionTextBox}"/>
+                            <TextBlock Text="(use "
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Source={x:Static saneDev:DateTimeCollectionConverter.DefaultFormatString}, Mode=OneTime}"
+                                       Background="Tan"
+                                       FontFamily="Courier New"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text=" as DateTime format string and "
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Source={x:Static saneDev:DateTimeCollectionConverter.StringItemsSeparator}, Mode=OneTime}"
+                                       Background="Tan"
+                                       FontFamily="Courier New"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text=" as items separator)"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBox x:Name="DateTimeCollectionTextBox"
+                                 Text="1-1-2000 0:0:0"
+                                 ToolTip="Type a text representation of DateTimeCollection here and press button below"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Set collection from string"
+                                    ToolTip="Convert text above to DateTimeCollection and set it to list view"
+                                    Margin="5">
+                                <behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="Click">
+                                        <behaviors:ChangePropertyAction
+                        TargetObject="{Binding ElementName=DateTimeCollectionListBox}"
+                        PropertyName="ItemsSource"
+                            Value="{Binding ElementName=DateTimeCollectionTextBox, Path=Text, Converter={StaticResource StringToDateTimeCollectionConverter}, Mode=OneWay}"/>
+                                    </behaviors:EventTrigger>
+                                </behaviors:Interaction.Triggers>
+                            </Button>
+
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

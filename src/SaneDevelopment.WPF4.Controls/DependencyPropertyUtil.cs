@@ -50,6 +50,22 @@ namespace SaneDevelopment.WPF4.Controls
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Util")]
     public static class DependencyPropertyUtil
     {
+        /// <summary>
+        /// Minimum value of the <c>AutoToolTipPrecision</c> property
+        /// </summary>
+        public static int MinimumAutoToolTipPrecision
+        {
+            get { return 0; }
+        }
+
+        /// <summary>
+        /// Maximum value of the <c>AutoToolTipPrecision</c> property
+        /// </summary>
+        public static int MaximumAutoToolTipPrecision
+        {
+            get { return 99; }
+        }
+
         internal static double ExtractDouble(object value, double defaultValue)
         {
             if (value == null || !(value is double))
@@ -219,7 +235,7 @@ namespace SaneDevelopment.WPF4.Controls
                 return false;
             }
             var intVal = (int) value;
-            return intVal >= 0 && intVal <= 99;
+            return intVal >= MinimumAutoToolTipPrecision && intVal <= MaximumAutoToolTipPrecision;
         }
 
         /// <summary>

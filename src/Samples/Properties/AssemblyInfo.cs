@@ -1,18 +1,18 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VisualTest1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("SaneDevelopment.WPF4.Controls Samples")]
+[assembly: AssemblyDescription("Sane Development WPF Controls Library Samples")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("VisualTest1")]
-[assembly: AssemblyCopyright("Copyright © Sane Development 2012-2019")]
+[assembly: AssemblyCompany("Sane Development")]
+[assembly: AssemblyProduct("Sane Development WPF Controls Library Samples")]
+[assembly: AssemblyCopyright("Copyright © Sane Development 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,6 +20,9 @@ using System.Windows;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+
+[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: CLSCompliant(true)]
 
 //In order to begin building localizable applications, set 
 //<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file
@@ -51,5 +54,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.3")]
-[assembly: AssemblyFileVersion("1.0.0.3")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

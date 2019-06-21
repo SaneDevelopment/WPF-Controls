@@ -42,9 +42,191 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace SaneDevelopment.WPF4.Controls
 {
+    #region Double converters
+
+    /// <summary>
+    /// Converter from <c>double</c> to <c>string</c> representation of <see cref="DateTime"/>,
+    /// where <c>double</c> value represents <see cref="System.DateTime.Ticks"/> value
+    /// </summary>
+    public class DoubleToDateTimeStringConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        /// <summary>
+        /// Converts <see cref="System.DateTime.Ticks"/> to <c>string</c> representation of <see cref="DateTime"/>
+        /// </summary>
+        /// <param name="value">Date time ticks</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Convertion parameter: date time format</param>
+        /// <param name="culture">Culture</param>
+        /// <returns>String representation of date, or <c>null</c>, if <paramref name="value"/> is not <c>double</c></returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return string.Empty;
+
+            string res = string.Empty;
+
+            var dbl = value as double?;
+            if (!dbl.HasValue)
+                return res;
+
+            var ticks = (long) dbl;
+            if (ticks < DateTime.MinValue.Ticks)
+                return res;
+            if (ticks > DateTime.MaxValue.Ticks + 1)
+                // allow minimum excess over DateTime.MaxValue.Ticks because of loss of accuracy while casting from double
+                return res;
+
+            if (ticks == DateTime.MaxValue.Ticks + 1)
+                ticks = DateTime.MaxValue.Ticks;
+
+            Contract.Assume(ticks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
+            var date = new DateTime(ticks);
+
+            res = parameter == null
+                      ? date.ToString(culture)
+                      : date.ToString(parameter.ToString(), culture);
+            
+            return res;
+        }
+
+        /// <summary>
+        /// Converts <c>string</c> to <see cref="DateTime.Ticks"/> as <c>double</c>
+        /// </summary>
+        /// <param name="value">Source string</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Convertion parameter (ignoring)</param>
+        /// <param name="culture">Culture</param>
+        /// <returns><see cref="DateTime"/>,
+        /// or <c>null</c>, if <paramref name="value"/> is empty (or whitespace),
+        /// or <see cref="DependencyProperty.UnsetValue"/>, if <paramref name="value"/> contains incorrect string</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+
+            string s = value.ToString();
+            if (string.IsNullOrWhiteSpace(s))
+                return null;
+
+            DateTime dt;
+            if (DateTime.TryParse(s, out dt))
+                return (double)dt.Ticks;
+
+            return DependencyProperty.UnsetValue;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Converter from <c>double</c> to <c>string</c> representation of <see cref="TimeSpan"/>,
+    /// where <c>double</c> value represents <see cref="System.TimeSpan.Ticks"/> value
+    /// </summary>
+    public class DoubleToTimeSpanStringConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        /// <summary>
+        /// Converts <see cref="System.TimeSpan.Ticks"/> to <c>string</c> representation of <see cref="TimeSpan"/>
+        /// </summary>
+        /// <param name="value">Time span ticks</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Convertion parameter: time span format</param>
+        /// <param name="culture">Culture</param>
+        /// <returns>String representation of time span, or <c>null</c>, if <paramref name="value"/> is not <c>double</c></returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
+            string res = string.Empty;
+
+            var dbl = value as double?;
+            if (!dbl.HasValue)
+            {
+                return res;
+            }
+
+            var ticks = (long)dbl.Value;
+
+            // (long)(double)(System.TimeSpan.MaxValue.Ticks) == System.TimeSpan.MinValue.Ticks,
+            // therefore we need to compare double values first
+            // to decrease risk of loss of accuracy while casting from double
+
+            if (DoubleUtil.AreClose(dbl.Value, TimeSpan.MaxValue.Ticks))
+            {
+                ticks = TimeSpan.MaxValue.Ticks;
+            }
+            else if (DoubleUtil.AreClose(dbl.Value, TimeSpan.MinValue.Ticks))
+            {
+                ticks = TimeSpan.MinValue.Ticks;
+            }
+            else
+            {
+                if (ticks < TimeSpan.MinValue.Ticks)
+                {
+                    return res;
+                }
+                if (ticks > TimeSpan.MaxValue.Ticks)
+                {
+                    return res;
+                }
+            }
+
+            var timeSpan = new TimeSpan(ticks);
+
+            res = parameter == null ?
+                timeSpan.ToString() :
+                timeSpan.ToString(parameter.ToString(), culture);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Converts <c>string</c> to <see cref="TimeSpan.Ticks"/> as <c>double</c>
+        /// </summary>
+        /// <param name="value">Source string</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Convertion parameter (ignoring)</param>
+        /// <param name="culture">Culture</param>
+        /// <returns><see cref="TimeSpan"/>,
+        /// or <c>null</c>, if <paramref name="value"/> is empty (or whitespace),
+        /// or <see cref="DependencyProperty.UnsetValue"/>, if <paramref name="value"/> contains incorrect string</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            string s = value.ToString();
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return null;
+            }
+
+            TimeSpan tm;
+            if (TimeSpan.TryParse(s, out tm))
+            {
+                return (double)tm.Ticks;
+            }
+
+            return DependencyProperty.UnsetValue;
+        }
+
+        #endregion
+    }
+
+    #endregion
+
     #region DateTime converters
 
     /// <summary>
@@ -189,9 +371,13 @@ namespace SaneDevelopment.WPF4.Controls
             var dbl = (double)value;
             var longTicks = (long) dbl;
 
-            if (longTicks > 0x2bca2875f4373fffL || longTicks <= 0)
-                return null;
+            if (longTicks < DateTime.MinValue.Ticks)
+                return DateTime.MinValue;
 
+            if (longTicks > DateTime.MaxValue.Ticks)
+                return DateTime.MaxValue;
+
+            Contract.Assume(longTicks >= 0 && longTicks <= 0x2bca2875f4373fffL); // code contracts cant recognize DateTime.MaxValue.Ticks and DateTime.MinValue.Ticks below
             return new DateTime(longTicks);
         }
 
@@ -349,6 +535,94 @@ namespace SaneDevelopment.WPF4.Controls
         #endregion
     }
 
+    /// <summary>
+    /// Converter from <c>long?</c> to <see cref="TimeSpan"/>
+    /// </summary>
+    public class NullableInt64ToTimeSpanConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        /// <summary>
+        /// Converts <c>long?</c> to <see cref="TimeSpan"/>
+        /// </summary>
+        /// <param name="value">Value to convert</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Conversion parameter: type of <paramref name="value"/>
+        /// "D" - days,
+        /// "H" - hours,
+        /// "M" - minutes,
+        /// "S" - seconds,
+        /// "MS" - milliseconds,
+        /// "T" - ticks
+        /// </param>
+        /// <param name="culture">Culture</param>
+        /// <returns><see cref="TimeSpan"/> or <see cref="DependencyProperty.UnsetValue"/>,
+        /// if <paramref name="value"/> has incorrect value</returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            var longValue = value as long?;
+            if (!longValue.HasValue)
+            {
+                var intValue = value as int?;
+                if (!intValue.HasValue)
+                {
+                    return DependencyProperty.UnsetValue;                    
+                }
+                longValue = intValue.Value;
+            }
+
+            string fromType = parameter == null ? "D" : parameter.ToString();
+
+            switch (fromType)
+            {
+                case "D":
+                    return TimeSpan.FromDays(longValue.Value);
+                case "H":
+                    return TimeSpan.FromHours(longValue.Value);
+                case "M":
+                    return TimeSpan.FromMinutes(longValue.Value);
+                case "S":
+                    return TimeSpan.FromSeconds(longValue.Value);
+                case "MS":
+                    return TimeSpan.FromMilliseconds(longValue.Value);
+                case "T":
+                    return TimeSpan.FromTicks(longValue.Value);
+            }
+            return DependencyProperty.UnsetValue;
+        }
+
+        /// <summary>
+        /// Converts <see cref="TimeSpan"/> to <c>long</c>
+        /// </summary>
+        /// <param name="value">Time span</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Conversion parameter (ignoring)</param>
+        /// <param name="culture">Culture</param>
+        /// <returns><see cref="TimeSpan.Ticks"/></returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            var ts = value as TimeSpan?;
+            if (!ts.HasValue)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            return ts.Value.Ticks;
+        }
+
+        #endregion
+    }
+
     #endregion
 
     /// <summary>
@@ -400,6 +674,66 @@ namespace SaneDevelopment.WPF4.Controls
 
             var thickness = (Thickness)value;
             return new object[] { thickness.Left, thickness.Top, thickness.Right, thickness.Bottom };
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Converts from <see cref="SolidColorBrush"/> to <see cref="Color"/>
+    /// </summary>
+    public class SolidColorBrushToColorConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        /// <summary>
+        /// Converts from <see cref="SolidColorBrush"/> to <see cref="Color"/>
+        /// </summary>
+        /// <param name="value">Value to convert</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Conversion parameter (ignoring)</param>
+        /// <param name="culture">Culture (ignoring)</param>
+        /// <returns><see cref="Color"/> or <see cref="DependencyProperty.UnsetValue"/>,
+        /// if <paramref name="value"/> has incorrect value</returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            var brush = value as SolidColorBrush;
+            if (brush == null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            return brush.Color;
+        }
+
+        /// <summary>
+        /// Converts <see cref="Color"/> to <see cref="SolidColorBrush"/>
+        /// </summary>
+        /// <remarks>This method every time constructs new <see cref="SolidColorBrush"/></remarks>
+        /// <param name="value">Color</param>
+        /// <param name="targetType">Target type (ignoring)</param>
+        /// <param name="parameter">Conversion parameter (ignoring)</param>
+        /// <param name="culture">Culture (ignoring)</param>
+        /// <returns><see cref="SolidColorBrush"/> or <see cref="DependencyProperty.UnsetValue"/></returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            var color = value as Color?;
+            if (!color.HasValue)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            return new SolidColorBrush(color.Value);
         }
 
         #endregion

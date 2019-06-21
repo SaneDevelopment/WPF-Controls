@@ -86,7 +86,10 @@ namespace SaneDevelopment.WPF4.Controls
         /// <returns>Коллекция дат</returns>
         public override object ConvertFromString(string value, IValueSerializerContext context)
         {
-            return DateTimeCollection.Parse(value);
+            return DateTimeCollectionConverter.ParseImpl(
+                value,
+                DateTimeCollectionConverter.DefaultFormatString,
+                DateTimeCollectionConverter.StringItemsSeparator);
         }
 
         /// <summary>
@@ -98,7 +101,16 @@ namespace SaneDevelopment.WPF4.Controls
         public override string ConvertToString(object value, IValueSerializerContext context)
         {
             var dates = value as DateTimeCollection;
-            return dates != null ? dates.ConvertToString(null, CultureInfo.InvariantCulture) : base.ConvertToString(value, context);
+            if (dates == null)
+            {
+                return base.ConvertToString(value, context);
+            }
+
+            return DateTimeCollectionConverter.ConvertToStringImpl(
+                dates,
+                DateTimeCollectionConverter.DefaultFormatString,
+                CultureInfo.InvariantCulture,
+                DateTimeCollectionConverter.StringItemsSeparator);
         }
     }
 
@@ -107,6 +119,17 @@ namespace SaneDevelopment.WPF4.Controls
     /// </summary>
     public sealed class DateTimeCollectionConverter : TypeConverter
     {
+        /// <summary>
+        /// Default format string while convert <see cref="DateTimeCollection"/> to <c>string</c>
+        /// </summary>
+        public const string DefaultFormatString = "d-M-yyyy H:m:s";
+
+        /// <summary>
+        /// Default items separator in string representation of <see cref="DateTimeCollection"/>
+        /// </summary>
+        public const char StringItemsSeparator = ',';
+
+
         /// <summary>
         /// Функция проверяет возможность получения коллекции дат из строки
         /// </summary>
@@ -145,7 +168,7 @@ namespace SaneDevelopment.WPF4.Controls
             var source = value as string;
             if (source != null)
             {
-                return DateTimeCollection.Parse(source);
+                return ParseImpl(source, DefaultFormatString, StringItemsSeparator);
             }
             return base.ConvertFrom(context, culture, value);
         }
@@ -163,9 +186,61 @@ namespace SaneDevelopment.WPF4.Controls
             var dates = value as DateTimeCollection;
             if ((dates != null) && destinationType == typeof(string))
             {
-                return dates.ConvertToString(null, culture);
+                return ConvertToStringImpl(dates, DefaultFormatString, culture, StringItemsSeparator);
             }
             return base.ConvertTo(context, culture, value, destinationType);
+        }
+
+        internal static string ConvertToStringImpl(
+            IEnumerable<DateTime> dates,
+            string itemFormat,
+            IFormatProvider provider,
+            char delimiter)
+        {
+            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            Contract.Assume(dates != null);
+
+            var datesCopy = dates.ToList();
+
+            if (datesCopy.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var format = "{0:" + itemFormat + "}";
+
+            var builder = new StringBuilder();
+            for (int i = 0; i < datesCopy.Count; i++)
+            {
+                builder.AppendFormat(provider, format, new object[] { datesCopy[i] });
+                if (i != (datesCopy.Count - 1))
+                {
+                    builder.Append(delimiter);
+                }
+            }
+            datesCopy.Clear();
+
+            return builder.ToString();
+        }
+
+        internal static DateTimeCollection ParseImpl(string source, string itemFormat, char separator)
+        {
+            Contract.Requires<ArgumentNullException>(itemFormat != null);
+
+            var res = new DateTimeCollection();
+            if (!string.IsNullOrWhiteSpace(source))
+            {
+                foreach (var str in source.Split(new[] { separator }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var strToParse = str.Trim();
+                    if (!string.IsNullOrEmpty(strToParse))
+                    {
+                        DateTime dt = DateTime.ParseExact(strToParse, itemFormat, CultureInfo.InvariantCulture);
+                        res.Add(dt);
+                    }
+                }
+            }
+            return res;
         }
     }
 
@@ -177,10 +252,19 @@ namespace SaneDevelopment.WPF4.Controls
     public sealed class DateTimeCollection
         : Freezable, IFormattable, IList, IList<DateTime>
     {
+        #region Private fields
+
         private List<DateTime> m_Collection;
         private uint m_Version;
-        private static DateTimeCollection s_Empty;
-        private const string c_DefaultParseFormat = "d-M-yyyy H:m:s";
+
+        private static readonly Lazy<DateTimeCollection> s_Empty = new Lazy<DateTimeCollection>(() =>
+            {
+                var doubles = new DateTimeCollection();
+                doubles.Freeze();
+                return doubles;
+            });
+
+        #endregion Private fields
 
         /// <summary>
         /// Инициализирует пустую коллекцию
@@ -234,6 +318,17 @@ namespace SaneDevelopment.WPF4.Controls
             Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
 
             this.m_Collection = new List<DateTime>(capacity);
+        }
+
+        /// <summary>
+        /// Frozen empty <see cref="DateTimeCollection"/>
+        /// </summary>
+        public static DateTimeCollection Empty
+        {
+            get
+            {
+                return s_Empty.Value;
+            }
         }
 
         #region Override methods
@@ -328,7 +423,12 @@ namespace SaneDevelopment.WPF4.Controls
         public override string ToString()
         {
             this.ReadPreamble();
-            return this.ConvertToString(null, null);
+
+            return DateTimeCollectionConverter.ConvertToStringImpl(
+                this.m_Collection,
+                DateTimeCollectionConverter.DefaultFormatString,
+                null,
+                DateTimeCollectionConverter.StringItemsSeparator);
         }
 
         #endregion Override methods
@@ -337,8 +437,15 @@ namespace SaneDevelopment.WPF4.Controls
 
         string IFormattable.ToString(string format, IFormatProvider provider)
         {
+            Contract.Assume(format != null);
+
             this.ReadPreamble();
-            return this.ConvertToString(format, provider);
+
+            return DateTimeCollectionConverter.ConvertToStringImpl(
+                this.m_Collection,
+                format,
+                provider,
+                DateTimeCollectionConverter.StringItemsSeparator);
         }
 
         #endregion IFormattable implementation
@@ -778,28 +885,21 @@ namespace SaneDevelopment.WPF4.Controls
             return (DateTimeCollection)base.CloneCurrentValue();
         }
 
-        //internal DateTime Internal_GetItem(int i)
-        //{
-        //    return this.m_Collection[i];
-        //}
-
         /// <summary>
         /// Выполняет синтаксический рабор строки <paramref name="source"/>, извлекая коллекцию дат
         /// </summary>
         /// <param name="source">Исходная строка</param>
+        /// <param name="itemFormat">Format string for <see cref="DateTime"/> item in collection</param>
+        /// <param name="separator">Separator (delimiter) for items in string</param>
         /// <returns>Коллекция дат</returns>
-        public static DateTimeCollection Parse(string source)
+        public static DateTimeCollection Parse(
+            string source,
+            string itemFormat = DateTimeCollectionConverter.DefaultFormatString,
+            char separator = DateTimeCollectionConverter.StringItemsSeparator)
         {
-            var res = new DateTimeCollection();
-            if (!string.IsNullOrWhiteSpace(source))
-            {
-                foreach (var str in source.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    DateTime dt = DateTime.ParseExact(str.Trim(), c_DefaultParseFormat, CultureInfo.InvariantCulture);
-                    res.Add(dt);
-                }
-            }
-            return res;
+            Contract.Requires<ArgumentNullException>(itemFormat != null);
+
+            return DateTimeCollectionConverter.ParseImpl(source, itemFormat, separator);
         }
 
         /// <summary>
@@ -810,39 +910,12 @@ namespace SaneDevelopment.WPF4.Controls
         public string ToString(IFormatProvider provider)
         {
             this.ReadPreamble();
-            return this.ConvertToString(c_DefaultParseFormat, provider);
-        }
 
-        internal string ConvertToString(string format, IFormatProvider provider)
-        {
-            if (this.m_Collection.Count == 0)
-            {
-                return string.Empty;
-            }
-            var builder = new StringBuilder();
-            for (int i = 0; i < this.m_Collection.Count; i++)
-            {
-                builder.AppendFormat(provider, "{{0:" + format + "}}", new object[] { this.m_Collection[i] });
-                if (i != (this.m_Collection.Count - 1))
-                {
-                    builder.Append(" ");
-                }
-            }
-            return builder.ToString();
-        }
-
-        internal static DateTimeCollection Empty
-        {
-            get
-            {
-                if (s_Empty == null)
-                {
-                    var doubles = new DateTimeCollection();
-                    doubles.Freeze();
-                    s_Empty = doubles;
-                }
-                return s_Empty;
-            }
+            return DateTimeCollectionConverter.ConvertToStringImpl(
+                this.m_Collection,
+                DateTimeCollectionConverter.DefaultFormatString,
+                provider,
+                DateTimeCollectionConverter.StringItemsSeparator);
         }
 
         /// <summary>

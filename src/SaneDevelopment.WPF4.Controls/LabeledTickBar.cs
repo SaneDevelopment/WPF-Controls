@@ -67,6 +67,8 @@ namespace SaneDevelopment.WPF4.Controls
     /// </summary>
     public class LabeledTickBar : TickBar
     {
+        private static readonly Lazy<Typeface> s_TextTypeface = new Lazy<Typeface>(() => new Typeface("Verdana"));
+
         #region EliminateOverlapping Property
 
         /// <summary>
@@ -158,6 +160,32 @@ namespace SaneDevelopment.WPF4.Controls
 
         #endregion
 
+        #region ValueNumericFormat Property
+
+        /// <summary>
+        /// Dependency property for <see cref="LabeledTickBar.ValueNumericFormat"/>
+        /// </summary>
+        public static readonly DependencyProperty ValueNumericFormatProperty =
+            DependencyProperty.Register(
+                "ValueNumericFormat",
+                typeof(string),
+                typeof(LabeledTickBar),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Format string for conversion numeric labels to text.
+        /// Empty string interprets as <c>null</c>.
+        /// Uses only when <see cref="ValueConverter"/> is <c>null</c>.
+        /// </summary>
+        [Bindable(true), Category("Behavior")]
+        public string ValueNumericFormat
+        {
+            get { return (string)GetValue(ValueNumericFormatProperty); }
+            set { SetValue(ValueNumericFormatProperty, value); }
+        }
+
+        #endregion
+
         #region ValueConverter Property
 
         /// <summary>
@@ -168,7 +196,7 @@ namespace SaneDevelopment.WPF4.Controls
                 "ValueConverter",
                 typeof(IDoubleToStringConverter),
                 typeof(LabeledTickBar),
-                new FrameworkPropertyMetadata(null));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// Конвертер числовых значений делений в их строковые представления
@@ -192,7 +220,7 @@ namespace SaneDevelopment.WPF4.Controls
                 "ValueConverterParameter",
                 typeof(object),
                 typeof(LabeledTickBar),
-                new FrameworkPropertyMetadata(null));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// Параметр конвертера числовых значений делений в их строковые представления
@@ -295,9 +323,10 @@ namespace SaneDevelopment.WPF4.Controls
             var pen = new Pen(textBrush, 1.0d);
             DoubleCollection ticks = Ticks;
             const double pointRadius = 1.0d;
+            string valueFormat = ValueNumericFormat;
             IDoubleToStringConverter valueConverter = ValueConverter;
             object valueConverterParameter = ValueConverterParameter;
-            var textTypeface = new Typeface("Verdana");
+            var textTypeface = s_TextTypeface.Value;
 
             double startSpace = StartLabelSpace, endSpace = EndLabelSpace;
             Contract.Assume(startSpace >= 0.0);
@@ -321,39 +350,41 @@ namespace SaneDevelopment.WPF4.Controls
                 }
 
                 Action<double, double> drawer = (tick, y) =>
-                {
-                    var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueConverter, valueConverterParameter);
-                    var textPoint = new Point(startPoint.X - formattedText.Width / 2,
-                        y - (textPointShiftDirection * formattedText.Height));
-                    double newTextEdge = y + (isDirectionReversed ? 1 : -1) * formattedText.Width / 2;
-
-                    bool drawThisText = true;
-                    if (eliminateOverlapping)
                     {
-                        if (isDirectionReversed)
-                        {
-                            drawThisText = DoubleUtil.GreaterThanOrClose(y - formattedText.Width / 2, prevTextEdge) &&
-                                DoubleUtil.LessThanOrClose(y + formattedText.Width / 2, maxTextEdge);
-                        }
-                        else
-                        {
-                            drawThisText = DoubleUtil.LessThanOrClose(y + formattedText.Width / 2, prevTextEdge) &&
-                                DoubleUtil.GreaterThanOrClose(y - formattedText.Width / 2, maxTextEdge);
-                        }
-                    }
+                        var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueFormat, valueConverter,
+                                                             valueConverterParameter);
+                        var textPoint = new Point(startPoint.X - formattedText.Width/2,
+                                                  y - (textPointShiftDirection*formattedText.Height));
+                        double newTextEdge = y + (isDirectionReversed ? 1 : -1)*formattedText.Width/2;
 
-                    if (drawThisText)
-                    {
-                        var rotateTransform = new RotateTransform(270,
-                            textPoint.X + formattedText.Width / 2,
-                            textPoint.Y + textPointShiftDirection * formattedText.Height);
-                        dc.DrawEllipse(textBrush, pen, new Point(startPoint.X, y), pointRadius, pointRadius);
-                        dc.PushTransform(rotateTransform);
-                        dc.DrawText(formattedText, textPoint);
-                        dc.Pop();
-                        prevTextEdge = newTextEdge;
-                    }
-                };
+                        bool drawThisText = true;
+                        if (eliminateOverlapping)
+                        {
+                            if (isDirectionReversed)
+                            {
+                                drawThisText = DoubleUtil.GreaterThanOrClose(y - formattedText.Width/2, prevTextEdge) &&
+                                               DoubleUtil.LessThanOrClose(y + formattedText.Width/2, maxTextEdge);
+                            }
+                            else
+                            {
+                                drawThisText = DoubleUtil.LessThanOrClose(y + formattedText.Width/2, prevTextEdge) &&
+                                               DoubleUtil.GreaterThanOrClose(y - formattedText.Width/2, maxTextEdge);
+                            }
+                        }
+
+                        if (drawThisText)
+                        {
+                            var rotateTransform = new RotateTransform(270,
+                                                                      textPoint.X + formattedText.Width/2,
+                                                                      textPoint.Y +
+                                                                      textPointShiftDirection*formattedText.Height);
+                            dc.DrawEllipse(textBrush, pen, new Point(startPoint.X, y), pointRadius, pointRadius);
+                            dc.PushTransform(rotateTransform);
+                            dc.DrawText(formattedText, textPoint);
+                            dc.Pop();
+                            prevTextEdge = newTextEdge;
+                        }
+                    };
                 // Draw Min tick
                 drawer(min, startPoint.Y);
 
@@ -404,34 +435,37 @@ namespace SaneDevelopment.WPF4.Controls
                 }
 
                 Action<double, double> drawer = (tick, x) =>
-                {
-                    var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueConverter, valueConverterParameter);
-                    var textPoint = new Point(x - (formattedText.Width / 2),
-                        startPoint.Y + textPointShiftDirection * formattedText.Height);
-                    double newTextEdge = textPoint.X + (isDirectionReversed ? 0.0 : formattedText.Width);
-
-                    bool drawThisText = true;
-                    if (eliminateOverlapping)
                     {
-                        if (isDirectionReversed)
-                        {
-                            drawThisText = DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, prevTextEdge) &&
-                                DoubleUtil.GreaterThanOrClose(textPoint.X, maxTextEdge);
-                        }
-                        else
-                        {
-                            drawThisText = DoubleUtil.GreaterThanOrClose(textPoint.X, prevTextEdge) &&
-                                DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, maxTextEdge);
-                        }
-                    }
+                        var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueFormat, valueConverter,
+                                                             valueConverterParameter);
+                        var textPoint = new Point(x - (formattedText.Width/2),
+                                                  startPoint.Y + textPointShiftDirection*formattedText.Height);
+                        double newTextEdge = textPoint.X + (isDirectionReversed ? 0.0 : formattedText.Width);
 
-                    if (drawThisText)
-                    {
-                        dc.DrawEllipse(textBrush, pen, new Point(x, startPoint.Y), pointRadius, pointRadius);
-                        dc.DrawText(formattedText, textPoint);
-                        prevTextEdge = newTextEdge;
-                    }
-                };
+                        bool drawThisText = true;
+                        if (eliminateOverlapping)
+                        {
+                            if (isDirectionReversed)
+                            {
+                                drawThisText =
+                                    DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, prevTextEdge) &&
+                                    DoubleUtil.GreaterThanOrClose(textPoint.X, maxTextEdge);
+                            }
+                            else
+                            {
+                                drawThisText =
+                                    DoubleUtil.GreaterThanOrClose(textPoint.X, prevTextEdge) &&
+                                    DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, maxTextEdge);
+                            }
+                        }
+
+                        if (drawThisText)
+                        {
+                            dc.DrawEllipse(textBrush, pen, new Point(x, startPoint.Y), pointRadius, pointRadius);
+                            dc.DrawText(formattedText, textPoint);
+                            prevTextEdge = newTextEdge;
+                        }
+                    };
                 // Draw Min tick
                 drawer(min, startPoint.X);
 
@@ -470,12 +504,16 @@ namespace SaneDevelopment.WPF4.Controls
             double value,
             Brush textBrush,
             Typeface textTypeface,
+            string valueFormat,
             IDoubleToStringConverter valueConverter,
             object valueConverterParameter)
         {
-            string text = (valueConverter == null) ?
-                value.ToString(CultureInfo.CurrentCulture.NumberFormat) :
-                valueConverter.Convert(value, valueConverterParameter);
+            string text = (valueConverter == null)
+                              ? (string.IsNullOrEmpty(valueFormat)
+                                     ? value.ToString(CultureInfo.CurrentCulture.NumberFormat)
+                                     : value.ToString(valueFormat, CultureInfo.CurrentCulture.NumberFormat))
+                              : valueConverter.Convert(value, valueConverterParameter);
+
             var formattedText = new FormattedText(
                 text,
                 CultureInfo.CurrentCulture,
@@ -483,6 +521,7 @@ namespace SaneDevelopment.WPF4.Controls
                 textTypeface,
                 8,
                 textBrush);
+
             return formattedText;
         }
 
@@ -490,10 +529,5 @@ namespace SaneDevelopment.WPF4.Controls
         {
             return DependencyPropertyUtil.IsValidChange(typeof(double), value);
         }
-
-        //[ContractInvariantMethod]
-        //private void ObjectInvariant()
-        //{
-        //}
     }
 }

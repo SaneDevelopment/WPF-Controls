@@ -1501,6 +1501,35 @@ namespace SaneDevelopment.WPF4.Controls
 
         #endregion
 
+        #region TickLabelNumericFormat Property
+
+        /// <summary>
+        /// Dependency property for <see cref="SimpleRangeSlider{T, TInterval}.TickLabelNumericFormat"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        // ReSharper disable StaticFieldInGenericType
+        public static readonly DependencyProperty TickLabelNumericFormatProperty =
+            // ReSharper restore StaticFieldInGenericType
+            DependencyProperty.Register(
+                "TickLabelNumericFormat",
+                typeof(string),
+                typeof(SimpleRangeSlider<T, TInterval>),
+                new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Format string for conversion numeric labels to text.
+        /// Empty string interprets as <c>null</c>.
+        /// Uses only when <see cref="TickLabelConverter"/> is <c>null</c>.
+        /// </summary>
+        [Bindable(true), Category("Behavior")]
+        public string TickLabelNumericFormat
+        {
+            get { return (string)GetValue(TickLabelNumericFormatProperty); }
+            set { SetValue(TickLabelNumericFormatProperty, value); }
+        }
+
+        #endregion
+
         #region TickLabelConverter Property
 
         /// <summary>
@@ -1668,16 +1697,22 @@ namespace SaneDevelopment.WPF4.Controls
             // Show AutoToolTip if needed.
             var thumb = e.OriginalSource as Thumb;
 
-            if ((thumb == null) || (this.AutoToolTipPlacement == AutoToolTipPlacement.None))
+            if (thumb == null)
             {
                 return;
             }
-            RangeThumbType thumbType = GetThumbType(thumb);
 
             Contract.Assume(!m_RangeValueData.IsRangeDragging);
             m_RangeValueData.IsRangeDragging = true;
             m_RangeValueData.RangeStart = StartValue;
             m_RangeValueData.RangeEnd = EndValue;
+
+
+            if (this.AutoToolTipPlacement == AutoToolTipPlacement.None)
+            {
+                return;
+            }
+            RangeThumbType thumbType = GetThumbType(thumb);
 
             // Save original tooltip
             m_ThumbOriginalToolTip = thumb.ToolTip;
@@ -1765,11 +1800,10 @@ namespace SaneDevelopment.WPF4.Controls
 
             var thumb = e.OriginalSource as Thumb;
 
-            if ((thumb == null) || (this.AutoToolTipPlacement == AutoToolTipPlacement.None))
+            if (thumb == null)
             {
                 return;
             }
-            //RangeThumbType thumbType = GetThumbType(thumb);
 
             Contract.Assume(m_RangeValueData.IsRangeDragging);
             var oldRangeValueData = m_RangeValueData;
@@ -1788,6 +1822,11 @@ namespace SaneDevelopment.WPF4.Controls
                 {
                     base.OnValueChanged(oldRangeValueData.RangeStart, oldRangeValueData.RangeEnd, StartValue, EndValue);
                 }
+            }
+
+            if (this.AutoToolTipPlacement == AutoToolTipPlacement.None)
+            {
+                return;
             }
 
             // Show AutoToolTip if needed.
@@ -2387,7 +2426,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// </summary>
         /// <param name="direction">Величина сдвига. Может быть меньше нуля.</param>
         /// <param name="isStartThumb"><c>true</c>, если выполняется сдвиг ползунка начала интервала, и <c>false</c> - если конца интервала.</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел рельный сдвиг ползунка
+        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунка
         /// и изменение значения соответствующего свойства.</returns>
         private bool InternalMoveToNextTick(ref double direction, bool isStartThumb)
         {
@@ -2456,7 +2495,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// <param name="direction">Величина сдвига. Должна быть положительной, т.к. "отрицательность" задается параметром <paramref name="isNegativeDirection"/></param>
         /// <param name="isNegativeDirection">Сдвиг должен происходить в отрицательную сторону (сторону уменьшения)</param>
         /// <param name="isStartThumb"><c>true</c>, если выполняется сдвиг ползунка начала интервала, и <c>false</c> - если конца интервала.</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел рельный сдвиг ползунка
+        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунка
         /// и изменение значения соответствующего свойства.</returns>
         public bool MoveToNextTick(TInterval direction, bool isNegativeDirection, bool isStartThumb)
         {
@@ -2465,7 +2504,11 @@ namespace SaneDevelopment.WPF4.Controls
                 return MoveRangeToNextTick(direction, isNegativeDirection);
             }
             double doubleDirection = (isNegativeDirection ? -1.0 : 1.0) * IntervalToDouble(direction);
-            Contract.Assume(!DoubleUtil.AreClose(doubleDirection, 0.0));
+
+            if (DoubleUtil.AreClose(doubleDirection, 0.0))
+            {
+                return false;
+            }
             Contract.Assume(!double.IsNaN(doubleDirection));
             return InternalMoveToNextTick(ref doubleDirection, isStartThumb);
         }
@@ -2481,7 +2524,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// </summary>
         /// <param name="direction">Величина сдвига. Должна быть положительной, т.к. "отрицательность" задается параметром <paramref name="isNegativeDirection"/></param>
         /// <param name="isNegativeDirection">Сдвиг должен происходить в отрицательную сторону (сторону уменьшения)</param>
-        /// <returns><c>true</c>, если в результате выполнения функции произошел рельный сдвиг ползунков
+        /// <returns><c>true</c>, если в результате выполнения функции произошел реальный сдвиг ползунков
         /// и изменение значений соответствующих свойств.</returns>
         public bool MoveRangeToNextTick(TInterval direction, bool isNegativeDirection)
         {
@@ -2722,8 +2765,6 @@ namespace SaneDevelopment.WPF4.Controls
         private const double c_DefaultMinimum = 0.0,
                              c_DefaultMaximum = 10.0;
 
-        private const string c_DefaultAutoToolTipFormat = "N";
-
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static SimpleNumericRangeSlider()
         {
@@ -2742,6 +2783,7 @@ namespace SaneDevelopment.WPF4.Controls
                 new FrameworkPropertyMetadata(c_DefaultMaximum, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
             TickFrequencyProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(c_DefaultTickFrequency));
+            TickLabelNumericFormatProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(null));
             TickLabelConverterProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(null));
             TickLabelConverterParameterProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(null));
 
@@ -2751,6 +2793,11 @@ namespace SaneDevelopment.WPF4.Controls
             DefaultStyleKeyProperty.OverrideMetadata(thisType,
                 new FrameworkPropertyMetadata(thisType));
         }
+
+        /// <summary>
+        /// Format string used when <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is <c>null</c> or empty
+        /// </summary>
+        public const string DefaultAutoToolTipFormat = "N";
 
         #region override functions
 
@@ -2889,10 +2936,11 @@ namespace SaneDevelopment.WPF4.Controls
                 string frmt = this.AutoToolTipFormat;
                 if (string.IsNullOrEmpty(frmt))
                 {
-                    frmt = c_DefaultAutoToolTipFormat;
+                    frmt = DefaultAutoToolTipFormat;
                 }
                 var format = (NumberFormatInfo)(NumberFormatInfo.CurrentInfo.Clone());
-                Contract.Assume(this.AutoToolTipPrecision >= 0 && this.AutoToolTipPrecision <= 99);
+                Contract.Assume(this.AutoToolTipPrecision >= DependencyPropertyUtil.MinimumAutoToolTipPrecision &&
+                                this.AutoToolTipPrecision <= DependencyPropertyUtil.MaximumAutoToolTipPrecision);
                 format.NumberDecimalDigits = this.AutoToolTipPrecision;
                 try
                 {
@@ -2992,9 +3040,11 @@ namespace SaneDevelopment.WPF4.Controls
         /// Свойство зависимости для <see cref="SimpleNumericRangeSlider.Ticks"/>
         /// </summary>
         public static readonly DependencyProperty TicksProperty
-            = DependencyProperty.Register("Ticks", typeof(DoubleCollection), typeof(SimpleNumericRangeSlider),
-            new FrameworkPropertyMetadata((new DoubleCollection()).GetAsFrozen(),
-                OnTicksChanged));
+            = DependencyProperty.Register(
+                "Ticks",
+                typeof(DoubleCollection),
+                typeof(SimpleNumericRangeSlider),
+                new FrameworkPropertyMetadata((new DoubleCollection()).GetAsFrozen(), OnTicksChanged));
 
         /// <summary>
         /// Коллекция значений меток на шкале делений.
@@ -3050,8 +3100,6 @@ namespace SaneDevelopment.WPF4.Controls
         private static readonly DateTime s_DefaultMinimum = new DateTime(1900, 1, 1),
                                          s_DefaultMaximum = new DateTime(9999, 12, 31);
 
-        private const string c_DefaultAutoToolTipFormat = "dd-MM-yyyy HH:mm:ss";
-
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static SimpleDateTimeRangeSlider()
         {
@@ -3075,6 +3123,8 @@ namespace SaneDevelopment.WPF4.Controls
 
             TickFrequencyProperty.OverrideMetadata(thisType,
                 new FrameworkPropertyMetadata(tickFrequency));
+            TickLabelNumericFormatProperty.OverrideMetadata(thisType,
+                new FrameworkPropertyMetadata(null));
             TickLabelConverterProperty.OverrideMetadata(thisType,
                 new FrameworkPropertyMetadata(new DefaultDateTimeTickLabelToStringConverter()));
             TickLabelConverterParameterProperty.OverrideMetadata(thisType,
@@ -3087,6 +3137,11 @@ namespace SaneDevelopment.WPF4.Controls
 
             DefaultStyleKeyProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(thisType));
         }
+
+        /// <summary>
+        /// Format string used when <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is <c>null</c> or empty
+        /// </summary>
+        public const string DefaultAutoToolTipFormat = "dd-MM-yyyy HH:mm:ss";
 
         #region override functions
 
@@ -3220,7 +3275,7 @@ namespace SaneDevelopment.WPF4.Controls
                 string frmt = this.AutoToolTipFormat;
                 if (string.IsNullOrEmpty(frmt))
                 {
-                    frmt = c_DefaultAutoToolTipFormat;
+                    frmt = DefaultAutoToolTipFormat;
                 }
                 try
                 {
@@ -3534,13 +3589,24 @@ namespace SaneDevelopment.WPF4.Controls
         public string Convert(double value, object parameter)
         {
             var longTicks = (long)value;
-            if (longTicks < DateTime.MinValue.Ticks || longTicks > DateTime.MaxValue.Ticks)
+            if (longTicks < DateTime.MinValue.Ticks || longTicks > (DateTime.MaxValue.Ticks + 1))
+            {
+                // allow minimum excess over DateTime.MaxValue.Ticks because of loss of accuracy while casting from double
+                return LocalizedStrings.BadDateTimeTicksValue;
+            }
+            if (longTicks == DateTime.MaxValue.Ticks + 1)
+                longTicks = DateTime.MaxValue.Ticks;
+
+            if (parameter != null && !(parameter is string))
             {
                 return LocalizedStrings.BadDateTimeTicksValue;
             }
-            Contract.Assume(longTicks <= 0x2bca2875f4373fffL);
+            var frmt = parameter as string;
+
+            Contract.Assume(longTicks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
             var dt = new DateTime(longTicks);
-            return dt.ToString(CultureInfo.CurrentCulture);
+
+            return (frmt == null) ? dt.ToString(CultureInfo.CurrentCulture) : dt.ToString(frmt, CultureInfo.CurrentCulture);
         }
     }
 

@@ -87,40 +87,53 @@ namespace SaneDevelopment.WPF4.Controls
         /// Минимальное значение, задаваемое по умолчанию
         /// </summary>
         public const double DefaultMinimum = 0.0;
+
         /// <summary>
         /// Максимальное значение, задаваемое по умолчанию
         /// </summary>
         public const double DefaultMaximum = 100.0;
+
         /// <summary>
         /// Значение сдвига, задаваемое по умолчанию
         /// </summary>
         public const double DefaultShiftValue = 5.0;
+
         /// <summary>
         /// Минимально возможное значение сдвига
         /// </summary>
         public const double MinShiftValue = 1.0;
+
         /// <summary>
         /// Начальное значение области выделения, задаваемое по умолчанию
         /// </summary>
         public const double DefaultSelectionStart = DefaultMinimum;
+
         /// <summary>
         /// Конечно значение области выделения, задаваемое по умолчанию
         /// </summary>
         public const double DefaultSelectionEnd = DefaultMaximum;
+
         private const double c_DefaultSelectionRange = DefaultSelectionEnd - DefaultSelectionStart;
 
         /// <summary>
         /// Толщина границы области выделения, задаваемое по умолчанию
         /// </summary>
         public const double DefaultSelectionBorderThickness = 1.0;
+
         /// <summary>
         /// Прозрачность заливки области за пределами области выделения (т.н. "область невыделения" или "отбрасываемая область"), задаваемое по умолчанию
         /// </summary>
         public const double DefaultNotSelectedOpacity = 0.7;
+
         /// <summary>
         /// Прозрачность границы области выделения, задаваемое по умолчанию
         /// </summary>
         public const double DefaultSelectionBorderOpacity = 0.5;
+
+        /// <summary>
+        /// Default value of start and end thumbs size (width or height depending on <see cref="Orientation"/>)
+        /// </summary>
+        public const double DefaultThumbSize = 10.0;
 
         #endregion
 
@@ -128,22 +141,27 @@ namespace SaneDevelopment.WPF4.Controls
         /// Содержимое элемента управления
         /// </summary>
         protected FrameworkElement ContentContainer { get; set; }
+
         /// <summary>
         /// Слайдер, на основе которого строится область выделения
         /// </summary>
         protected SimpleNumericRangeSlider RangeSlider { get; set; }
+
         /// <summary>
         /// Начальный ползунок
         /// </summary>
         protected Thumb StartThumb { get; set; }
+
         /// <summary>
         /// Конечный ползунок
         /// </summary>
         protected Thumb EndThumb { get; set; }
+
         /// <summary>
         /// Кнопка сдвига области выделения влево (вниз)
         /// </summary>
         protected ButtonBase ShiftLeftButton { get; set; }
+
         /// <summary>
         /// Кнопка сдвига области выделения вправо (вверх)
         /// </summary>
@@ -171,35 +189,38 @@ namespace SaneDevelopment.WPF4.Controls
 
         private void ResizeContentContainerMargin()
         {
-            if (ContentContainer != null)
+            if (this.ContentContainer == null)
             {
-                // делаем справа и слева от краев области содержимого отступ, равный ширине ползунков,
-                // чтобы в случае, когда ползунок сдвигался до упора он не загораживал бы собой области содержимого
-                double left = 0.0, top = 0.0, right = 0.0, bottom = 0.0;
-                if (StartThumb != null)
-                {
-                    if (Orientation == Orientation.Horizontal)
-                    {
-                        left = StartThumb.Width + StartThumb.Margin.Left + StartThumb.Margin.Right;
-                    }
-                    else
-                    {
-                        bottom = StartThumb.Height + StartThumb.Margin.Bottom + StartThumb.Margin.Top;
-                    }
-                }
-                if (EndThumb != null)
-                {
-                    if (Orientation == Orientation.Horizontal)
-                    {
-                        right = EndThumb.Width + EndThumb.Margin.Left + EndThumb.Margin.Right;
-                    }
-                    else
-                    {
-                        top = EndThumb.Height + EndThumb.Margin.Bottom + EndThumb.Margin.Top;
-                    }
-                }
-                ContentContainer.Margin = new Thickness(left, top, right, bottom);
+                return;
             }
+
+            // делаем справа и слева от краев области содержимого отступ, равный ширине ползунков,
+            // чтобы в случае, когда ползунок сдвигался до упора он не загораживал бы собой области содержимого
+            double left = 0.0, top = 0.0, right = 0.0, bottom = 0.0;
+            if (this.StartThumb != null)
+            {
+                if (this.Orientation == Orientation.Horizontal)
+                {
+                    left = this.StartThumb.ActualWidth + this.StartThumb.Margin.Left + this.StartThumb.Margin.Right;
+                }
+                else
+                {
+                    bottom = this.StartThumb.ActualHeight + this.StartThumb.Margin.Bottom + this.StartThumb.Margin.Top;
+                }
+            }
+            if (this.EndThumb != null)
+            {
+                if (this.Orientation == Orientation.Horizontal)
+                {
+                    right = this.EndThumb.ActualWidth + this.EndThumb.Margin.Left + this.EndThumb.Margin.Right;
+                }
+                else
+                {
+                    top = this.EndThumb.ActualHeight + this.EndThumb.Margin.Bottom + this.EndThumb.Margin.Top;
+                }
+            }
+
+            this.ContentContainer.Margin = new Thickness(left, top, right, bottom);
         }
 
         #region Dependency properties
@@ -965,10 +986,72 @@ namespace SaneDevelopment.WPF4.Controls
 
         #region Visual style properties
 
+        #region ThumbSize
+
+        /// <summary>
+        /// Size (width or height) of start and end thumbs
+        /// </summary>
+        [Bindable(true), Category("Layout")]
+        public double ThumbSize
+        {
+            get
+            {
+                var res = GetValue(ThumbSizeProperty);
+                Contract.Assume(res != null);
+                return (double)res;
+            }
+            set { SetValue(ThumbSizeProperty, value); }
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="ZoomBar.ThumbSize"/>
+        /// </summary>
+        public static readonly DependencyProperty ThumbSizeProperty =
+            DependencyProperty.Register(
+                "ThumbSize",
+                typeof(double),
+                typeof(ZoomBar),
+                new FrameworkPropertyMetadata(DefaultThumbSize,
+                    FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.AffectsArrange,
+                    null,
+                    CoerceThumbSizeValue));
+
+        private static object CoerceThumbSizeValue(DependencyObject element, object value)
+        {
+            Contract.Requires(element is ZoomBar);
+
+            var cntrl = element as ZoomBar;
+            Debug.Assert(cntrl != null, "cntrl != null");
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
+            if (cntrl != null)
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
+            {
+                double newValue =
+                    DependencyPropertyUtil.ExtractDouble(
+                        value,
+                        ThumbSizeProperty.DefaultMetadata == null
+                            ? 0.0
+                            : (double)(ThumbSizeProperty.DefaultMetadata.DefaultValue ?? 0.0));
+
+                if (DoubleUtil.LessThan(newValue, 0.0))
+                {
+                    newValue = 0.0;
+                }
+
+                value = newValue;
+            }
+
+            return value;
+        }
+
+        #endregion
+
+        #region NotSelectedBackground Property
+
         /// <summary>
         /// Фон невыделенной области содержимого
         /// </summary>
-        [Category("Brushes")]
+        [Category("Brush")]
         public Brush NotSelectedBackground
         {
             get { return (Brush)GetValue(NotSelectedBackgroundProperty); }
@@ -984,6 +1067,10 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(Brush),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(Brushes.White));
+
+        #endregion
+
+        #region NotSelectedOpacity Property
 
         /// <summary>
         /// Прозрачность фона невыделенной области содержимого
@@ -1009,10 +1096,14 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultNotSelectedOpacity));
 
+        #endregion
+
+        #region SelectionBorderBackground Property
+
         /// <summary>
         /// Фон границы области выделения
         /// </summary>
-        [Category("Brushes")]
+        [Category("Brush")]
         public Brush SelectionBorderBackground
         {
             get { return (Brush)GetValue(SelectionBorderBackgroundProperty); }
@@ -1028,6 +1119,10 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(Brush),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(Brushes.Red));
+
+        #endregion
+
+        #region SelectionBorderOpacity Property
 
         /// <summary>
         /// Прозрачность границы области выделения
@@ -1053,6 +1148,10 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultSelectionBorderOpacity));
 
+        #endregion
+
+        #region SelectionBorderThickness Property
+
         /// <summary>
         /// Толщина границы области выделения
         /// </summary>
@@ -1076,8 +1175,10 @@ namespace SaneDevelopment.WPF4.Controls
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultSelectionBorderThickness));
-
+        
         #endregion
+
+        #endregion Visual style properties
 
         #endregion Dependency properties
 
@@ -1206,6 +1307,7 @@ namespace SaneDevelopment.WPF4.Controls
         /// Команда сдвига области выделения влево/вниз
         /// </summary>
         public static RoutedCommand ShiftLeftCommand { get; private set; }
+
         /// <summary>
         /// Команда сдвига области выделения вправо/вверх
         /// </summary>
@@ -1233,11 +1335,13 @@ namespace SaneDevelopment.WPF4.Controls
         private static void OnShiftLeftCommand(object sender, ExecutedRoutedEventArgs e)
         {
             var zoombar = sender as ZoomBar;
-            if (zoombar != null)
+            if (zoombar == null)
             {
-                double shiftValue = DependencyPropertyUtil.ConvertToDouble(e.Parameter, zoombar.ShiftValue);
-                zoombar.OnShiftLeft(shiftValue);
+                return;
             }
+
+            double shiftValue = DependencyPropertyUtil.ConvertToDouble(e.Parameter, zoombar.ShiftValue);
+            zoombar.OnShiftLeft(shiftValue);
         }
 
         private static void ShiftLeftCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1255,11 +1359,13 @@ namespace SaneDevelopment.WPF4.Controls
         private static void OnShiftRightCommand(object sender, ExecutedRoutedEventArgs e)
         {
             var zoombar = sender as ZoomBar;
-            if (zoombar != null)
+            if (zoombar == null)
             {
-                double shiftValue = DependencyPropertyUtil.ConvertToDouble(e.Parameter, zoombar.ShiftValue);
-                zoombar.OnShiftRight(shiftValue);
+                return;
             }
+
+            double shiftValue = DependencyPropertyUtil.ConvertToDouble(e.Parameter, zoombar.ShiftValue);
+            zoombar.OnShiftRight(shiftValue);
         }
 
         private static void ShiftRightCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1305,7 +1411,7 @@ namespace SaneDevelopment.WPF4.Controls
             RangeSlider.MoveRangeToNextTick(Math.Abs(shiftValue), shiftValue < 0.0);
         }
 
-        #endregion
+        #endregion Commands
 
         /// <summary>
         /// Обработчик назначения шаблона данному контролу
