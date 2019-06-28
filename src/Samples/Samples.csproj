@@ -7,7 +7,7 @@
     <ProjectGuid>{FAC6E5E8-3F26-47B9-8936-09528A72FE81}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SaneDevelopment.WPF4.Controls.Samples</RootNamespace>
+    <RootNamespace>SaneDevelopment.WPF.Controls.Samples</RootNamespace>
     <AssemblyName>Samples</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -119,9 +119,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SaneDevelopment.WPF4.Controls\SaneDevelopment.WPF4.Controls.csproj">
+    <ProjectReference Include="..\SaneDevelopment.WPF.Controls\SaneDevelopment.WPF.Controls.csproj">
       <Project>{3c243421-2a4c-4fa1-8c80-ff1e407d6673}</Project>
-      <Name>SaneDevelopment.WPF4.Controls</Name>
+      <Name>SaneDevelopment.WPF.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

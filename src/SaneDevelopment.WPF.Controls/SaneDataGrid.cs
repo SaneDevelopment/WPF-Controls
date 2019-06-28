@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="App.xaml.cs" company="Sane Development">
+// <copyright file="SaneDataGrid.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library Samples
+//   Sane Development WPF Controls Library
 //
 //   The BSD 3-Clause License
 //
@@ -35,12 +35,28 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SaneDevelopment.WPF.Controls.Samples
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace SaneDevelopment.WPF.Controls
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Control behaves absolutely like a <see cref="DataGrid"/>,
+    /// but never "swallow" (handles) <see cref="UIElement.MouseWheelEvent"/> event (as <see cref="DataGrid"/> does).
+    /// 
+    /// <remarks>See details in comment of Kevin Stumpf to http://blog.ramondeklein.nl/index.php/2009/07/24/scrollviewer-always-handles-the-mousewheel/</remarks>
     /// </summary>
-    public partial class App
+    public class SaneDataGrid : DataGrid
     {
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
+        static SaneDataGrid()
+        {
+            EventManager.RegisterClassHandler(typeof(SaneDataGrid),
+                Mouse.MouseWheelEvent,
+                new MouseWheelEventHandler((sender, args) => { args.Handled = false; }),
+                true);
+        }
     }
 }

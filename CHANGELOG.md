@@ -10,18 +10,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Set up CI with Azure Pipelines.
+- New property `LabeledTickBar.ValueNumericFormat`.
+- New `TickLabelNumericFormat` property in range sliders.
+- New handy `NullableInt64ToTimeSpanConverter`, `SolidColorBrushToColorConverter`.
+- New `ZoomBar.ThumbSize` property. `StartThumb` and `EndThumb` size now not fixed to 10, but can be customized.
+- Add `LocalizationResource.resx` to make library localizable.
 
 ### Changed
 - Migrate from `Blend SDK` to `Microsoft.Xaml.Behaviors`.
+- `VisualTest1` project replaced by more advanced `Samples` project.
+- Change NeutralResourcesLanguageAttribute to `en-US` from `ru`.
+- Translate all russian comments (Fixes #7).
+- Remove WPF version from names, comments, properties, etc. I.e. `WPF4` now comes to `WPF`.
 
 ### Deprecated
-- ???.
+- `GridSplitter` marked `Obsolete` (Fixes #15).
 
 ### Removed
 - ???.
 
 ### Fixed
-- ???.
+- Improve `DateTimeCollection` convertion from and to string.
+- Fix bug in `OnThumbDragStarted` in range sliders (appear if `AutoToolTipPlacement` is `null`).
+- Some `ZoomBar`'s properties category changed from `Brushes` to `Brush`.
 
 ### Security
 - ???.

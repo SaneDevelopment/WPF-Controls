@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="App.xaml.cs" company="Sane Development">
+// <copyright file="ValidationHelper.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library Samples
+//   Sane Development WPF Controls Library
 //
 //   The BSD 3-Clause License
 //
@@ -35,12 +35,44 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SaneDevelopment.WPF.Controls.Samples
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+
+using SaneDevelopment.WPF.Controls.LinqToVisualTree;
+
+namespace SaneDevelopment.WPF.Controls
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Provides handy helper methods for WPF data validation
     /// </summary>
-    public partial class App
+    public static class ValidationHelper
     {
+        /// <summary>
+        /// Check the validity of dependency object.
+        /// Object is valid if it has no errors
+        /// and all its children (descendants), which are dependency objects, has no errors too
+        /// (i.e. is valid recursively).
+        /// 
+        /// <remarks>See details in http://stackoverflow.com/questions/127477/detecting-wpf-validation-errors
+        /// and in http://www.scottlogic.co.uk/blog/colin/2010/03/linq-to-visual-tree/</remarks>
+        /// </summary>
+        /// <param name="obj">Object to validate</param>
+        /// <returns><c>true</c> if object <paramref name="obj"/> is valid; otherwise, <c>false</c>.</returns>
+        public static bool IsValid(DependencyObject obj)
+        {
+            // http://stackoverflow.com/questions/127477/detecting-wpf-validation-errors
+            // The dependency object is valid if it has no errors, 
+            // and all of its children (that are dependency objects) are error-free.
+            var hasError = Validation.GetHasError(obj);
+            if (hasError)
+                return false;
+
+            var children = obj.Descendants();
+            var allChildrenAreValid = children
+                .All(o => !Validation.GetHasError(o));
+
+            return allChildrenAreValid;
+        }
     }
 }

@@ -43,9 +43,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SaneDevelopment.WPF4.Controls.Interactivity;
+using SaneDevelopment.WPF.Controls.Interactivity;
 
-namespace SaneDevelopment.WPF4.Controls.Samples
+namespace SaneDevelopment.WPF.Controls.Samples
 {
 
     /// <summary>

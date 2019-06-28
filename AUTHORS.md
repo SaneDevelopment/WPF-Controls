@@ -1,4 +1,4 @@
-> This is the official list of "Sane Development WPF 4.5 Controls Library" authors for copyright purposes.
+> This is the official list of "Sane Development WPF Controls Library" authors for copyright purposes.
 
 # Authors
 

@@ -34,7 +34,7 @@
 
 </copyright>
 -->
-<Window x:Class="SaneDevelopment.WPF4.Controls.Samples.MainWindow"
+<Window x:Class="SaneDevelopment.WPF.Controls.Samples.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -43,7 +43,7 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:saneDev="uri://schemas.sane-development.com/wpf/2012/xaml"
-        xmlns:eventManagers="clr-namespace:SaneDevelopment.WPF4.Controls.Samples"
+        xmlns:eventManagers="clr-namespace:SaneDevelopment.WPF.Controls.Samples"
         mc:Ignorable="d"
         Title="Sane Development WPF Controls Library Samples"
         >

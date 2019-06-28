@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="App.xaml.cs" company="Sane Development">
+// <copyright file="VisualTreeAdapter.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library Samples
+//   Sane Development WPF Controls Library
 //
 //   The BSD 3-Clause License
 //
@@ -35,12 +35,65 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SaneDevelopment.WPF.Controls.Samples
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Windows;
+using System.Windows.Media;
+
+namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Adapts a DependencyObject to provide methods required for generate
+    /// a Linq To Tree API.
+    /// See http://www.scottlogic.co.uk/blog/colin/2010/03/linq-to-visual-tree/
     /// </summary>
-    public partial class App
+    public class VisualTreeAdapter : ILinqTree<DependencyObject>
     {
+        private readonly DependencyObject m_Item;
+
+        /// <summary>
+        /// Constructs new object
+        /// </summary>
+        /// <param name="item"><see cref="DependencyObject"/></param>
+        public VisualTreeAdapter(DependencyObject item)
+        {
+            Contract.Requires<ArgumentNullException>(item != null);
+            this.m_Item = item;
+        }
+
+        /// <summary>
+        /// Get children of current <see cref="DependencyObject"/>
+        /// </summary>
+        /// <returns>children of current <see cref="DependencyObject"/></returns>
+        public IEnumerable<DependencyObject> Children()
+        {
+            int childrenCount = VisualTreeHelper.GetChildrenCount(this.m_Item);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                yield return VisualTreeHelper.GetChild(this.m_Item, i);
+            }
+        }
+
+        /// <summary>
+        /// Get parent of current <see cref="DependencyObject"/>
+        /// </summary>
+        public DependencyObject Parent
+        {
+            get
+            {
+                return VisualTreeHelper.GetParent(this.m_Item);
+            }
+        }
+
+        #region Code Contracts
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.m_Item != null);
+        }
+
+        #endregion
     }
 }

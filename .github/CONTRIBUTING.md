@@ -1,7 +1,7 @@
 Contributing to WPF-Controls
 ============================
 
-This document describes contribution guidelines that are specific to Sane Development WPF 4.5 Controls Library. We try to follow [.NET CoreFX](https://github.com/dotnet/corefx/blob/master/Documentation/project-docs/contributing.md), but still on the way...
+This document describes contribution guidelines that are specific to Sane Development WPF Controls Library. We try to follow [.NET CoreFX](https://github.com/dotnet/corefx/blob/master/Documentation/project-docs/contributing.md), but still on the way...
 
 Coding Style Changes
 --------------------
