@@ -105,7 +105,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="ticks">The collection of <see cref="double"/> values that make up the <see cref="DoubleTicksCollection"/>.</param>
         public DoubleTicksCollection(DoubleCollection ticks)
         {
-            Contract.Requires<ArgumentNullException>(ticks != null);
+            if (ticks == null)
+                throw new ArgumentNullException(nameof(ticks));
 
             m_Ticks = ticks;
         }
@@ -158,7 +159,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="ticks">The collection of <see cref="DateTime"/> values that make up the <see cref="DateTimeTicksCollection"/>.</param>
         public DateTimeTicksCollection(IList<DateTime> ticks)
         {
-            Contract.Requires<ArgumentNullException>(ticks != null);
+            if (ticks == null)
+                throw new ArgumentNullException(nameof(ticks));
 
             m_Ticks = ticks;
         }

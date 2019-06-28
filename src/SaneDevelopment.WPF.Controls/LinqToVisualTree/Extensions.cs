@@ -132,7 +132,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Elements(this DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
             Contract.Ensures(Contract.Result<IEnumerable<DependencyObject>>() != null);
 
             ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item);
@@ -253,7 +254,9 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public static IEnumerable<DependencyObject> Elements<T>(this DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
             return item.Elements().Where(i => i is T);
         }
 

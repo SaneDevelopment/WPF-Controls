@@ -58,7 +58,9 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// <param name="item"><see cref="DependencyObject"/></param>
         public VisualTreeAdapter(DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
             this.m_Item = item;
         }
 

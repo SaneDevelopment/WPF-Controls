@@ -200,7 +200,9 @@ namespace SaneDevelopment.WPF.Controls
             IFormatProvider provider,
             char delimiter)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
+
             Contract.Assume(dates != null);
 
             var datesCopy = dates.ToList();
@@ -228,7 +230,8 @@ namespace SaneDevelopment.WPF.Controls
 
         internal static DateTimeCollection ParseImpl(string source, string itemFormat, char separator)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
 
             var res = new DateTimeCollection();
             if (!string.IsNullOrWhiteSpace(source))
@@ -284,7 +287,9 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public DateTimeCollection(IEnumerable<DateTime> collection)
         {
-            Contract.Requires<ArgumentNullException>(collection != null);
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
             Contract.Assume(!this.IsFrozen);
 
             this.WritePreamble();
@@ -319,7 +324,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="capacity">The number of <see cref="DateTime"/> values that the collection is initially capable of storing.</param>
         public DateTimeCollection(int capacity)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity));
 
             this.m_Collection = new List<DateTime>(capacity);
         }
@@ -879,8 +885,10 @@ namespace SaneDevelopment.WPF.Controls
 
         private static DateTime Cast(object value)
         {
-            Contract.Requires<ArgumentNullException>(value != null);
-            Contract.Requires<ArgumentException>(value is DateTime, LocalizationResource.CollectionBadType);
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (!(value is DateTime))
+                throw new ArgumentException(LocalizationResource.CollectionBadType, nameof(value));
 
             return (DateTime)value;
         }
@@ -919,7 +927,8 @@ namespace SaneDevelopment.WPF.Controls
             string itemFormat = DateTimeCollectionConverter.DefaultFormatString,
             char separator = DateTimeCollectionConverter.StringItemsSeparator)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
 
             return DateTimeCollectionConverter.ParseImpl(source, itemFormat, separator);
         }

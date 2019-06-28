@@ -1713,7 +1713,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragStarted(object sender, DragStartedEventArgs e)
         {
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragStarted(e);
@@ -1722,8 +1723,10 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragDelta(object sender, DragDeltaEventArgs e)
         {
-            Contract.Requires<ArgumentException>(e.OriginalSource is Thumb);
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
+            if (!(e.OriginalSource is Thumb))
+                throw new ArgumentOutOfRangeException(nameof(e));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragDelta(e);
@@ -1732,7 +1735,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragCompleted(object sender, DragCompletedEventArgs e)
         {
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragCompleted(e);
@@ -1745,7 +1749,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragStarted(DragStartedEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
             // Show AutoToolTip if needed.
             var thumb = e.OriginalSource as Thumb;
@@ -1800,8 +1805,10 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragDelta(DragDeltaEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
-            Contract.Requires<ArgumentException>(e.OriginalSource is Thumb);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
+            if (!(e.OriginalSource is Thumb))
+                throw new ArgumentOutOfRangeException(nameof(e));
 
             IsRangeDragging = true; // do it here in order to not useless set this indicator in handler of DragStarted,
             // because in DragStarted this indicator will be set up even there was no real movement,
@@ -1851,7 +1858,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragCompleted(DragCompletedEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
             var thumb = e.OriginalSource as Thumb;
 

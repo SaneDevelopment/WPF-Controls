@@ -278,7 +278,8 @@ namespace SaneDevelopment.WPF.Controls
     {
         internal static ValidationResult Validate(IValueConverter converter, object value, CultureInfo cultureInfo)
         {
-            Contract.Requires<ArgumentNullException>(converter != null);
+            if (converter == null)
+                throw new ArgumentNullException(nameof(converter));
 
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
             {
@@ -469,7 +470,8 @@ namespace SaneDevelopment.WPF.Controls
     {
         internal static ValidationResult Validate(IValueConverter converter, object value, CultureInfo cultureInfo)
         {
-            Contract.Requires<ArgumentNullException>(converter != null);
+            if (converter == null)
+                throw new ArgumentNullException(nameof(converter));
 
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
             {
