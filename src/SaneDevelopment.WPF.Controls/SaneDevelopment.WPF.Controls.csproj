@@ -26,8 +26,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.Debug.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\SaneDevelopment.WPF.Controls.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\SaneDevelopment.WPF.Controls.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,7 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\SaneDevelopment.WPF.Controls.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\SaneDevelopment.WPF.Controls.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>

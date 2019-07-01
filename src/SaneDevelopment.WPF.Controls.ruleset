@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Rules for SaneDevelopment.WPF.Controls" Description="Code analysis rules for SaneDevelopment.WPF.Controls." ToolsVersion="16.0">
+  <IncludeAll Action="Warning" />
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+    <Rule Id="CA1008" Action="Warning" />
+    <Rule Id="CA1012" Action="Warning" />
+    <Rule Id="CA1014" Action="Warning" />
+    <Rule Id="CA1017" Action="Warning" />
+    <Rule Id="CA1024" Action="Warning" />
+    <Rule Id="CA1027" Action="Warning" />
+    <Rule Id="CA1033" Action="Warning" />
+    <Rule Id="CA1050" Action="Warning" />
+    <Rule Id="CA1060" Action="Warning" />
+    <Rule Id="CA1501" Action="Warning" />
+    <Rule Id="CA1502" Action="Warning" />
+    <Rule Id="CA1505" Action="Warning" />
+    <Rule Id="CA1506" Action="Warning" />
+    <Rule Id="CA1508" Action="Warning" />
+    <Rule Id="CA1509" Action="Warning" />
+    <Rule Id="CA1708" Action="Warning" />
+    <Rule Id="CA1711" Action="Warning" />
+    <Rule Id="CA1725" Action="Warning" />
+    <Rule Id="CA2217" Action="Warning" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.CodeQuality.CSharp.Analyzers" RuleNamespace="Microsoft.CodeQuality.CSharp.Analyzers">
+    <Rule Id="CA1003" Action="Warning" />
+    <Rule Id="CA1019" Action="Warning" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetCore.Analyzers" RuleNamespace="Microsoft.NetCore.Analyzers">
+    <Rule Id="CA1813" Action="Warning" />
+    <Rule Id="CA2300" Action="Warning" />
+    <Rule Id="CA2301" Action="Warning" />
+    <Rule Id="CA2302" Action="Warning" />
+    <Rule Id="CA2305" Action="Warning" />
+    <Rule Id="CA2310" Action="Warning" />
+    <Rule Id="CA2311" Action="Warning" />
+    <Rule Id="CA2312" Action="Warning" />
+    <Rule Id="CA2315" Action="Warning" />
+    <Rule Id="CA2321" Action="Warning" />
+    <Rule Id="CA2322" Action="Warning" />
+    <Rule Id="CA3001" Action="Warning" />
+    <Rule Id="CA3002" Action="Warning" />
+    <Rule Id="CA3003" Action="Warning" />
+    <Rule Id="CA3004" Action="Warning" />
+    <Rule Id="CA3005" Action="Warning" />
+    <Rule Id="CA3006" Action="Warning" />
+    <Rule Id="CA3007" Action="Warning" />
+    <Rule Id="CA3008" Action="Warning" />
+    <Rule Id="CA3009" Action="Warning" />
+    <Rule Id="CA3010" Action="Warning" />
+    <Rule Id="CA3011" Action="Warning" />
+    <Rule Id="CA3012" Action="Warning" />
+    <Rule Id="CA5358" Action="Warning" />
+    <Rule Id="CA5362" Action="Warning" />
+    <Rule Id="CA5367" Action="Warning" />
+    <Rule Id="CA5375" Action="Warning" />
+    <Rule Id="CA5382" Action="Warning" />
+    <Rule Id="CA5383" Action="Warning" />
+    <Rule Id="CA5386" Action="Warning" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetCore.CSharp.Analyzers" RuleNamespace="Microsoft.NetCore.CSharp.Analyzers">
+    <Rule Id="CA1309" Action="Warning" />
+    <Rule Id="CA2201" Action="Warning" />
+  </Rules>
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA1009" Action="None" />
+    <Rule Id="SA1111" Action="None" />
+    <Rule Id="SA1305" Action="Warning" />
+    <Rule Id="SA1309" Action="None" />
+    <Rule Id="SA1412" Action="Warning" />
+    <Rule Id="SA1507" Action="None" />
+    <Rule Id="SA1512" Action="None" />
+    <Rule Id="SA1515" Action="None" />
+    <Rule Id="SA1609" Action="Warning" />
+  </Rules>
+</RuleSet>
