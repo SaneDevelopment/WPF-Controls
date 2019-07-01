@@ -39,8 +39,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -200,8 +200,10 @@ namespace SaneDevelopment.WPF.Controls
             IFormatProvider provider,
             char delimiter)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
-            Contract.Assume(dates != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
+
+            Debug.Assert(dates != null);
 
             var datesCopy = dates.ToList();
 
@@ -228,7 +230,8 @@ namespace SaneDevelopment.WPF.Controls
 
         internal static DateTimeCollection ParseImpl(string source, string itemFormat, char separator)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
 
             var res = new DateTimeCollection();
             if (!string.IsNullOrWhiteSpace(source))
@@ -284,8 +287,10 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public DateTimeCollection(IEnumerable<DateTime> collection)
         {
-            Contract.Requires<ArgumentNullException>(collection != null);
-            Contract.Assume(!this.IsFrozen);
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
+            Debug.Assert(!this.IsFrozen);
 
             this.WritePreamble();
             var is3 = collection as ICollection<DateTime>;
@@ -319,7 +324,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="capacity">The number of <see cref="DateTime"/> values that the collection is initially capable of storing.</param>
         public DateTimeCollection(int capacity)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity));
 
             this.m_Collection = new List<DateTime>(capacity);
         }
@@ -344,12 +350,12 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="source">The object to clone (<see cref="DateTimeCollection"/>)</param>
         protected override void CloneCore(Freezable source)
         {
-            Contract.Assume(source != null);
+            Debug.Assert(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.CloneCore(source);
 
-            Contract.Assume(doubles.m_Collection != null);
+            Debug.Assert(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
             for (int i = 0; i < count; i++)
@@ -365,12 +371,12 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="source">The <see cref="System.Windows.Freezable"/> to be cloned (<see cref="DateTimeCollection"/>)</param>
         protected override void CloneCurrentValueCore(Freezable source)
         {
-            Contract.Assume(source != null);
+            Debug.Assert(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.CloneCurrentValueCore(source);
 
-            Contract.Assume(doubles.m_Collection != null);
+            Debug.Assert(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
             for (int i = 0; i < count; i++)
@@ -395,12 +401,12 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="source">The instance to copy.</param>
         protected override void GetAsFrozenCore(Freezable source)
         {
-            Contract.Assume(source != null);
+            Debug.Assert(source != null);
 
             var doubles = (DateTimeCollection)source;
             base.GetAsFrozenCore(source);
 
-            Contract.Assume(doubles.m_Collection != null);
+            Debug.Assert(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
             for (int i = 0; i < count; i++)
@@ -419,7 +425,7 @@ namespace SaneDevelopment.WPF.Controls
             var doubles = (DateTimeCollection)source;
             base.GetCurrentValueAsFrozenCore(source);
 
-            Contract.Assume(doubles.m_Collection != null);
+            Debug.Assert(doubles.m_Collection != null);
             int count = doubles.m_Collection.Count;
             this.m_Collection = new List<DateTime>(count);
             for (int i = 0; i < count; i++)
@@ -449,7 +455,8 @@ namespace SaneDevelopment.WPF.Controls
 
         string IFormattable.ToString(string format, IFormatProvider provider)
         {
-            Contract.Assume(format != null);
+            if (format == null)
+                throw new ArgumentNullException(nameof(format));
 
             this.ReadPreamble();
 
@@ -485,17 +492,21 @@ namespace SaneDevelopment.WPF.Controls
         {
             get
             {
-                Contract.Assert(index >= 0);
-                Contract.Assert(index < this.Count);
+                if (index < 0 || index >= this.Count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
 
                 return this[index];
             }
             set
             {
-                Contract.Assume(value != null);
-                Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
-                Contract.Assert(index >= 0);
-                Contract.Assert(index < this.Count);
+                if (this.IsFrozen)
+                    throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+                if (index < 0 || index >= this.Count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                if (value == null)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                if (!(value is DateTime))
+                    throw new ArgumentException(LocalizationResource.CollectionBadType, nameof(value));
 
                 this[index] = Cast(value);
             }
@@ -503,9 +514,12 @@ namespace SaneDevelopment.WPF.Controls
 
         int IList.Add(object value)
         {
-            Contract.Assume(!this.IsFrozen);
-            Contract.Assume(value != null);
-            Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+            if (value == null)
+                throw new ArgumentOutOfRangeException(nameof(value));
+            if (!(value is DateTime))
+                throw new ArgumentException(LocalizationResource.CollectionBadType, nameof(value));
 
             return this.AddHelper(Cast(value));
         }
@@ -526,9 +540,14 @@ namespace SaneDevelopment.WPF.Controls
 
         void IList.Insert(int index, object value)
         {
-            Contract.Assume(index <= this.Count);
-            Contract.Assume(value != null);
-            Contract.Assume(value is DateTime, LocalizationResource.CollectionBadType);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+            if (index < 0 || index > this.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            if (value == null)
+                throw new ArgumentOutOfRangeException(nameof(value));
+            if (!(value is DateTime))
+                throw new ArgumentException(LocalizationResource.CollectionBadType, nameof(value));
 
             this.Insert(index, Cast(value));
         }
@@ -544,16 +563,15 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCount")]
         void IList.RemoveAt(int index)
         {
-            Contract.Ensures(this.Count == Contract.OldValue(this.Count) - 1);
-            Contract.Assume(!this.IsFrozen);
-// ReSharper disable RedundantAssignment
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+
             var oldCount = this.Count;
-// ReSharper restore RedundantAssignment
 
             this.RemoveAtWithoutFiringPublicEvents(index);
             this.WritePostscript();
 
-            Contract.Assume(this.Count == oldCount - 1);
+            Debug.Assert(this.Count == oldCount - 1);
         }
 
         /// <summary>
@@ -576,9 +594,6 @@ namespace SaneDevelopment.WPF.Controls
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-                Contract.Ensures(Contract.Result<int>() == this.m_Collection.Count);
-
                 this.ReadPreamble();
                 return this.m_Collection.Count;
             }
@@ -622,8 +637,8 @@ namespace SaneDevelopment.WPF.Controls
             {
                 for (int i = 0; i < count; i++)
                 {
-                    Contract.Assume(0 < array.Rank);
-                    Contract.Assume(index + i <= array.GetUpperBound(0));
+                    Debug.Assert(0 < array.Rank);
+                    Debug.Assert(index + i <= array.GetUpperBound(0));
                     array.SetValue(this.m_Collection[i], index + i);
                 }
             }
@@ -646,20 +661,20 @@ namespace SaneDevelopment.WPF.Controls
         {
             get
             {
+                if (index < 0 || index >= this.Count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+
                 this.ReadPreamble();
-                Contract.Assert(index >= 0);
-                Contract.Assume(index < this.Count);
                 return this.m_Collection[index];
             }
             set
             {
-                Contract.Assume(!this.IsFrozen);
+                if (this.IsFrozen)
+                    throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+                if (index < 0 || index >= this.Count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
 
                 this.WritePreamble();
-
-                Contract.Assert(index >= 0);
-                Contract.Assume(index < this.Count);
-
                 this.m_Collection[index] = value;
                 this.m_Version++;
                 this.WritePostscript();
@@ -685,22 +700,21 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCount")]
         public void Insert(int index, DateTime item)
         {
-            Contract.Ensures(this.Count == Contract.OldValue(this.Count) + 1);
-
-            Contract.Assert(index >= 0);
-            Contract.Assert(index <= this.Count);
-            Contract.Assume(!this.IsFrozen);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+            if (index < 0 || index > this.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
 
 // ReSharper disable RedundantAssignment
             var oldCount = this.Count;
 // ReSharper restore RedundantAssignment
 
             this.WritePreamble();
-            Contract.Assume(index <= this.m_Collection.Count);
+            Debug.Assert(index <= this.m_Collection.Count);
             this.m_Collection.Insert(index, item);
             this.m_Version++;
             this.WritePostscript();
-            Contract.Assume(this.Count == oldCount + 1);
+            Debug.Assert(this.Count == oldCount + 1);
         }
 
         #endregion IList<DateTime> implementation
@@ -722,7 +736,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="item">The <see cref="DateTime"/> to add to the collection.</param>
         public void Add(DateTime item)
         {
-            Contract.Assume(!this.IsFrozen);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
 
             this.AddHelper(item);
         }
@@ -732,18 +747,16 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public void Clear()
         {
-            Contract.Ensures(this.Count == 0);
-            Contract.Ensures(((ICollection)this).IsSynchronized || this.Count == 0);
-
-            Contract.Assume(!this.IsFrozen);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
 
             this.WritePreamble();
             this.m_Collection.Clear();
             this.m_Version++;
             this.WritePostscript();
 
-            Contract.Assume(((ICollection)this).IsSynchronized || this.Count == 0);
-            Contract.Assume(this.Count == 0);
+            Debug.Assert(((ICollection)this).IsSynchronized || this.Count == 0);
+            Debug.Assert(this.Count == 0);
         }
 
         /// <summary>
@@ -753,10 +766,12 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns><c>true</c> if item is found in the collection; otherwise, <c>false</c>.</returns>
         public bool Contains(DateTime item)
         {
-            Contract.Ensures(!Contract.Result<bool>() || this.Count > 0);
-
             this.ReadPreamble();
-            return this.m_Collection.Contains(item);
+            var res = this.m_Collection.Contains(item);
+
+            Debug.Assert(!res || this.Count > 0);
+
+            return res;
         }
 
         /// <summary>
@@ -792,7 +807,9 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCount")]
         public bool Remove(DateTime item)
         {
-            Contract.Assume(!this.IsFrozen);
+            if (this.IsFrozen)
+                throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
+
 // ReSharper disable RedundantAssignment
             int oldCount = this.Count;
 // ReSharper restore RedundantAssignment
@@ -804,10 +821,10 @@ namespace SaneDevelopment.WPF.Controls
                 this.m_Collection.RemoveAt(index);
                 this.m_Version++;
                 this.WritePostscript();
-                Contract.Assume(this.Count == oldCount - 1);
+                Debug.Assert(this.Count == oldCount - 1);
                 return true;
             }
-            Contract.Assume(this.Count <= oldCount);
+            Debug.Assert(this.Count <= oldCount);
             return false;
         }
 
@@ -833,54 +850,59 @@ namespace SaneDevelopment.WPF.Controls
 
         private int AddHelper(DateTime value)
         {
-            Contract.Requires(!this.IsFrozen);
-            Contract.Ensures(Contract.Result<int>() == this.Count - 1);
-            Contract.Ensures(this.Count == Contract.OldValue(this.Count) + 1);
-            Contract.Ensures(this.Count > Contract.OldValue(this.Count));
+            Debug.Assert(!this.IsFrozen);
+
+            var oldCount = this.Count;
 
             int num = this.AddWithoutFiringPublicEvents(value);
             this.WritePostscript();
-            Contract.Assume(num == this.Count - 1);
+
+            Debug.Assert(num == this.Count - 1);
+            Debug.Assert(this.Count == oldCount + 1);
+
             return num;
         }
 
         private int AddWithoutFiringPublicEvents(DateTime value)
         {
-            Contract.Requires(!this.IsFrozen);
-            Contract.Ensures(Contract.Result<int>() == this.Count - 1);
-            Contract.Ensures(this.Count == Contract.OldValue(this.Count) + 1);
-            Contract.Ensures(this.Count > Contract.OldValue(this.Count));
+            Debug.Assert(!this.IsFrozen);
+
+            var oldCount = this.Count;
 
             this.WritePreamble();
             this.m_Collection.Add(value);
             int num = this.m_Collection.Count - 1;
             this.m_Version++;
+
+            Debug.Assert(num == this.Count - 1);
+            Debug.Assert(this.Count == oldCount + 1);
+
             return num;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "oldCollCount")]
         private void RemoveAtWithoutFiringPublicEvents(int index)
         {
-            Contract.Requires(index >= 0);
-            Contract.Requires(index < this.Count);
-            Contract.Requires(!this.IsFrozen);
-            Contract.Ensures(this.m_Collection.Count == Contract.OldValue(this.m_Collection.Count) - 1);
+            Debug.Assert(index >= 0);
+            Debug.Assert(index < this.Count);
+            Debug.Assert(!this.IsFrozen);
 
-// ReSharper disable RedundantAssignment
             var oldCollCount = this.m_Collection.Count;
-// ReSharper restore RedundantAssignment
+
             this.WritePreamble();
-            Contract.Assume(index < this.m_Collection.Count);
+            Debug.Assert(index < this.m_Collection.Count);
             this.m_Collection.RemoveAt(index);
             this.m_Version++;
 
-            Contract.Assume(this.m_Collection.Count == oldCollCount - 1);
+            Debug.Assert(this.m_Collection.Count == oldCollCount - 1);
         }
 
         private static DateTime Cast(object value)
         {
-            Contract.Requires<ArgumentNullException>(value != null);
-            Contract.Requires<ArgumentException>(value is DateTime, LocalizationResource.CollectionBadType);
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (!(value is DateTime))
+                throw new ArgumentException(LocalizationResource.CollectionBadType, nameof(value));
 
             return (DateTime)value;
         }
@@ -919,7 +941,8 @@ namespace SaneDevelopment.WPF.Controls
             string itemFormat = DateTimeCollectionConverter.DefaultFormatString,
             char separator = DateTimeCollectionConverter.StringItemsSeparator)
         {
-            Contract.Requires<ArgumentNullException>(itemFormat != null);
+            if (itemFormat == null)
+                throw new ArgumentNullException(nameof(itemFormat));
 
             return DateTimeCollectionConverter.ParseImpl(source, itemFormat, separator);
         }
@@ -963,7 +986,7 @@ namespace SaneDevelopment.WPF.Controls
 
             internal Enumerator(DateTimeCollection list)
             {
-                Contract.Requires(list != null);
+                Debug.Assert(list != null);
 
                 this.m_List = list;
                 this.m_Version = list.m_Version;
@@ -988,7 +1011,9 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     throw new InvalidOperationException(LocalizationResource.EnumeratorCollectionChanged);
                 }
-                Contract.Assume(this.m_List.m_Collection != null);
+
+                Debug.Assert(this.m_List.m_Collection != null);
+
                 if ((this.m_Index > -2) && (this.m_Index < (this.m_List.m_Collection.Count - 1)))
                 {
                     this.m_Current = this.m_List.m_Collection[++this.m_Index];
@@ -1037,24 +1062,6 @@ namespace SaneDevelopment.WPF.Controls
                     throw new InvalidOperationException(LocalizationResource.EnumeratorReachedEnd);
                 }
             }
-
-            [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"),
-            SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            [ContractInvariantMethod]
-            private void ObjectInvariant()
-            {
-                Contract.Invariant(this.m_List != null);
-            }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.m_Collection != null);
-            Contract.Invariant(this.m_Collection.Count >= 0);
-            Contract.Invariant(this.Count >= 0);
-            Contract.Invariant(this.Count == this.m_Collection.Count);
         }
     }
 }

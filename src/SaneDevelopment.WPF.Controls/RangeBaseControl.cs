@@ -39,7 +39,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -319,7 +318,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsSingleValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             set { SetValue(IsSingleValueProperty, value); }
@@ -339,11 +338,11 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsSingleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is RangeBaseControl<T, TInterval>);
-            Contract.Requires(args.NewValue != null);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
+            Debug.Assert(args.NewValue != null);
 
             var element = obj as RangeBaseControl<T, TInterval>;
-            Contract.Assert(element != null);
+            Debug.Assert(element != null);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
@@ -387,7 +386,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MinimumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -419,9 +418,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d != null);
-            Contract.Requires(e.OldValue != null);
-            Contract.Requires(e.NewValue != null);
+            Debug.Assert(d != null);
+            Debug.Assert(e.OldValue != null);
+            Debug.Assert(e.NewValue != null);
 
             var element = (RangeBaseControl<T, TInterval>)d;
             element.CoerceValue(MaximumProperty);
@@ -444,7 +443,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MaximumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -488,9 +487,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d != null);
-            Contract.Requires(e.OldValue != null);
-            Contract.Requires(e.NewValue != null);
+            Debug.Assert(d != null);
+            Debug.Assert(e.OldValue != null);
+            Debug.Assert(e.NewValue != null);
 
             var element = (RangeBaseControl<T, TInterval>)d;
             element.CoerceValue(MinRangeValueProperty);
@@ -512,7 +511,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(StartValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -539,7 +538,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceStartValue(DependencyObject d, object value)
         {
-            Contract.Requires(d is RangeBaseControl<T, TInterval>);
+            Debug.Assert(d is RangeBaseControl<T, TInterval>);
 
             var base2 = d as RangeBaseControl<T, TInterval>;
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
@@ -577,9 +576,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnStartValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d != null);
-            Contract.Requires(e.OldValue != null);
-            Contract.Requires(e.NewValue != null);
+            Debug.Assert(d != null);
+            Debug.Assert(e.OldValue != null);
+            Debug.Assert(e.NewValue != null);
 
             var element = (RangeBaseControl<T, TInterval>)d;
             if (element.IsSingleValue)
@@ -606,7 +605,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(EndValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -633,10 +632,10 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceEndValue(DependencyObject d, object value)
         {
-            Contract.Requires(d is RangeBaseControl<T, TInterval>);
+            Debug.Assert(d is RangeBaseControl<T, TInterval>);
 
             var base2 = d as RangeBaseControl<T, TInterval>;
-            Contract.Assert(base2 != null);
+            Debug.Assert(base2 != null);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (base2 == null) return value;
@@ -672,9 +671,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnEndValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d != null);
-            Contract.Requires(e.OldValue != null);
-            Contract.Requires(e.NewValue != null);
+            Debug.Assert(d != null);
+            Debug.Assert(e.OldValue != null);
+            Debug.Assert(e.NewValue != null);
 
             var element = (RangeBaseControl<T, TInterval>)d;
             if (element.IsSingleValue)
@@ -701,7 +700,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MinRangeValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TInterval) res;
             }
             set { SetValue(MinRangeValueProperty, value); }
@@ -726,10 +725,10 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinRangeValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is RangeBaseControl<T, TInterval>);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
 
             var element = obj as RangeBaseControl<T, TInterval>;
-            Contract.Assert(element != null, "element != null");
+            Debug.Assert(element != null, "element != null");
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
@@ -742,10 +741,10 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceMinRangeValue(DependencyObject element, object value)
         {
-            Contract.Requires(element is RangeBaseControl<T, TInterval>);
+            Debug.Assert(element is RangeBaseControl<T, TInterval>);
 
             var cntrl = element as RangeBaseControl<T, TInterval>;
-            Contract.Assert(cntrl != null);
+            Debug.Assert(cntrl != null);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (cntrl != null)
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
@@ -769,7 +768,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(RangeValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TInterval) res;
             }
             private set { SetValue(RangeValuePropertyKey, value); }
@@ -796,9 +795,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnRangeValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is RangeBaseControl<T, TInterval>);
-            Contract.Requires(args.OldValue is TInterval);
-            Contract.Requires(args.NewValue is TInterval);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
+            Debug.Assert(args.OldValue is TInterval);
+            Debug.Assert(args.NewValue is TInterval);
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null, "element != null");
@@ -843,7 +842,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(SmallChangeProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TInterval)res;
             }
             set
@@ -880,7 +879,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(LargeChangeProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TInterval)res;
             }
             set

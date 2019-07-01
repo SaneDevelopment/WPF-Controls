@@ -37,8 +37,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Windows;
 
@@ -132,12 +132,12 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Elements(this DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
-            Contract.Ensures(Contract.Result<IEnumerable<DependencyObject>>() != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
 
             ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item);
             var res = adapter.Children();
-            Contract.Assume(res != null);
+            Debug.Assert(res != null);
             return res;
         }
 
@@ -253,7 +253,9 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public static IEnumerable<DependencyObject> Elements<T>(this DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
             return item.Elements().Where(i => i is T);
         }
 
@@ -281,8 +283,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         private static IEnumerable<DependencyObject> DrillDown(this IEnumerable<DependencyObject> items,
             Func<DependencyObject, IEnumerable<DependencyObject>> function)
         {
-            Contract.Requires(items != null);
-            Contract.Requires(function != null);
+            Debug.Assert(items != null);
+            Debug.Assert(function != null);
 
             return items.SelectMany(function);
         }
@@ -299,8 +301,10 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
             Func<DependencyObject, IEnumerable<DependencyObject>> function)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
-            Contract.Requires(function != null);
+            if (items == null)
+                throw new NullReferenceException();
+            if (function == null)
+                throw new ArgumentNullException(nameof(function));
 
             return items.SelectMany(function).OfType<T>();
         }
@@ -311,7 +315,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Descendants(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.Descendants());
         }
@@ -321,7 +326,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> DescendantsAndSelf(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.DescendantsAndSelf());
         }
@@ -331,7 +337,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Ancestors(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.Ancestors());
         }
@@ -341,7 +348,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> AncestorsAndSelf(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.AncestorsAndSelf());
         }
@@ -351,7 +359,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Elements(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.Elements());
         }
@@ -361,7 +370,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> ElementsAndSelf(this IEnumerable<DependencyObject> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown(i => i.ElementsAndSelf());
         }
@@ -374,7 +384,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> Descendants<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.Descendants());
         }
@@ -387,7 +398,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> DescendantsAndSelf<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.DescendantsAndSelf());
         }
@@ -399,7 +411,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> Ancestors<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.Ancestors());
         }
@@ -412,7 +425,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> AncestorsAndSelf<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.AncestorsAndSelf());
         }
@@ -424,7 +438,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> Elements<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.Elements());
         }
@@ -437,7 +452,8 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         public static IEnumerable<DependencyObject> ElementsAndSelf<T>(this IEnumerable<DependencyObject> items)
             where T : DependencyObject
         {
-            Contract.Requires(items != null);
+            if (items == null)
+                throw new NullReferenceException();
 
             return items.DrillDown<T>(i => i.ElementsAndSelf());
         }

@@ -64,7 +64,6 @@ namespace SaneDevelopment.WPF.Controls
     /// <summary>
     /// Exposes <see cref="T:System.Windows.Controls.GridSplitter" /> types to UI Automation.
     /// </summary>
-    [System.Diagnostics.Contracts.ContractVerification(false)]
     [Obsolete("Use System.Windows.Automation.Peers.GridSplitterAutomationPeer instead")]
     public class GridSplitterAutomationPeer : ThumbAutomationPeer, ITransformProvider
     {

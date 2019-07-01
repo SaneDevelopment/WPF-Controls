@@ -37,8 +37,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -891,7 +891,7 @@ namespace SaneDevelopment.WPF.Controls
 
             bool hasLeftCtrl = Keyboard.IsKeyDown(Key.LeftCtrl);
             bool hasRightCtrl = Keyboard.IsKeyDown(Key.RightCtrl);
-            Contract.Assume(hasLeftCtrl ^ hasRightCtrl);
+            Debug.Assert(hasLeftCtrl ^ hasRightCtrl);
 
             if (hasLeftCtrl)
             {
@@ -903,7 +903,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 res = RangeThumbType.EndThumb;
             }
-            Contract.Assert(res != RangeThumbType.None, "res != RangeThumbType.None");
+            Debug.Assert(res != RangeThumbType.None, "res != RangeThumbType.None");
 
             return res;
         }
@@ -934,7 +934,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(OrientationProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (Orientation) res;
             }
             set { SetValue(OrientationProperty, value); }
@@ -963,7 +963,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsDragRangeEnabledProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             set { SetValue(IsDragRangeEnabledProperty, value); }
@@ -983,7 +983,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsRangeDraggingProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             private set { SetValue(IsRangeDraggingPropertyKey, value); }
@@ -1011,12 +1011,12 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsRangeDraggingChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is SimpleRangeSlider<T, TInterval>);
-            Contract.Requires(args.OldValue is bool);
-            Contract.Requires(args.NewValue is bool);
+            Debug.Assert(obj is SimpleRangeSlider<T, TInterval>);
+            Debug.Assert(args.OldValue is bool);
+            Debug.Assert(args.NewValue is bool);
 
             var element = obj as SimpleRangeSlider<T, TInterval>;
-            Contract.Assert(element != null, "element != null");
+            Debug.Assert(element != null, "element != null");
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
@@ -1069,7 +1069,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsRaiseValueChangedWhileDraggingProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             set { SetValue(IsRaiseValueChangedWhileDraggingProperty, value); }
@@ -1110,7 +1110,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(DelayProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (int)res;
             }
             set
@@ -1153,7 +1153,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IntervalProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (int)res;
             }
             set
@@ -1273,7 +1273,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(AutoToolTipPlacementProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (AutoToolTipPlacement)res;
             }
             set
@@ -1313,7 +1313,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(StartReservedSpaceProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(StartReservedSpacePropertyKey, value); }
@@ -1349,7 +1349,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(EndReservedSpaceProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double)res;
             }
             private set { SetValue(EndReservedSpacePropertyKey, value); }
@@ -1372,7 +1372,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsSnapToTickEnabledProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool)res;
             }
             set
@@ -1395,12 +1395,12 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsSnapToTickEnabledChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is SimpleRangeSlider<T, TInterval>);
-            Contract.Requires(args.OldValue is bool);
-            Contract.Requires(args.NewValue is bool);
+            Debug.Assert(obj is SimpleRangeSlider<T, TInterval>);
+            Debug.Assert(args.OldValue is bool);
+            Debug.Assert(args.NewValue is bool);
 
             var element = obj as SimpleRangeSlider<T, TInterval>;
-            Contract.Assert(element != null, "element != null");
+            Debug.Assert(element != null, "element != null");
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
@@ -1457,7 +1457,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(TickPlacementProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TickPlacement)res;
             }
             set
@@ -1492,7 +1492,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(TickFrequencyProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (TInterval)res;
             }
             set
@@ -1514,12 +1514,12 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnTickFrequencyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is SimpleRangeSlider<T, TInterval>);
-            Contract.Requires(args.OldValue is TInterval);
-            Contract.Requires(args.NewValue is TInterval);
+            Debug.Assert(obj is SimpleRangeSlider<T, TInterval>);
+            Debug.Assert(args.OldValue is TInterval);
+            Debug.Assert(args.NewValue is TInterval);
 
             var element = obj as SimpleRangeSlider<T, TInterval>;
-            Contract.Assert(element != null, "element != null");
+            Debug.Assert(element != null, "element != null");
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
@@ -1713,7 +1713,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragStarted(object sender, DragStartedEventArgs e)
         {
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragStarted(e);
@@ -1722,8 +1723,10 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragDelta(object sender, DragDeltaEventArgs e)
         {
-            Contract.Requires<ArgumentException>(e.OriginalSource is Thumb);
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
+            if (!(e.OriginalSource is Thumb))
+                throw new ArgumentOutOfRangeException(nameof(e));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragDelta(e);
@@ -1732,7 +1735,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         private static void OnThumbDragCompleted(object sender, DragCompletedEventArgs e)
         {
-            Contract.Requires<ArgumentException>(sender is SimpleRangeSlider<T, TInterval>);
+            if (!(sender is SimpleRangeSlider<T, TInterval>))
+                throw new ArgumentOutOfRangeException(nameof(sender));
 
             var slider = sender as SimpleRangeSlider<T, TInterval>;
             slider.OnThumbDragCompleted(e);
@@ -1745,7 +1749,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragStarted(DragStartedEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
             // Show AutoToolTip if needed.
             var thumb = e.OriginalSource as Thumb;
@@ -1756,7 +1761,7 @@ namespace SaneDevelopment.WPF.Controls
             }
 
             // remember range values on the moment when drag started
-            Contract.Assume(!m_RangeValueData.IsRangeDragging);
+            Debug.Assert(!m_RangeValueData.IsRangeDragging);
             m_RangeValueData.IsRangeDragging = true;
             m_RangeValueData.RangeStart = StartValue;
             m_RangeValueData.RangeEnd = EndValue;
@@ -1800,8 +1805,10 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragDelta(DragDeltaEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
-            Contract.Requires<ArgumentException>(e.OriginalSource is Thumb);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
+            if (!(e.OriginalSource is Thumb))
+                throw new ArgumentOutOfRangeException(nameof(e));
 
             IsRangeDragging = true; // do it here in order to not useless set this indicator in handler of DragStarted,
             // because in DragStarted this indicator will be set up even there was no real movement,
@@ -1831,7 +1838,7 @@ namespace SaneDevelopment.WPF.Controls
                         thumb.ToolTip = m_AutoToolTip;
                     }
 
-                    //Contract.Assume(m_AutoToolTip != null);
+                    //Debug.Assert(m_AutoToolTip != null);
                     if (!m_AutoToolTip.IsOpen)
                     {
                         m_AutoToolTip.IsOpen = true;
@@ -1851,7 +1858,8 @@ namespace SaneDevelopment.WPF.Controls
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void OnThumbDragCompleted(DragCompletedEventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(e != null);
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
             var thumb = e.OriginalSource as Thumb;
 
@@ -1860,7 +1868,7 @@ namespace SaneDevelopment.WPF.Controls
                 return;
             }
 
-            Contract.Assume(m_RangeValueData.IsRangeDragging);
+            Debug.Assert(m_RangeValueData.IsRangeDragging);
             var oldRangeValueData = m_RangeValueData;
             m_RangeValueData.IsRangeDragging = false;
 
@@ -1994,7 +2002,7 @@ namespace SaneDevelopment.WPF.Controls
 
             if (m_AutoToolTip != null)
             {
-                Contract.Assume(m_AutoToolTip.Tag is RangeThumbType);
+                Debug.Assert(m_AutoToolTip.Tag is RangeThumbType);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
                 RangeThumbType thumbType = (m_AutoToolTip.Tag is RangeThumbType) ?
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
@@ -2057,7 +2065,6 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="value">Current value</param>
         /// <param name="thumbType">The type of thumb which value is <paramref name="value"/>.</param>
         /// <returns>String representation of <paramref name="value"/> for thumb, which type is <paramref name="thumbType"/>.</returns>
-        [Pure]
         protected abstract string GetAutoToolTipString(T value, RangeThumbType thumbType);
 
         #endregion
@@ -2258,7 +2265,6 @@ namespace SaneDevelopment.WPF.Controls
 
         #region Helper Functions
 
-        [Pure]
         private string GetAutoToolTipContent(RangeThumbType thumbType)
         {
             var res = new StringBuilder();
@@ -2431,7 +2437,7 @@ namespace SaneDevelopment.WPF.Controls
             double snappedStartValue = SnapToTick(startValue, true, true);
             double snappedEndValue = SnapToTick(endValue, false, true);
 
-            Contract.Assume(DoubleUtil.LessThanOrClose(snappedStartValue, snappedEndValue));
+            Debug.Assert(DoubleUtil.LessThanOrClose(snappedStartValue, snappedEndValue));
             if (DoubleUtil.GreaterThan(snappedStartValue, snappedEndValue))
                 return;
 
@@ -2495,9 +2501,9 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns><c>true</c> if real movement happened and appropriate property value changed; otherwise, <c>false</c>.</returns>
         private bool InternalMoveToNextTick(ref double direction, bool isStartThumb)
         {
-            Contract.Requires(!double.IsNaN(direction));
-            Contract.Requires(!DoubleUtil.AreClose(direction, 0.0));
-            Contract.Ensures(!double.IsNaN(direction));
+            Debug.Assert(!double.IsNaN(direction));
+            Debug.Assert(!DoubleUtil.AreClose(direction, 0.0));
+            Debug.Assert(!double.IsNaN(direction));
 
             double value = ValueToDouble(isStartThumb ? this.StartValue : this.EndValue);
             double min = ValueToDouble(isStartThumb ? this.Minimum : this.StartValue);
@@ -2547,7 +2553,7 @@ namespace SaneDevelopment.WPF.Controls
                 direction = next - value;
                 this.SetCurrentValue(isStartThumb ? StartValueProperty : EndValueProperty, DoubleToValue(next));
             }
-            Contract.Assume(!double.IsNaN(direction));
+            Debug.Assert(!double.IsNaN(direction));
             return changed;
         }
 
@@ -2575,7 +2581,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return false;
             }
-            Contract.Assume(!double.IsNaN(doubleDirection));
+            Debug.Assert(!double.IsNaN(doubleDirection));
             return InternalMoveToNextTick(ref doubleDirection, isStartThumb);
         }
 
@@ -2604,21 +2610,21 @@ namespace SaneDevelopment.WPF.Controls
             {
                 if (doubleDirection > 0)
                 {
-                    Contract.Assume(!DoubleUtil.AreClose(doubleDirection, 0.0));
+                    Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0));
                     changed = InternalMoveToNextTick(ref doubleDirection, false);
                     if (changed)
                     {
-                        Contract.Assume(!DoubleUtil.AreClose(doubleDirection, 0.0));
+                        Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0));
                         InternalMoveToNextTick(ref doubleDirection, true);
                     }
                 }
                 else if (doubleDirection < 0)
                 {
-                    Contract.Assume(!DoubleUtil.AreClose(doubleDirection, 0.0));
+                    Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0));
                     changed = InternalMoveToNextTick(ref doubleDirection, true);
                     if (changed)
                     {
-                        Contract.Assume(!DoubleUtil.AreClose(doubleDirection, 0.0));
+                        Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0));
                         InternalMoveToNextTick(ref doubleDirection, false);
                     }
                 }
@@ -3018,7 +3024,7 @@ namespace SaneDevelopment.WPF.Controls
                     frmt = DefaultAutoToolTipFormat;
                 }
                 var format = (NumberFormatInfo)(NumberFormatInfo.CurrentInfo.Clone());
-                Contract.Assume(this.AutoToolTipPrecision >= DependencyPropertyUtil.MinimumAutoToolTipPrecision &&
+                Debug.Assert(this.AutoToolTipPrecision >= DependencyPropertyUtil.MinimumAutoToolTipPrecision &&
                                 this.AutoToolTipPrecision <= DependencyPropertyUtil.MaximumAutoToolTipPrecision);
                 format.NumberDecimalDigits = this.AutoToolTipPrecision;
                 try
@@ -3109,7 +3115,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(AutoToolTipPrecisionProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (int)res;
             }
             set
@@ -3154,7 +3160,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnTicksChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d is SimpleNumericRangeSlider);
+            Debug.Assert(d is SimpleNumericRangeSlider);
 
             var element = (SimpleNumericRangeSlider)d;
             if (element.IsSnapToTickEnabled)
@@ -3498,7 +3504,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MinimumAsDoubleProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(MinimumAsDoublePropertyKey, value); }
@@ -3536,7 +3542,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MaximumAsDoubleProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(MaximumAsDoublePropertyKey, value); }
@@ -3596,7 +3602,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnTicksChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d is SimpleDateTimeRangeSlider);
+            Debug.Assert(d is SimpleDateTimeRangeSlider);
 
             var element = (SimpleDateTimeRangeSlider)d;
             if (element.IsSnapToTickEnabled)
@@ -3661,7 +3667,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(TickFrequencyAsDoubleProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(TickFrequencyAsDoublePropertyKey, value); }
@@ -3720,7 +3726,7 @@ namespace SaneDevelopment.WPF.Controls
             }
             var frmt = parameter as string;
 
-            Contract.Assume(longTicks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
+            Debug.Assert(longTicks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
             var dt = new DateTime(longTicks);
 
             if (frmt == null)

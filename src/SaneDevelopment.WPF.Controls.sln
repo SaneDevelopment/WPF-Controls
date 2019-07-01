@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.181
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaneDevelopment.WPF.Controls", "SaneDevelopment.WPF.Controls\SaneDevelopment.WPF.Controls.csproj", "{3C243421-2A4C-4FA1-8C80-FF1E407D6673}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{FAC6E5E8-3F26-47B9-8936-09528A72FE81}"
@@ -22,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {441E01CF-A1FA-49C4-A3D8-D2A5BEDD62B6}
 	EndGlobalSection
 EndGlobal

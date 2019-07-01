@@ -37,7 +37,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Media;
 
@@ -58,7 +57,9 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
         /// <param name="item"><see cref="DependencyObject"/></param>
         public VisualTreeAdapter(DependencyObject item)
         {
-            Contract.Requires<ArgumentNullException>(item != null);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
             this.m_Item = item;
         }
 
@@ -85,15 +86,5 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
                 return VisualTreeHelper.GetParent(this.m_Item);
             }
         }
-
-        #region Code Contracts
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.m_Item != null);
-        }
-
-        #endregion
     }
 }

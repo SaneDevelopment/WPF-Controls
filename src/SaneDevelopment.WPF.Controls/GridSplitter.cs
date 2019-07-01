@@ -60,7 +60,6 @@ namespace SaneDevelopment.WPF.Controls
     /// Represents the control that redistributes space between columns or rows of a <see cref="T:System.Windows.Controls.Grid" /> control. 
     /// </summary>
     [StyleTypedProperty(Property = "PreviewStyle", StyleTargetType = typeof(Control))]
-    [System.Diagnostics.Contracts.ContractVerification(false)]
     [Obsolete("Use System.Windows.Controls.GridSplitter instead")]
     public class GridSplitter : Thumb
     {

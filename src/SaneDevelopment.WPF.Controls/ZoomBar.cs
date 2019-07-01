@@ -39,7 +39,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -252,7 +251,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(OrientationProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (Orientation) res;
             }
             set { SetValue(OrientationProperty, value); }
@@ -271,7 +270,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MinimumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
         }
@@ -303,7 +302,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MaximumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
         }
@@ -335,7 +334,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(ShiftValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(ShiftValueProperty, value); }
@@ -358,7 +357,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceShiftValue(DependencyObject element, object value)
         {
-            Contract.Requires(element is ZoomBar);
+            Debug.Assert(element is ZoomBar);
 
             double newValue =
                 DependencyPropertyUtil.ExtractDouble(
@@ -399,7 +398,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(SelectionStartProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(SelectionStartProperty, value); }
@@ -420,9 +419,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnSelectionStartChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is ZoomBar);
-            Contract.Requires(args.OldValue is double);
-            Contract.Requires(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar);
+            Debug.Assert(args.OldValue is double);
+            Debug.Assert(args.NewValue is double);
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
@@ -436,11 +435,11 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceSelectionStart(DependencyObject d, object value)
         {
-            Contract.Requires(d is ZoomBar);
-            Contract.Requires(value != null);
+            Debug.Assert(d is ZoomBar);
+            Debug.Assert(value != null);
 
             var base2 = d as ZoomBar;
-            Contract.Assert(base2 != null);
+            Debug.Assert(base2 != null);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (base2 != null)
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
@@ -478,7 +477,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(SelectionEndProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(SelectionEndProperty, value); }
@@ -499,9 +498,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnSelectionEndChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is ZoomBar);
-            Contract.Requires(args.OldValue is double);
-            Contract.Requires(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar);
+            Debug.Assert(args.OldValue is double);
+            Debug.Assert(args.NewValue is double);
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
@@ -516,11 +515,11 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceSelectionEnd(DependencyObject d, object value)
         {
-            Contract.Requires(d is ZoomBar);
-            Contract.Requires(value != null);
+            Debug.Assert(d is ZoomBar);
+            Debug.Assert(value != null);
 
             var base2 = d as ZoomBar;
-            Contract.Assert(base2 != null);
+            Debug.Assert(base2 != null);
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (base2 != null)
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
@@ -558,7 +557,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(MinSelectionRangeProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(MinSelectionRangeProperty, value); }
@@ -579,7 +578,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceMinSelectionRangeValue(DependencyObject element, object value)
         {
-            Contract.Requires(element is ZoomBar);
+            Debug.Assert(element is ZoomBar);
 
             var cntrl = element as ZoomBar;
             Debug.Assert(cntrl != null, "cntrl != null");
@@ -626,7 +625,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(SelectionRangeProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(SelectionRangePropertyKey, value); }
@@ -649,9 +648,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnSelectionRangeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is ZoomBar);
-            Contract.Requires(args.OldValue is double);
-            Contract.Requires(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar);
+            Debug.Assert(args.OldValue is double);
+            Debug.Assert(args.NewValue is double);
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
@@ -691,7 +690,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(LeftContentIndentProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(LeftContentIndentPropertyKey, value); }
@@ -725,7 +724,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(RightContentIndentProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             private set { SetValue(RightContentIndentPropertyKey, value); }
@@ -760,7 +759,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsSelectionDraggingProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             private set { SetValue(IsSelectionDraggingPropertyKey, value); }
@@ -783,9 +782,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsSelectionDraggingChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Contract.Requires(obj is ZoomBar);
-            Contract.Requires(args.OldValue is bool);
-            Contract.Requires(args.NewValue is bool);
+            Debug.Assert(obj is ZoomBar);
+            Debug.Assert(args.OldValue is bool);
+            Debug.Assert(args.NewValue is bool);
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
@@ -793,8 +792,8 @@ namespace SaneDevelopment.WPF.Controls
             if (zoombar != null)
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
-                Contract.Assert(args.OldValue is bool);
-                Contract.Assert(args.NewValue is bool);
+                Debug.Assert(args.OldValue is bool);
+                Debug.Assert(args.NewValue is bool);
                 zoombar.OnIsSelectionDraggingChanged((bool)args.OldValue, (bool)args.NewValue);
             }
         }
@@ -839,7 +838,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsRaiseSelectionChangedWhileDraggingProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool) res;
             }
             set { SetValue(IsRaiseSelectionChangedWhileDraggingProperty, value); }
@@ -950,7 +949,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(AutoToolTipPrecisionProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (int)res;
             }
             set
@@ -983,7 +982,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(AutoToolTipPlacementProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (AutoToolTipPlacement)res;
             }
             set
@@ -1008,7 +1007,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(ThumbSizeProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double)res;
             }
             set { SetValue(ThumbSizeProperty, value); }
@@ -1029,7 +1028,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceThumbSizeValue(DependencyObject element, object value)
         {
-            Contract.Requires(element is ZoomBar);
+            Debug.Assert(element is ZoomBar);
 
             var cntrl = element as ZoomBar;
             Debug.Assert(cntrl != null, "cntrl != null");
@@ -1094,7 +1093,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(NotSelectedOpacityProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(NotSelectedOpacityProperty, value); }
@@ -1147,7 +1146,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(SelectionBorderOpacityProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(SelectionBorderOpacityProperty, value); }
@@ -1175,7 +1174,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(SelectionBorderThicknessProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (double) res;
             }
             set { SetValue(SelectionBorderThicknessProperty, value); }
@@ -1597,7 +1596,7 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="e">Data for event</param>
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Contract.Requires(sender is ZoomBar);
+            Debug.Assert(sender is ZoomBar);
 
             var zoombar = sender as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");

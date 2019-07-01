@@ -19,7 +19,7 @@ namespace SaneDevelopment.WPF.Controls.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LocalizationResource {
@@ -138,6 +138,15 @@ namespace SaneDevelopment.WPF.Controls.Properties {
         internal static string CollectionBadType {
             get {
                 return ResourceManager.GetString("CollectionBadType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collection is frozen and can&apos;t be modified.
+        /// </summary>
+        internal static string CollectionIsFrozen {
+            get {
+                return ResourceManager.GetString("CollectionIsFrozen", resourceCulture);
             }
         }
         
