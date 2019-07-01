@@ -35,8 +35,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -88,7 +88,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(IsCheckedChangedProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (bool?) res;
             }
             set { SetValue(IsCheckedChangedProperty, value); }
@@ -107,8 +107,8 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsCheckedChangedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Contract.Requires(d is UncheckableRadioButton);
-            Contract.Requires(e.NewValue is bool);
+            Debug.Assert(d is UncheckableRadioButton);
+            Debug.Assert(e.NewValue is bool);
 
             ((UncheckableRadioButton)d).IsChecked = (bool)e.NewValue;
         }

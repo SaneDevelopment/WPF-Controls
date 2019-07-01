@@ -38,7 +38,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Windows.Media;
 
 namespace SaneDevelopment.WPF.Controls
@@ -48,7 +47,6 @@ namespace SaneDevelopment.WPF.Controls
     /// </summary>
     /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-    [ContractClass(typeof(ITicksCollectionContract<>))]
     public interface ITicksCollection<out T>
     {
         /// <summary>
@@ -63,31 +61,6 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         /// <returns>The number of elements contained in the collection.</returns>
         int Count { get; }
-    }
-
-    [ContractClassFor(typeof(ITicksCollection<>))]
-// ReSharper disable InconsistentNaming
-    abstract class ITicksCollectionContract<T> : ITicksCollection<T>
-// ReSharper restore InconsistentNaming
-    {
-        public T this[int index]
-        {
-            get
-            {
-                Contract.Requires(index >= 0);
-                Contract.Requires(index < this.Count);
-                return default(T);
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-                return 0;
-            }
-        }
     }
 
     /// <summary>
@@ -129,18 +102,8 @@ namespace SaneDevelopment.WPF.Controls
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() == m_Ticks.Count);
                 return m_Ticks.Count;
             }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"),
-        SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(m_Ticks != null);
-            Contract.Invariant(m_Ticks.Count == this.Count);
         }
     }
 
@@ -183,18 +146,8 @@ namespace SaneDevelopment.WPF.Controls
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() == m_Ticks.Count);
                 return m_Ticks.Count;
             }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"),
-        SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(m_Ticks != null);
-            Contract.Invariant(m_Ticks.Count == this.Count);
         }
     }
 }

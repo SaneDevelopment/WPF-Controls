@@ -37,7 +37,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -107,8 +106,6 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns><c>true</c> if <paramref name="value"/> can be cast to <c>double</c> and is valid value (i.e. not Nan and not infinity).</returns>
         public static bool IsValidDoubleValue(object value)
         {
-            Contract.Ensures(value != null || !Contract.Result<bool>());
-
             if (value == null)
                 return false;
 
@@ -186,8 +183,6 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns><c>true</c> if <paramref name="value"/> id valid change value of type <paramref name="targetType"/></returns>
         public static bool IsValidChange(Type targetType, object value)
         {
-            Contract.Ensures(value != null || !Contract.Result<bool>());
-
             if (value == null)
                 return false;
 

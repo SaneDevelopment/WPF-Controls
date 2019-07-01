@@ -142,6 +142,15 @@ namespace SaneDevelopment.WPF.Controls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collection is frozen and can&apos;t be modified.
+        /// </summary>
+        internal static string CollectionIsFrozen {
+            get {
+                return ResourceManager.GetString("CollectionIsFrozen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please enter a valid date, or leave this value blank.
         /// </summary>
         internal static string DateTimeValidationRuleMsg {

@@ -36,8 +36,8 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,7 +96,7 @@ namespace SaneDevelopment.WPF.Controls
                 ticks = DateTime.MaxValue.Ticks;
             }
 
-            Contract.Assume(ticks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
+            Debug.Assert(ticks <= 0x2bca2875f4373fffL); // DateTime.MaxValue.Ticks
             var date = new DateTime(ticks);
 
             if (parameter == null)
@@ -451,7 +451,6 @@ namespace SaneDevelopment.WPF.Controls
                 return DateTime.MaxValue;
             }
 
-            Contract.Assume(longTicks >= 0 && longTicks <= 0x2bca2875f4373fffL); // code contracts cant recognize DateTime.MaxValue.Ticks and DateTime.MinValue.Ticks below
             return new DateTime(longTicks);
         }
 

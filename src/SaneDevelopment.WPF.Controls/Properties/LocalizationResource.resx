@@ -144,6 +144,9 @@
   <data name="CollectionBadType" xml:space="preserve">
     <value>Collection bad type</value>
   </data>
+  <data name="CollectionIsFrozen" xml:space="preserve">
+    <value>Collection is frozen and can't be modified</value>
+  </data>
   <data name="DateTimeValidationRuleMsg" xml:space="preserve">
     <value>Please enter a valid date, or leave this value blank</value>
   </data>

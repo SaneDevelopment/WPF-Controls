@@ -37,8 +37,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -91,7 +91,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(EliminateOverlappingProperty);
-                Contract.Assume(res is bool);
+                Debug.Assert(res is bool);
                 return (bool) res;
             }
             set { SetValue(EliminateOverlappingProperty, value); }
@@ -121,7 +121,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(StartLabelSpaceProperty);
-                Contract.Assume(res is double);
+                Debug.Assert(res is double);
                 return (double) res;
             }
             set { SetValue(StartLabelSpaceProperty, value); }
@@ -151,7 +151,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = GetValue(EndLabelSpaceProperty);
-                Contract.Assume(res is double);
+                Debug.Assert(res is double);
                 return (double) res;
             }
             set { SetValue(EndLabelSpaceProperty, value); }
@@ -243,7 +243,8 @@ namespace SaneDevelopment.WPF.Controls
         {
             bool eliminateOverlapping = EliminateOverlapping;
             double controlActualWidth = ActualWidth, controlActualHeight = ActualHeight;
-            Contract.Assert(ActualWidth >= 0);
+            Debug.Assert(ActualWidth >= 0);
+
             var size = new Size(controlActualWidth, controlActualHeight);
             double min = Minimum, max = Maximum;
             double range = max - min;
@@ -326,10 +327,11 @@ namespace SaneDevelopment.WPF.Controls
             IDoubleToStringConverter valueConverter = ValueConverter;
             object valueConverterParameter = ValueConverterParameter;
             var textTypeface = s_TextTypeface.Value;
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
             double startSpace = StartLabelSpace, endSpace = EndLabelSpace;
-            Contract.Assume(startSpace >= 0.0);
-            Contract.Assume(endSpace >= 0.0);
+            Debug.Assert(startSpace >= 0.0);
+            Debug.Assert(endSpace >= 0.0);
 
             // Is it Vertical?
             if ((Placement == TickBarPlacement.Left) || (Placement == TickBarPlacement.Right))
@@ -351,7 +353,7 @@ namespace SaneDevelopment.WPF.Controls
                 Action<double, double> drawer = (tick, y) =>
                     {
                         var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueFormat, valueConverter,
-                                                             valueConverterParameter);
+                                                             valueConverterParameter, pixelsPerDip);
                         var textPoint = new Point(startPoint.X - formattedText.Width/2,
                                                   y - (textPointShiftDirection*formattedText.Height));
                         double newTextEdge = y + (isDirectionReversed ? 1 : -1)*formattedText.Width/2;
@@ -436,7 +438,7 @@ namespace SaneDevelopment.WPF.Controls
                 Action<double, double> drawer = (tick, x) =>
                     {
                         var formattedText = GetFormattedText(tick, textBrush, textTypeface, valueFormat, valueConverter,
-                                                             valueConverterParameter);
+                                                             valueConverterParameter, pixelsPerDip);
                         var textPoint = new Point(x - (formattedText.Width/2),
                                                   startPoint.Y + textPointShiftDirection*formattedText.Height);
                         double newTextEdge = textPoint.X + (isDirectionReversed ? 0.0 : formattedText.Width);
@@ -505,7 +507,8 @@ namespace SaneDevelopment.WPF.Controls
             Typeface textTypeface,
             string valueFormat,
             IDoubleToStringConverter valueConverter,
-            object valueConverterParameter)
+            object valueConverterParameter,
+            double pixelsPerDip)
         {
             string text;
             try
@@ -527,7 +530,8 @@ namespace SaneDevelopment.WPF.Controls
                 CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
                 textTypeface,
                 8,
-                textBrush);
+                textBrush,
+                pixelsPerDip);
 
             return formattedText;
         }

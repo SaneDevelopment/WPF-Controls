@@ -36,8 +36,8 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -143,7 +143,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MinimumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -174,7 +174,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MaximumProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set { this.SetValue(MaximumProperty, value); }
@@ -202,7 +202,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(StartValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -233,7 +233,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(EndValueProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (T)res;
             }
             set
@@ -264,7 +264,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(OrientationProperty);
-                Contract.Assume(res != null);
+                Debug.Assert(res != null);
                 return (Orientation)res;
             }
             set
@@ -298,7 +298,7 @@ namespace SaneDevelopment.WPF.Controls
         protected override Size ArrangeOverride(Size finalSize)
         {
             double decreaseButtonLength, startThumbLength, rangeThumbLength, endThumbLength, increaseButtonLength;
-            Contract.Assert(finalSize.Width >= 0);
+            Debug.Assert(finalSize.Width >= 0);
             bool isVertical = this.Orientation == Orientation.Vertical;
 
             this.ComputeLengths(finalSize, isVertical,
@@ -409,16 +409,15 @@ namespace SaneDevelopment.WPF.Controls
 
         private static Size MeasureThumb(Thumb thumb, bool isVertical, Size availableSize, Size desiredSize)
         {
-            Contract.Requires(!desiredSize.IsEmpty);
-            Contract.Ensures(!Contract.Result<Size>().IsEmpty);
+            Debug.Assert(!desiredSize.IsEmpty);
 
             if (thumb != null)
             {
                 thumb.Measure(availableSize);
                 if (!thumb.DesiredSize.IsEmpty)
                 {
-                    Contract.Assert(thumb.DesiredSize.Height >= 0);
-                    Contract.Assert(thumb.DesiredSize.Width >= 0);
+                    Debug.Assert(thumb.DesiredSize.Height >= 0);
+                    Debug.Assert(thumb.DesiredSize.Width >= 0);
                     if (isVertical)
                     {
                         // making desired width of vertical slider as a max of thumbs widthes
@@ -431,11 +430,13 @@ namespace SaneDevelopment.WPF.Controls
                         // making desired width of horizontal slider as a sum of thumbs widthes
                         desiredSize.Width += thumb.DesiredSize.Width;
                         // making desired height of horizontal slider as a max of thumbs hightes
-                        Contract.Assert(desiredSize.Height >= 0);
+                        Debug.Assert(desiredSize.Height >= 0);
                         desiredSize.Height = Math.Max(desiredSize.Height, thumb.DesiredSize.Height);
                     }
                 }
             }
+
+            Debug.Assert(!desiredSize.IsEmpty);
             return desiredSize;
         }
 
@@ -564,8 +565,6 @@ namespace SaneDevelopment.WPF.Controls
 
         private void UpdateComponent(Control oldValue, Control newValue)
         {
-            Contract.Ensures(this.m_VisualChildren == null || this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
-
             if (Equals(oldValue, newValue))
                 return;
 
@@ -577,7 +576,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 this.RemoveVisualChild(oldValue);
             }
-            Contract.Assume(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
+            Debug.Assert(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
             int index = 0;
             while (index < this.m_VisualChildren.Length)
             {
@@ -599,18 +598,17 @@ namespace SaneDevelopment.WPF.Controls
                     index++;
                 }
             }
-            Contract.Assume(index < this.m_VisualChildren.Length);
+            Debug.Assert(index < this.m_VisualChildren.Length);
             this.m_VisualChildren[index] = newValue;
             this.AddVisualChild(newValue);
             this.InvalidateMeasure();
             this.InvalidateArrange();
-            Contract.Assume(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
+            Debug.Assert(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
         }
 
         private static void CoerceLength(ref double componentLength, double trackLength)
         {
-            Contract.Requires(trackLength >= 0);
-            Contract.Ensures(componentLength >= 0.0 && componentLength <= trackLength);
+            Debug.Assert(trackLength >= 0);
 
             if (componentLength < 0.0)
             {
@@ -620,6 +618,8 @@ namespace SaneDevelopment.WPF.Controls
             {
                 componentLength = trackLength;
             }
+
+            Debug.Assert(componentLength >= 0.0 && componentLength <= trackLength);
         }
 
         private void ComputeLengths(
@@ -631,7 +631,7 @@ namespace SaneDevelopment.WPF.Controls
             out double endThumbLength,
             out double increaseButtonLength)
         {
-            Contract.Requires(!arrangeSize.IsEmpty);
+            Debug.Assert(!arrangeSize.IsEmpty);
 
             double minimum = ValueToDouble(this.Minimum), maximum = ValueToDouble(this.Maximum);
             double interval = Math.Max(0.0, maximum - minimum); // the "length" of available interval of values
@@ -655,7 +655,7 @@ namespace SaneDevelopment.WPF.Controls
             CoerceLength(ref endThumbLength, height);
 
             double trackLength = height - (startThumbLength + endThumbLength);
-            Contract.Assume(trackLength >= 0);
+            Debug.Assert(trackLength >= 0);
             this.Density = interval / trackLength;
 
             decreaseButtonLength = decreaseAreaInterval / this.Density;
@@ -778,13 +778,6 @@ namespace SaneDevelopment.WPF.Controls
             {
                 this.m_Density = value;
             }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.m_VisualChildren == null || this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
         }
     }
 

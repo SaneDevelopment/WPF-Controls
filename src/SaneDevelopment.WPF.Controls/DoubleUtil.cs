@@ -36,14 +36,12 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace SaneDevelopment.WPF.Controls
 {
     /// <summary>
     /// Code extracted from Framework's dll via Reflector
     /// </summary>
-    [Pure]
     internal static class DoubleUtil
     {
 // ReSharper disable InconsistentNaming
@@ -51,14 +49,15 @@ namespace SaneDevelopment.WPF.Controls
         internal const float FLT_MIN = 1.175494E-38f;
 // ReSharper restore InconsistentNaming
 
-        [Pure]
         public static bool AreClose(double value1, double value2)
         {
 // ReSharper disable CompareOfFloatsByEqualityOperator
-            Contract.Ensures(value1 != value2 || Contract.Result<bool>());
+            if (value1 == value2)
+            {
+                return true;
+            }
+            // ReSharper restore CompareOfFloatsByEqualityOperator
 
-            if (value1 == value2) return true;
-// ReSharper restore CompareOfFloatsByEqualityOperator
             double num = ((Math.Abs(value1) + Math.Abs(value2)) + 10.0) * DBL_EPSILON;
             double num2 = value1 - value2;
             return ((-num < num2) && (num > num2));
@@ -97,16 +96,13 @@ namespace SaneDevelopment.WPF.Controls
         //    return (int)(val + 0.5);
         //}
 
-        [Pure]
         public static bool GreaterThan(double value1, double value2)
         {
             return ((value1 > value2) && !AreClose(value1, value2));
         }
 
-        [Pure]
         public static bool GreaterThanOrClose(double value1, double value2)
         {
-            Contract.Ensures(value1 <= value2 || Contract.Result<bool>());
             if (value1 <= value2)
             {
                 return AreClose(value1, value2);
@@ -129,17 +125,13 @@ namespace SaneDevelopment.WPF.Controls
         //    return (Math.Abs(value) < 2.2204460492503131E-15);
         //}
 
-        [Pure]
         public static bool LessThan(double value1, double value2)
         {
             return value1 < value2 && !AreClose(value1, value2);
         }
 
-        [Pure]
         public static bool LessThanOrClose(double value1, double value2)
         {
-            Contract.Ensures(Contract.Result<bool>() == value1 < value2 || AreClose(value1, value2));
-
             return value1 < value2 || AreClose(value1, value2);
         }
 

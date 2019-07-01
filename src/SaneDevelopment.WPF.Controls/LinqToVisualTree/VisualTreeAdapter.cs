@@ -37,7 +37,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Media;
 
@@ -87,15 +86,5 @@ namespace SaneDevelopment.WPF.Controls.LinqToVisualTree
                 return VisualTreeHelper.GetParent(this.m_Item);
             }
         }
-
-        #region Code Contracts
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.m_Item != null);
-        }
-
-        #endregion
     }
 }
