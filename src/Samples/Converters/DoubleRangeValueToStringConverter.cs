@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="DoubleRangeValueToStringConverter.xaml.cs" company="Sane Development">
+// <copyright file="DoubleRangeValueToStringConverter.cs" company="Sane Development">
 //
 // Sane Development WPF Controls Library Samples.
 //

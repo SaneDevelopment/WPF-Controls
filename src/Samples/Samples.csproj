@@ -89,11 +89,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DoubleRangeValueToStringConverter.xaml.cs" />
-    <Compile Include="NegateDoubleConverter.xaml.cs" />
-    <Compile Include="SamplesEventManager.xaml.cs" />
-    <Compile Include="StringToDateTimeCollectionConverter.xaml.cs" />
-    <Compile Include="UniversalConverter.xaml.cs" />
+    <Compile Include="Converters\DoubleRangeValueToStringConverter.cs" />
+    <Compile Include="Converters\NegateDoubleConverter.cs" />
+    <Compile Include="EventManagers\SamplesEventManager.cs" />
+    <Compile Include="Converters\StringToDateTimeCollectionConverter.cs" />
+    <Compile Include="Converters\UniversalConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -154,6 +154,7 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

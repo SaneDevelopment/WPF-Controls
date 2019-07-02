@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SamplesEventManager.xaml.cs" company="Sane Development">
+// <copyright file="SamplesEventManager.cs" company="Sane Development">
 //
 // Sane Development WPF Controls Library Samples.
 //

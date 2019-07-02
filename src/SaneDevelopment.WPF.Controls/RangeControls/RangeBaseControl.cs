@@ -1,222 +1,136 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright file="RangeBaseControl.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library
+// Sane Development WPF Controls Library.
 //
-//   The BSD 3-Clause License
+// The BSD 3-Clause License.
 //
-//   Copyright (c) Sane Development
-//   All rights reserved.
+// Copyright (c) Sane Development.
+// All rights reserved.
 //
-//   Redistribution and use in source and binary forms, with or without modification,
-//   are permitted provided that the following conditions are met:
-//
-//   - Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   - Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   - Neither the name of the Sane Development nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-//   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-//   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-//   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-//   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
-//   BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-//   OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-//   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-//   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-//   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-//   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// See LICENSE file for full license information.
 //
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Controls;
-
 namespace SaneDevelopment.WPF.Controls
 {
-    #region Range interfaces
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Windows;
+    using System.Windows.Controls;
+
+#pragma warning disable CA1501 // Avoid excessive inheritance
 
     /// <summary>
-    /// Interface for polymorphous call of <see cref="FrameworkElement.OnApplyTemplate"/>,
-    /// in contrast to hardcoded implementation of that method inside of CLR.
+    /// Control, that provides a pair of values inside some interval.
     /// </summary>
-    public interface IRangeTrackTemplatedParent<T, TInterval>
-    {
-        /// <summary>
-        /// Method should handle <see cref="FrameworkElement.OnApplyTemplate"/>
-        /// </summary>
-        /// <param name="templatedParent">Templated parent</param>
-        /// <param name="track">Any range track</param>
-        void OnApplyRangeTrackTemplate(DependencyObject templatedParent, RangeTrack<T, TInterval> track);
-    }
-
-    /// <summary>
-    /// Describes classes of interval (ranged) objects
-    /// </summary>
-    /// <typeparam name="T">Value type</typeparam>
-    /// <typeparam name="TInterval">Interval (distance) type</typeparam>
-    public interface IRanged<T, TInterval>
-    {
-        /// <summary>
-        /// Gets minimum available value
-        /// </summary>
-        T Minimum { get; }
-
-        /// <summary>
-        /// Gets maximum available value
-        /// </summary>
-        T Maximum { get; }
-        
-        /// <summary>
-        /// Gets start interval value
-        /// </summary>
-        T StartValue { get; }
-        
-        /// <summary>
-        /// Gets end interval value
-        /// </summary>
-        T EndValue { get; }
-        
-        /// <summary>
-        /// Gets minimum available interval (range) value
-        /// </summary>
-        TInterval MinRangeValue { get; }
-        
-        /// <summary>
-        /// Gets the indicator that this object behaves like a single value object, i.e. start value equals to end value,
-        /// so interval (range) value equals to zero.
-        /// </summary>
-        bool IsSingleValue { get; }
-
-        /// <summary>
-        /// Method for converting <c>double</c> to value type
-        /// </summary>
-        /// <param name="value">Value to convert from</param>
-        /// <returns>Value of type <typeparamref name="T"/></returns>
-        T DoubleToValue(double value);
-        
-        /// <summary>
-        /// Method for converting value type to <c>double</c>
-        /// </summary>
-        /// <param name="value">Value of type <typeparamref name="T"/></param>
-        /// <returns><c>double</c> value, converted from <paramref name="value"/></returns>
-        double ValueToDouble(T value);
-
-        /// <summary>
-        /// Method for converting <c>double</c> to interval type
-        /// </summary>
-        /// <param name="value">Value to convert from</param>
-        /// <returns>Value of type <typeparamref name="TInterval"/></returns>
-        TInterval DoubleToInterval(double value);
-        
-        /// <summary>
-        /// Method for converting interval value to <c>double</c>
-        /// </summary>
-        /// <param name="value">Value of type <typeparamref name="TInterval"/></param>
-        /// <returns><c>double</c> value, converted from <paramref name="value"/></returns>
-        double IntervalToDouble(TInterval value);
-    }
-
-    #endregion
-
-    /// <summary>
-    /// Control, that provides a pair of values inside some interval
-    /// </summary>
+    /// <typeparam name="T">Type of values.</typeparam>
+    /// <typeparam name="TInterval">Type of interval value.</typeparam>
     public abstract class RangeBaseControl<T, TInterval>
         : Control, IRangeTrackTemplatedParent<T, TInterval>, IRanged<T, TInterval>
     {
+        #region Private fields
+
+#pragma warning disable SA1310 // Field names should not contain underscore
+#pragma warning disable SA1303 // Const field names should begin with upper-case letter
+#pragma warning disable SA1308 // Variable names should not be prefixed
+
         private const bool c_DefaultMinRangeValueEnabled = true;
         private bool m_MinRangeValueEnabled = c_DefaultMinRangeValueEnabled;
 
+#pragma warning restore SA1308 // Variable names should not be prefixed
+#pragma warning restore SA1303 // Const field names should begin with upper-case letter
+#pragma warning restore SA1310 // Field names should not contain underscore
+
+        #endregion Private fields
+
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the <see cref="RangeBaseControl{T, TInterval}"/> class.
         /// </summary>
         protected RangeBaseControl()
         {
-            IsRangeValueChanging = false;
+            this.IsRangeValueChanging = false;
         }
 
         #region Abstract methods
 
         /// <summary>
-        /// Method for converting a number to value type
+        /// Gets current interval (range) value.
         /// </summary>
-        /// <param name="value">Number to convert</param>
-        /// <returns>Value of type <typeparamref name="T"/> - representation of <paramref name="value"/></returns>
-        protected abstract T DoubleToValue(double value);
-        
+        /// <value>Current interval (range) value.</value>
+        protected abstract TInterval CurrentRangeValue { get; }
+
         /// <summary>
-        /// Method for converting a value type to number
+        /// Method for converting a number to value type.
         /// </summary>
-        /// <param name="value">Value of type <typeparamref name="T"/></param>
-        /// <returns><c>double</c> representation of <paramref name="value"/></returns>
+        /// <param name="value">Number to convert.</param>
+        /// <returns>Value of type <typeparamref name="T"/> - representation of <paramref name="value"/>.</returns>
+        protected abstract T DoubleToValue(double value);
+
+        /// <summary>
+        /// Method for converting a value type to number.
+        /// </summary>
+        /// <param name="value">Value of type <typeparamref name="T"/>.</param>
+        /// <returns><c>double</c> representation of <paramref name="value"/>.</returns>
         protected abstract double ValueToDouble(T value);
 
         /// <summary>
-        /// Method for converting a number to interval type
+        /// Method for converting a number to interval type.
         /// </summary>
-        /// <param name="value">Number to convert</param>
-        /// <returns>Value of type <typeparamref name="TInterval"/> - representation of <paramref name="value"/></returns>
+        /// <param name="value">Number to convert.</param>
+        /// <returns>Value of type <typeparamref name="TInterval"/> - representation of <paramref name="value"/>.</returns>
         protected abstract TInterval DoubleToInterval(double value);
-        
+
         /// <summary>
-        /// Method for converting an interval type to number
+        /// Method for converting an interval type to number.
         /// </summary>
-        /// <param name="value">Value of type <typeparamref name="TInterval"/></param>
-        /// <returns><c>double</c> representation of <paramref name="value"/></returns>
+        /// <param name="value">Value of type <typeparamref name="TInterval"/>.</param>
+        /// <returns><c>double</c> representation of <paramref name="value"/>.</returns>
         protected abstract double IntervalToDouble(TInterval value);
 
         /// <summary>
-        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>.
         /// </summary>
-        /// <param name="value">Value to coerce</param>
-        /// <returns>Coerced (if needed) value</returns>
+        /// <param name="value">Value to coerce.</param>
+        /// <returns>Coerced (if needed) value.</returns>
         protected abstract object CoerceMinRangeValue(object value);
-        
-        /// <summary>
-        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
-        /// </summary>
-        /// <param name="value">Value to coerce</param>
-        /// <returns>Coerced (if needed) value</returns>
-        protected abstract object CoerceMaximum(object value);
 
         /// <summary>
-        /// Current interval (range) value
+        /// Method for coerce the value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/>.
         /// </summary>
-        protected abstract TInterval CurrentRangeValue { get; }
+        /// <param name="value">Value to coerce.</param>
+        /// <returns>Coerced (if needed) value.</returns>
+        protected abstract object CoerceMaximum(object value);
 
         #endregion Abstract methods
 
         #region IRanged<T, TInterval> implementation
 
+        /// <inheritdoc/>
         T IRanged<T, TInterval>.DoubleToValue(double value)
         {
-            return DoubleToValue(value);
+            return this.DoubleToValue(value);
         }
-        
+
+        /// <inheritdoc/>
         double IRanged<T, TInterval>.ValueToDouble(T value)
         {
-            return ValueToDouble(value);
+            return this.ValueToDouble(value);
         }
-        
+
+        /// <inheritdoc/>
         TInterval IRanged<T, TInterval>.DoubleToInterval(double value)
         {
-            return DoubleToInterval(value);
+            return this.DoubleToInterval(value);
         }
-        
+
+        /// <inheritdoc/>
         double IRanged<T, TInterval>.IntervalToDouble(TInterval value)
         {
-            return IntervalToDouble(value);
+            return this.IntervalToDouble(value);
         }
 
         #endregion IRanged<T, TInterval>
@@ -239,6 +153,7 @@ namespace SaneDevelopment.WPF.Controls
         protected bool MinRangeValueEnabled
         {
             get { return m_MinRangeValueEnabled; }
+
             set
             {
                 if (value != m_MinRangeValueEnabled)
@@ -253,7 +168,7 @@ namespace SaneDevelopment.WPF.Controls
         /// Default value of property <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
         /// which will be set to when such validation become available.
         /// E.g. when <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/> mode comes to OFF (<c>false</c>).
-        /// 
+        ///
         /// In derived classes this property can be overridden to control mentioned mechanism,
         /// suitable for every control individually by default.
         /// </summary>
@@ -285,12 +200,14 @@ namespace SaneDevelopment.WPF.Controls
         /// Method handles <see cref="FrameworkElement.OnApplyTemplate"/>,
         /// notably bind some dependency properties with templated parent.
         /// </summary>
-        /// <param name="templatedParent">Templated parent</param>
-        /// <param name="track">Any range track</param>
+        /// <param name="templatedParent">Templated parent.</param>
+        /// <param name="track">Any range track.</param>
         public virtual void OnApplyRangeTrackTemplate(DependencyObject templatedParent, RangeTrack<T, TInterval> track)
         {
             if (track == null)
+            {
                 throw new ArgumentNullException("track");
+            }
 
             var templatedParentControl = templatedParent as RangeBaseControl<T, TInterval>;
             if (templatedParentControl != null)
@@ -319,19 +236,18 @@ namespace SaneDevelopment.WPF.Controls
             {
                 var res = GetValue(IsSingleValueProperty);
                 Debug.Assert(res != null);
-                return (bool) res;
+                return (bool)res;
             }
+
             set { SetValue(IsSingleValueProperty, value); }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty IsSingleValueProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "IsSingleValue",
+            nameof(IsSingleValue),
             typeof(bool),
             typeof(RangeBaseControl<T, TInterval>),
             new FrameworkPropertyMetadata(false, OnIsSingleValueChanged));
@@ -343,11 +259,7 @@ namespace SaneDevelopment.WPF.Controls
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null);
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             var newValue = (bool)args.NewValue;
             if (newValue)
@@ -378,7 +290,7 @@ namespace SaneDevelopment.WPF.Controls
         #region Minimum
 
         /// <summary>
-        /// Minimum available value
+        /// Minimum available value.
         /// </summary>
         [Bindable(true), Category("Behavior")]
         public T Minimum
@@ -389,6 +301,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(MinimumProperty, value);
@@ -396,13 +309,11 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Minimum"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Minimum"/>.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "Minimum",
+            nameof(Minimum),
             typeof(T),
             typeof(RangeBaseControl<T, TInterval>),
             new FrameworkPropertyMetadata(OnMinimumChanged),
@@ -414,7 +325,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="oldMinimum">The value of the property before the change reported by the relevant event or state change.</param>
         /// <param name="newMinimum">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnMinimumChanged(T oldMinimum, T newMinimum)
-        { }
+        {
+        }
 
         private static void OnMinimumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -435,7 +347,7 @@ namespace SaneDevelopment.WPF.Controls
         #region Maximum
 
         /// <summary>
-        /// Maximum available value
+        /// Maximum available value.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T Maximum
@@ -446,6 +358,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(MaximumProperty, value);
@@ -456,10 +369,8 @@ namespace SaneDevelopment.WPF.Controls
         /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "Maximum",
+            nameof(Maximum),
             typeof(T),
             typeof(RangeBaseControl<T, TInterval>),
             new FrameworkPropertyMetadata(
@@ -474,6 +385,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 value = base2.CoerceMaximum(value);
             }
+
             return value;
         }
 
@@ -483,7 +395,8 @@ namespace SaneDevelopment.WPF.Controls
         /// <param name="oldMaximum">The value of the property before the change reported by the relevant event or state change.</param>
         /// <param name="newMaximum">The value of the property after the change reported by the relevant event or state change.</param>
         protected virtual void OnMaximumChanged(T oldMaximum, T newMaximum)
-        { }
+        {
+        }
 
         private static void OnMaximumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -503,7 +416,7 @@ namespace SaneDevelopment.WPF.Controls
         #region StartValue
 
         /// <summary>
-        /// Start interval value
+        /// Start interval value.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T StartValue
@@ -514,6 +427,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(StartValueProperty, value);
@@ -521,16 +435,15 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.StartValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.StartValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty StartValueProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "StartValue",
+            nameof(StartValue),
             typeof(T),
             typeof(RangeBaseControl<T, TInterval>),
-            new FrameworkPropertyMetadata(default(T),
+            new FrameworkPropertyMetadata(
+                default(T),
                 FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                 OnStartValueChanged,
                 CoerceStartValue),
@@ -541,17 +454,14 @@ namespace SaneDevelopment.WPF.Controls
             Debug.Assert(d is RangeBaseControl<T, TInterval>);
 
             var base2 = d as RangeBaseControl<T, TInterval>;
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
             if (base2 == null) return value;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             if (value != null)
             {
                 var doubleVal = (T)value;
                 value = DependencyPropertyUtil.CoerceRangeStartValue(base2, doubleVal);
             }
+
             return value;
         }
 
@@ -564,13 +474,13 @@ namespace SaneDevelopment.WPF.Controls
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
             {
-                RoutedEvent = StartValueChangedEvent
+                this.RoutedEvent = this.StartValueChangedEvent
             };
-            RaiseEvent(e);
+            this.RaiseEvent(e);
 
-            if (!IsRangeValueChanging)
+            if (!this.IsRangeValueChanging)
             {
-                OnValueChanged(oldValue, EndValue, newValue, EndValue);
+                this.OnValueChanged(oldValue, this.EndValue, newValue, this.EndValue);
             }
         }
 
@@ -589,6 +499,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 element.RangeValue = element.CurrentRangeValue;
             }
+
             element.OnStartValueChanged((T)e.OldValue, (T)e.NewValue);
         }
 
@@ -597,7 +508,7 @@ namespace SaneDevelopment.WPF.Controls
         #region EndValue
 
         /// <summary>
-        /// End interval value
+        /// End interval value.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public T EndValue
@@ -608,6 +519,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(EndValueProperty, value);
@@ -615,16 +527,15 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.EndValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.EndValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty EndValueProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "EndValue",
+            nameof(EndValue),
             typeof(T),
             typeof(RangeBaseControl<T, TInterval>),
-            new FrameworkPropertyMetadata(default(T),
+            new FrameworkPropertyMetadata(
+                default(T),
                 FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                 OnEndValueChanged,
                 CoerceEndValue),
@@ -636,17 +547,14 @@ namespace SaneDevelopment.WPF.Controls
 
             var base2 = d as RangeBaseControl<T, TInterval>;
             Debug.Assert(base2 != null);
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
             if (base2 == null) return value;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             if (value != null)
             {
                 var doubleVal = (T)value;
                 value = DependencyPropertyUtil.CoerceRangeEndValue(base2, doubleVal);
             }
+
             return value;
         }
 
@@ -659,13 +567,13 @@ namespace SaneDevelopment.WPF.Controls
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
             {
-                RoutedEvent = EndValueChangedEvent
+                this.RoutedEvent = this.EndValueChangedEvent
             };
-            RaiseEvent(e);
+            this.RaiseEvent(e);
 
-            if (!IsRangeValueChanging)
+            if (!this.IsRangeValueChanging)
             {
-                OnValueChanged(StartValue, oldValue, StartValue, newValue);
+                this.OnValueChanged(this.StartValue, oldValue, this.StartValue, newValue);
             }
         }
 
@@ -684,6 +592,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 element.RangeValue = element.CurrentRangeValue;
             }
+
             element.OnEndValueChanged((T)e.OldValue, (T)e.NewValue);
         }
 
@@ -692,32 +601,32 @@ namespace SaneDevelopment.WPF.Controls
         #region MinRangeValue
 
         /// <summary>
-        /// Minimum available interval (range) value
+        /// Minimum available interval (range) value.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public TInterval MinRangeValue
         {
             get
             {
-                var res = GetValue(MinRangeValueProperty);
+                var res = this.GetValue(MinRangeValueProperty);
                 Debug.Assert(res != null);
                 return (TInterval) res;
             }
-            set { SetValue(MinRangeValueProperty, value); }
+
+            set { this.SetValue(MinRangeValueProperty, value); }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.MinRangeValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty MinRangeValueProperty =
-// ReSharper restore StaticFieldInGenericType
             DependencyProperty.Register(
-                "MinRangeValue",
+                nameof(MinRangeValue),
                 typeof(TInterval),
                 typeof(RangeBaseControl<T, TInterval>),
-                new FrameworkPropertyMetadata(default(TInterval),
+                new FrameworkPropertyMetadata(
+                    default(TInterval),
                     FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnMinRangeValueChanged,
                     CoerceMinRangeValue),
@@ -729,11 +638,7 @@ namespace SaneDevelopment.WPF.Controls
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null, "element != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             element.CoerceValue(StartValueProperty);
             element.CoerceValue(EndValueProperty);
@@ -745,9 +650,7 @@ namespace SaneDevelopment.WPF.Controls
 
             var cntrl = element as RangeBaseControl<T, TInterval>;
             Debug.Assert(cntrl != null);
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (cntrl != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 value = cntrl.CoerceMinRangeValue(value);
             }
@@ -760,38 +663,33 @@ namespace SaneDevelopment.WPF.Controls
         #region RangeValue
 
         /// <summary>
-        /// Current interval (range) value
+        /// Current interval (range) value.
         /// </summary>
         [Category("Behavior"), Bindable(true)]
         public TInterval RangeValue
         {
             get
             {
-                var res = GetValue(RangeValueProperty);
+                var res = this.GetValue(RangeValueProperty);
                 Debug.Assert(res != null);
                 return (TInterval) res;
             }
-            private set { SetValue(RangeValuePropertyKey, value); }
+
+            private set { this.SetValue(RangeValuePropertyKey, value); }
         }
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable StaticFieldInGenericType
         private static readonly DependencyPropertyKey RangeValuePropertyKey =
-// ReSharper restore StaticFieldInGenericType
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "RangeValue",
+                nameof(RangeValue),
                 typeof(TInterval),
                 typeof(RangeBaseControl<T, TInterval>),
                 new FrameworkPropertyMetadata(OnRangeValueChanged));
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.RangeValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty RangeValueProperty = RangeValuePropertyKey.DependencyProperty;
-// ReSharper restore StaticFieldInGenericType
 
         private static void OnRangeValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
@@ -801,11 +699,7 @@ namespace SaneDevelopment.WPF.Controls
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null, "element != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
             if (element == null) return;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             if (!element.IsRangeValueChanging)
             {
@@ -822,9 +716,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<TInterval>(oldValue, newValue)
             {
-                RoutedEvent = RangeValueChangedEvent
+                RoutedEvent = RangeValueChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         #endregion
@@ -845,6 +739,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (TInterval)res;
             }
+
             set
             {
                 this.SetValue(SmallChangeProperty, value);
@@ -852,13 +747,11 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.SmallChange"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.SmallChange"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty SmallChangeProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "SmallChange",
+            nameof(SmallChange),
             typeof(TInterval),
             typeof(RangeBaseControl<T, TInterval>),
             new FrameworkPropertyMetadata(),
@@ -882,6 +775,7 @@ namespace SaneDevelopment.WPF.Controls
                 Debug.Assert(res != null);
                 return (TInterval)res;
             }
+
             set
             {
                 this.SetValue(LargeChangeProperty, value);
@@ -889,13 +783,11 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.LargeChange"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.LargeChange"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty LargeChangeProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "LargeChange",
+            nameof(LargeChange),
             typeof(TInterval),
             typeof(RangeBaseControl<T, TInterval>),
             new FrameworkPropertyMetadata(),
@@ -910,13 +802,11 @@ namespace SaneDevelopment.WPF.Controls
         #region StartValueChanged
 
         /// <summary>
-        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.StartValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.StartValueChanged"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly RoutedEvent StartValueChangedEvent = EventManager.RegisterRoutedEvent(
-// ReSharper restore StaticFieldInGenericType
-            "StartValueChanged",
+            nameof(StartValueChanged),
             RoutingStrategy.Bubble,
             typeof(RoutedPropertyChangedEventHandler<T>),
             typeof(RangeBaseControl<T, TInterval>));
@@ -931,6 +821,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 this.AddHandler(StartValueChangedEvent, value);
             }
+
             remove
             {
                 this.RemoveHandler(StartValueChangedEvent, value);
@@ -942,13 +833,11 @@ namespace SaneDevelopment.WPF.Controls
         #region EndValueChanged
 
         /// <summary>
-        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.EndValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.EndValueChanged"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly RoutedEvent EndValueChangedEvent = EventManager.RegisterRoutedEvent(
-// ReSharper restore StaticFieldInGenericType
-            "EndValueChanged",
+            nameof(EndValueChanged),
             RoutingStrategy.Bubble,
             typeof(RoutedPropertyChangedEventHandler<T>),
             typeof(RangeBaseControl<T, TInterval>));
@@ -963,6 +852,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 this.AddHandler(EndValueChangedEvent, value);
             }
+
             remove
             {
                 this.RemoveHandler(EndValueChangedEvent, value);
@@ -974,14 +864,12 @@ namespace SaneDevelopment.WPF.Controls
         #region RangeValueChanged
 
         /// <summary>
-        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly RoutedEvent RangeValueChangedEvent =
-// ReSharper restore StaticFieldInGenericType
             EventManager.RegisterRoutedEvent(
-                "RangeValueChanged",
+                nameof(RangeValueChanged),
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<TInterval>),
                 typeof(RangeBaseControl<T, TInterval>));
@@ -992,8 +880,8 @@ namespace SaneDevelopment.WPF.Controls
         [Category("Behavior")]
         public event RoutedPropertyChangedEventHandler<TInterval> RangeValueChanged
         {
-            add { AddHandler(RangeValueChangedEvent, value); }
-            remove { RemoveHandler(RangeValueChangedEvent, value); }
+            add { this.AddHandler(RangeValueChangedEvent, value); }
+            remove { this.RemoveHandler(RangeValueChangedEvent, value); }
         }
 
         #endregion RangeValueChanged
@@ -1001,14 +889,12 @@ namespace SaneDevelopment.WPF.Controls
         #region ValueChanged
 
         /// <summary>
-        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/>
+        /// Routed property event for <see cref="RangeBaseControl{T, TInterval}.ValueChanged"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly RoutedEvent ValueChangedEvent =
-// ReSharper restore StaticFieldInGenericType
             EventManager.RegisterRoutedEvent(
-                "ValueChanged",
+                nameof(ValueChanged),
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<RangeDragCompletedEventArgs<T>>),
                 typeof(RangeBaseControl<T, TInterval>));
@@ -1019,28 +905,45 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event EventHandler<RangeDragCompletedEventArgs<T>> ValueChanged
         {
-            add { AddHandler(ValueChangedEvent, value); }
-            remove { RemoveHandler(ValueChangedEvent, value); }
+            add { this.AddHandler(ValueChangedEvent, value); }
+            remove { this.RemoveHandler(ValueChangedEvent, value); }
         }
 
         #endregion ValueChanged
 
         #endregion
 
+        /// <summary>
+        /// Checks whether received value is valid value of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <param name="value">Value to check.</param>
+        /// <returns><c>true</c>, if <paramref name="value"/> is valid value of type <typeparamref name="T"/>.</returns>
         internal static bool IsValidValue(object value)
         {
             bool res = DependencyPropertyUtil.IsValidValue(typeof(T), value);
             return res;
         }
 
+        /// <summary>
+        /// Checks whether received value is valid value of type <typeparamref name="TInterval"/>.
+        /// </summary>
+        /// <param name="value">Value to check.</param>
+        /// <returns><c>true</c>, if <paramref name="value"/> is valid value of type <typeparamref name="TInterval"/>.</returns>
         internal static bool IsValidIntervalValue(object value)
         {
             return DependencyPropertyUtil.IsValidValue(typeof(TInterval), value);
         }
 
+        /// <summary>
+        /// Checks whether received value is valid change (distance) value of type <typeparamref name="TInterval"/>.
+        /// </summary>
+        /// <param name="value">Value to check.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> id valid change value of type <typeparamref name="TInterval"/>.</returns>
         internal static bool IsValidChange(object value)
         {
             return DependencyPropertyUtil.IsValidChange(typeof(TInterval), value);
         }
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

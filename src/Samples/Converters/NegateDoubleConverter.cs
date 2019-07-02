@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="StringToDateTimeCollectionConverter.xaml.cs" company="Sane Development">
+// <copyright file="NegateDoubleConverter.cs" company="Sane Development">
 //
 // Sane Development WPF Controls Library Samples.
 //
@@ -20,9 +20,9 @@ namespace SaneDevelopment.WPF.Controls.Samples
     using System.Windows.Data;
 
     /// <summary>
-    /// Added for purposes to pass concrete <c>targetType</c> to <see cref="UniversalConverter.Convert"/>.
+    /// Convert double value to negate value.
     /// </summary>
-    public sealed class StringToDateTimeCollectionConverter : IValueConverter
+    public sealed class NegateDoubleConverter : IValueConverter
     {
         /// <inheritdoc/>
         public object Convert(
@@ -31,7 +31,12 @@ namespace SaneDevelopment.WPF.Controls.Samples
             object parameter,
             CultureInfo culture)
         {
-            return new UniversalConverter().Convert(value ?? string.Empty, typeof(DateTimeCollection), parameter, culture);
+            if (value == null)
+            {
+                return Binding.DoNothing;
+            }
+
+            return -1.0 * System.Convert.ToDouble(value, CultureInfo.CurrentCulture);
         }
 
         /// <inheritdoc/>

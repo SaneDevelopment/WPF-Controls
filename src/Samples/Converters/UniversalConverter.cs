@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="NegateDoubleConverter.xaml.cs" company="Sane Development">
+// <copyright file="UniversalConverter.cs" company="Sane Development">
 //
 // Sane Development WPF Controls Library Samples.
 //
@@ -16,13 +16,15 @@
 namespace SaneDevelopment.WPF.Controls.Samples
 {
     using System;
+    using System.ComponentModel;
     using System.Globalization;
+    using System.Windows;
     using System.Windows.Data;
 
     /// <summary>
-    /// Convert double value to negate value.
+    /// Universal converter for any type using <see cref="TypeConverter"/>.
     /// </summary>
-    public sealed class NegateDoubleConverter : IValueConverter
+    public sealed class UniversalConverter : IValueConverter
     {
         /// <inheritdoc/>
         public object Convert(
@@ -31,12 +33,31 @@ namespace SaneDevelopment.WPF.Controls.Samples
             object parameter,
             CultureInfo culture)
         {
-            if (value == null)
+            if (targetType == null || value == null)
             {
-                return Binding.DoNothing;
+                return null;
             }
 
-            return -1.0 * System.Convert.ToDouble(value, CultureInfo.CurrentCulture);
+            object res = DependencyProperty.UnsetValue;
+
+            TypeConverter converter = TypeDescriptor.GetConverter(targetType);
+
+            try
+            {
+                if (converter.CanConvertFrom(value.GetType()))
+                {
+                    res = converter.ConvertFrom(value);
+                }
+                else if (converter.CanConvertFrom(typeof(string)))
+                {
+                    res = converter.ConvertFrom(value.ToString());
+                }
+            }
+            catch (FormatException)
+            {
+            }
+
+            return res;
         }
 
         /// <inheritdoc/>
