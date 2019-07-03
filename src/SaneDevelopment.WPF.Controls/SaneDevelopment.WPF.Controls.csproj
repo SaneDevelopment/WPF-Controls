@@ -119,12 +119,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="RangeControls\DateTimeRangeTrack.cs" />
+    <Compile Include="DefaultDateTimeTickLabelToStringConverter.cs" />
     <Compile Include="RangeControls\IRanged.cs" />
     <Compile Include="RangeControls\IRangeTrackTemplatedParent.cs" />
+    <Compile Include="RangeControls\IRangeValueToStringConverter.cs" />
+    <Compile Include="RangeControls\NumericRangeTrack.cs" />
     <Compile Include="RangeControls\RangeBaseControl.cs" />
+    <Compile Include="RangeControls\RangeThumbType.cs" />
     <Compile Include="RangeControls\RangeTrack.cs" />
+    <Compile Include="RangeControls\RangeValueData.cs" />
+    <Compile Include="RangeControls\SimpleDateTimeRangeSlider.cs" />
+    <Compile Include="RangeControls\SimpleNumericRangeSlider.cs" />
+    <Compile Include="RangeControls\SimpleRangeSlider.cs" />
     <Compile Include="SaneDataGrid.cs" />
-    <Compile Include="RangeControls\SimpleRangeSliders.cs" />
     <Compile Include="Interactivity\SupplementaryInteraction.cs" />
     <Compile Include="Ticks\DateTimeTicksCollection.cs" />
     <Compile Include="Ticks\DoubleTicksCollection.cs" />

@@ -1,95 +1,61 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright file="RangeTrack.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library
+// Sane Development WPF Controls Library.
 //
-//   The BSD 3-Clause License
+// The BSD 3-Clause License.
 //
-//   Copyright (c) Sane Development
-//   All rights reserved.
+// Copyright (c) Sane Development.
+// All rights reserved.
 //
-//   Redistribution and use in source and binary forms, with or without modification,
-//   are permitted provided that the following conditions are met:
-//
-//   - Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   - Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   - Neither the name of the Sane Development nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-//   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-//   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-//   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-//   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
-//   BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-//   OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-//   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-//   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-//   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-//   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// See LICENSE file for full license information.
 //
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-
 namespace SaneDevelopment.WPF.Controls
 {
-    /// <summary>
-    /// Range thumb type
-    /// </summary>
-    public enum RangeThumbType
-    {
-        /// <summary>
-        /// No set
-        /// </summary>
-        None = 0,
-        /// <summary>
-        /// Start thumb
-        /// </summary>
-        StartThumb,
-        /// <summary>
-        /// Interval (range) thumb
-        /// </summary>
-        RangeThumb,
-        /// <summary>
-        /// End thumb
-        /// </summary>
-        EndThumb
-    }
+    using System;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Controls.Primitives;
+    using System.Windows.Data;
+    using System.Windows.Input;
+    using System.Windows.Media;
 
     /// <summary>
     /// Control primitive, that manages positions of three <see cref="Thumb"/>s and two <see cref="RepeatButton"/>s,
     /// which uses for changing of <see cref="RangeTrack{T, TInterval}.StartValue"/> and <see cref="RangeTrack{T, TInterval}.EndValue"/>.
     /// </summary>
+    /// <typeparam name="T">Type of values.</typeparam>
+    /// <typeparam name="TInterval">Type of interval value.</typeparam>
     public abstract class RangeTrack<T, TInterval> : FrameworkElement
     {
-        #region Private fields
+#pragma warning disable SA1201 // Elements should appear in the correct order
 
-        private RepeatButton m_DecreaseButton, m_IncreaseButton;
-        private Thumb m_StartThumb, m_RangeThumb, m_EndThumb;
+        #region Private fields
+#pragma warning disable SA1308 // Variable names should not be prefixed
+#pragma warning disable SA1303 // Const field names should begin with upper-case letter
+#pragma warning disable SA1310 // Field names should not contain underscore
+
+        private const int c_MaxVisualChildrenCount = 5; // maximum count of visual children elements
+
+        private RepeatButton m_DecreaseButton;
+        private RepeatButton m_IncreaseButton;
+        private Thumb m_StartThumb;
+        private Thumb m_RangeThumb;
+        private Thumb m_EndThumb;
 
         private double m_Density = double.NaN;
 
         private Visual[] m_VisualChildren;
 
-        private const int c_MaxVisualChildrenCount = 5; // maximum count of visual children elements
-
+#pragma warning restore SA1310 // Field names should not contain underscore
+#pragma warning restore SA1303 // Const field names should begin with upper-case letter
+#pragma warning restore SA1308 // Variable names should not be prefixed
         #endregion Private fields
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static RangeTrack()
         {
             IsEnabledProperty.OverrideMetadata(
@@ -103,49 +69,135 @@ namespace SaneDevelopment.WPF.Controls
                     }));
         }
 
-        /// <summary>
-        /// Method should convert <c>double</c> to value type <typeparamref name="T"/>
-        /// </summary>
-        /// <param name="value">Number to convert</param>
-        /// <returns>Number, converted to <typeparamref name="T"/></returns>
-        protected abstract T DoubleToValue(double value);
-        
-        /// <summary>
-        /// Method should convert value of type <typeparamref name="T"/> to <c>double</c>
-        /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Number representation of <paramref name="value"/></returns>
-        protected abstract double ValueToDouble(T value);
+        #region Control Parts
 
         /// <summary>
-        /// Calculates the value change of <see cref="RangeTrack{T, TInterval}.StartValue" /> or <see cref="RangeTrack{T, TInterval}.EndValue" />
-        /// from the distance that the mouse (or thumb) has moved.
+        /// Gets or sets button for decreasing interval.
         /// </summary>
-        /// <param name="horizontalChange">The horizontal distance that the mouse or thumb has moved</param>
-        /// <param name="verticalChange">The vertical distance that the mouse or thumb has moved</param>
-        /// <returns>Change of start value or end value corresponding to distance that the mouse or thumb has moved.</returns>
-        public virtual double ValueFromDistance(double horizontalChange, double verticalChange)
+        /// <value>Button for decreasing interval.</value>
+        public virtual RepeatButton DecreaseRepeatButton
         {
-            return (this.Orientation == Orientation.Horizontal)
-                       ? horizontalChange * this.Density
-                       : -1.0 * verticalChange * this.Density;
+            get
+            {
+                return this.m_DecreaseButton;
+            }
+
+            set
+            {
+                if (Equals(this.m_DecreaseButton, value))
+                {
+                    throw new NotSupportedException();
+                }
+
+                this.UpdateComponent(this.m_DecreaseButton, value);
+                this.m_DecreaseButton = value;
+                if (this.m_DecreaseButton != null)
+                {
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
+
+        /// <summary>
+        /// Gets or sets button for increasing interval.
+        /// </summary>
+        /// <value>Button for increasing interval.</value>
+        public virtual RepeatButton IncreaseRepeatButton
+        {
+            get
+            {
+                return this.m_IncreaseButton;
+            }
+
+            set
+            {
+                if (Equals(this.m_IncreaseButton, value))
+                {
+                    throw new NotSupportedException();
+                }
+
+                this.UpdateComponent(this.m_IncreaseButton, value);
+                this.m_IncreaseButton = value;
+                if (this.m_IncreaseButton != null)
+                {
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets start interval thumb.
+        /// </summary>
+        /// <value>Start interval thumb.</value>
+        public virtual Thumb StartThumb
+        {
+            get
+            {
+                return this.m_StartThumb;
+            }
+
+            set
+            {
+                this.UpdateComponent(this.m_StartThumb, value);
+                this.m_StartThumb = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets interval (range) thumb.
+        /// </summary>
+        /// <value>Interval (range) thumb.</value>
+        public virtual Thumb RangeThumb
+        {
+            get
+            {
+                return this.m_RangeThumb;
+            }
+
+            set
+            {
+                this.UpdateComponent(this.m_RangeThumb, value);
+                this.m_RangeThumb = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets end interval thumb.
+        /// </summary>
+        /// <value>End interval thumb.</value>
+        public virtual Thumb EndThumb
+        {
+            get
+            {
+                return this.m_EndThumb;
+            }
+
+            set
+            {
+                this.UpdateComponent(this.m_EndThumb, value);
+                this.m_EndThumb = value;
+            }
+        }
+
+        #endregion
 
         #region Dependency properties
 
         #region Minimum
 
         /// <summary>
-        /// Minimum available value
+        /// Gets or sets minimum available value.
         /// </summary>
+        /// <value>Minimum available value.</value>
         public T Minimum
         {
             get
             {
                 var res = this.GetValue(MinimumProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(MinimumProperty, value);
@@ -153,12 +205,9 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Minimum"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Minimum"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-        // ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty MinimumProperty = RangeBaseControl<T, TInterval>.MinimumProperty.AddOwner(
-            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.AffectsArrange));
 
@@ -167,26 +216,28 @@ namespace SaneDevelopment.WPF.Controls
         #region Maximum
 
         /// <summary>
-        /// Maximum available value
+        /// Gets or sets maximum available value.
         /// </summary>
+        /// <value>Maximum available value.</value>
         public T Maximum
         {
             get
             {
                 var res = this.GetValue(MaximumProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
-            set { this.SetValue(MaximumProperty, value); }
+
+            set
+            {
+                this.SetValue(MaximumProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Maximum"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Maximum"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-        // ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty MaximumProperty = RangeBaseControl<T, TInterval>.MaximumProperty.AddOwner(
-            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.AffectsArrange));
 
@@ -195,16 +246,18 @@ namespace SaneDevelopment.WPF.Controls
         #region StartValue
 
         /// <summary>
-        /// Start value of interval (range)
+        /// Gets or sets start value of interval (range).
         /// </summary>
+        /// <value>Start value of interval (range).</value>
         public T StartValue
         {
             get
             {
                 var res = this.GetValue(StartValueProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(StartValueProperty, value);
@@ -212,12 +265,9 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeTrack{T, TInterval}.StartValue"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.StartValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-        // ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty StartValueProperty = RangeBaseControl<T, TInterval>.StartValueProperty.AddOwner(
-            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
 
@@ -226,16 +276,18 @@ namespace SaneDevelopment.WPF.Controls
         #region EndValue
 
         /// <summary>
-        /// End value of interval (range)
+        /// Gets or sets end value of interval (range).
         /// </summary>
+        /// <value>End value of interval (range).</value>
         public T EndValue
         {
             get
             {
                 var res = this.GetValue(EndValueProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
+
             set
             {
                 this.SetValue(EndValueProperty, value);
@@ -243,12 +295,9 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeTrack{T, TInterval}.EndValue"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.EndValue"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-        // ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty EndValueProperty = RangeBaseControl<T, TInterval>.EndValueProperty.AddOwner(
-            // ReSharper restore StaticFieldInGenericType
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
 
@@ -257,16 +306,18 @@ namespace SaneDevelopment.WPF.Controls
         #region Orientation
 
         /// <summary>
-        /// Control orientation
+        /// Gets or sets control orientation.
         /// </summary>
+        /// <value>Control orientation.</value>
         public Orientation Orientation
         {
             get
             {
                 var res = this.GetValue(OrientationProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (Orientation)res;
             }
+
             set
             {
                 this.SetValue(OrientationProperty, value);
@@ -274,13 +325,10 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Orientation"/>
+        /// Dependency property for <see cref="RangeTrack{T, TInterval}.Orientation"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
-// ReSharper disable StaticFieldInGenericType
         public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(
-// ReSharper restore StaticFieldInGenericType
-            "Orientation",
+            nameof(Orientation),
             typeof(Orientation),
             typeof(RangeTrack<T, TInterval>),
             new FrameworkPropertyMetadata(Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsMeasure),
@@ -291,6 +339,140 @@ namespace SaneDevelopment.WPF.Controls
         #endregion
 
         /// <summary>
+        /// Gets the number of visual child elements within this element.
+        /// </summary>
+        /// <value>The number of visual child elements for this element (0 to 5).</value>
+        protected override int VisualChildrenCount
+        {
+            get
+            {
+                if (this.m_VisualChildren == null)
+                {
+                    return 0;
+                }
+
+                int i = 0;
+                for (; i < this.m_VisualChildren.Length; i++)
+                {
+                    if (this.m_VisualChildren[i] == null)
+                    {
+                        return i;
+                    }
+                }
+
+                return i;
+            }
+        }
+
+
+        /// <summary>
+        /// Calculates the value change of <see cref="RangeTrack{T, TInterval}.StartValue" /> or <see cref="RangeTrack{T, TInterval}.EndValue" />
+        /// from the distance that the mouse (or thumb) has moved.
+        /// </summary>
+        /// <param name="horizontalChange">The horizontal distance that the mouse or thumb has moved.</param>
+        /// <param name="verticalChange">The vertical distance that the mouse or thumb has moved.</param>
+        /// <returns>Change of start value or end value corresponding to distance that the mouse or thumb has moved.</returns>
+        public virtual double ValueFromDistance(double horizontalChange, double verticalChange)
+        {
+            return (this.Orientation == Orientation.Horizontal)
+                       ? horizontalChange * this.m_Density
+                       : -1.0 * verticalChange * this.m_Density;
+        }
+
+        /// <summary>
+        /// Method performs immediate processing of <see cref="FrameworkElement.OnApplyTemplate"/>.
+        /// </summary>
+        public void DoApplyTemplate()
+        {
+            var templatedParent = this.TemplatedParent as IRangeTrackTemplatedParent<T, TInterval>;
+            if (templatedParent != null)
+            {
+                templatedParent.OnApplyRangeTrackTemplate(this.TemplatedParent, this);
+            }
+        }
+
+        /// <summary>
+        /// Is invoked whenever application code or internal processes call <see cref="System.Windows.FrameworkElement.ApplyTemplate"/>().
+        /// Invokes <see cref="DoApplyTemplate"/>().
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            this.DoApplyTemplate();
+        }
+
+        /// <summary>
+        /// Attaches a binding to <paramref name="element"/>, based on the <see cref="FrameworkElement.TemplatedParent"/> as the binding source.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <param name="target">Identifies the property where the binding should be established.</param>
+        /// <param name="source">A property path that describes a path to single dependency property.</param>
+        public void BindChildToTemplatedParent(FrameworkElement element, DependencyProperty target, DependencyProperty source)
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (element != null)
+            {
+                var binding = new Binding
+                {
+                    Source = this.TemplatedParent,
+                    Path = new PropertyPath(source),
+                };
+                element.SetBinding(target, binding);
+            }
+        }
+
+        /// <summary>
+        /// Attaches a binding to this element, based on the templated parent relatively.
+        /// </summary>
+        /// <param name="target">Identifies the property where the binding should be established.</param>
+        /// <param name="source">A property path that describes a path to single dependency property.</param>
+        public void BindToTemplatedParent(DependencyProperty target, DependencyProperty source)
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var binding = new Binding
+            {
+                RelativeSource = RelativeSource.TemplatedParent,
+                Path = new PropertyPath(source),
+            };
+            this.SetBinding(target, binding);
+        }
+
+
+        /// <summary>
+        /// Method should convert <c>double</c> to value type <typeparamref name="T"/>.
+        /// </summary>
+        /// <param name="value">Number to convert.</param>
+        /// <returns>Number, converted to <typeparamref name="T"/>.</returns>
+        protected abstract T DoubleToValue(double value);
+
+        /// <summary>
+        /// Method should convert value of type <typeparamref name="T"/> to <c>double</c>.
+        /// </summary>
+        /// <param name="value">Value to convert.</param>
+        /// <returns>Number representation of <paramref name="value"/>.</returns>
+        protected abstract double ValueToDouble(T value);
+
+
+        /// <summary>
         /// Positions child elements and determines a size for a <see cref="RangeTrack{T, TInterval}"/>.
         /// </summary>
         /// <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
@@ -298,15 +480,19 @@ namespace SaneDevelopment.WPF.Controls
         protected override Size ArrangeOverride(Size finalSize)
         {
             double decreaseButtonLength, startThumbLength, rangeThumbLength, endThumbLength, increaseButtonLength;
-            Debug.Assert(finalSize.Width >= 0);
+            Debug.Assert(finalSize.Width >= 0, "finalSize.Width >= 0");
             bool isVertical = this.Orientation == Orientation.Vertical;
 
-            this.ComputeLengths(finalSize, isVertical,
+            this.ComputeLengths(
+                finalSize,
+                isVertical,
                 out decreaseButtonLength,
-                out startThumbLength, out rangeThumbLength, out endThumbLength,
+                out startThumbLength,
+                out rangeThumbLength,
+                out endThumbLength,
                 out increaseButtonLength);
 
-            var location = new Point();
+            var location = default(Point);
             Size size = finalSize;
             if (isVertical)
             {
@@ -404,40 +590,8 @@ namespace SaneDevelopment.WPF.Controls
                     this.RangeThumb.Arrange(new Rect(location, size));
                 }
             }
+
             return finalSize;
-        }
-
-        private static Size MeasureThumb(Thumb thumb, bool isVertical, Size availableSize, Size desiredSize)
-        {
-            Debug.Assert(!desiredSize.IsEmpty);
-
-            if (thumb != null)
-            {
-                thumb.Measure(availableSize);
-                if (!thumb.DesiredSize.IsEmpty)
-                {
-                    Debug.Assert(thumb.DesiredSize.Height >= 0);
-                    Debug.Assert(thumb.DesiredSize.Width >= 0);
-                    if (isVertical)
-                    {
-                        // making desired width of vertical slider as a max of thumbs widthes
-                        desiredSize.Width = Math.Max(desiredSize.Width, thumb.DesiredSize.Width);
-                        // making desired height of vertical slider as a sum of thumbs hightes
-                        desiredSize.Height += thumb.DesiredSize.Height;
-                    }
-                    else
-                    {
-                        // making desired width of horizontal slider as a sum of thumbs widthes
-                        desiredSize.Width += thumb.DesiredSize.Width;
-                        // making desired height of horizontal slider as a max of thumbs hightes
-                        Debug.Assert(desiredSize.Height >= 0);
-                        desiredSize.Height = Math.Max(desiredSize.Height, thumb.DesiredSize.Height);
-                    }
-                }
-            }
-
-            Debug.Assert(!desiredSize.IsEmpty);
-            return desiredSize;
         }
 
         /// <summary>
@@ -456,52 +610,7 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Method performs immediate processing of <see cref="FrameworkElement.OnApplyTemplate"/>.
-        /// </summary>
-        public void DoApplyTemplate()
-        {
-            var templatedParent = this.TemplatedParent as IRangeTrackTemplatedParent<T, TInterval>;
-            if (templatedParent != null)
-            {
-                templatedParent.OnApplyRangeTrackTemplate(this.TemplatedParent, this);
-            }
-        }
-
-        /// <summary>
-        /// Is invoked whenever application code or internal processes call <see cref="System.Windows.FrameworkElement.ApplyTemplate"/>().
-        /// Invokes <see cref="DoApplyTemplate"/>().
-        /// </summary>
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            DoApplyTemplate();
-        }
-
-        /// <summary>
-        /// Gets the number of visual child elements within this element.
-        /// </summary>
-        /// <returns>The number of visual child elements for this element (0 to 5).</returns>
-        protected override int VisualChildrenCount
-        {
-            get
-            {
-                if (this.m_VisualChildren == null)
-                {
-                    return 0;
-                }
-                int i = 0;
-                for (; i < m_VisualChildren.Length; i++)
-                {
-                    if (m_VisualChildren[i] == null)
-                        return i;
-                }
-                return i;
-            }
-        }
-
-        /// <summary>
-        /// Overrides <see cref="System.Windows.Media.Visual.GetVisualChild(System.Int32)"/>,
+        /// Overrides <see cref="Visual.GetVisualChild(int)"/>,
         /// and returns a child at the specified index from a collection of child elements.
         /// </summary>
         /// <param name="index">The zero-based index of the requested child element in the collection.</param>
@@ -514,69 +623,82 @@ namespace SaneDevelopment.WPF.Controls
                 index < 0 ||
                 this.m_VisualChildren[index] == null)
             {
-                throw new ArgumentOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
+
             return this.m_VisualChildren[index];
         }
 
-        /// <summary>
-        /// Attaches a binding to <paramref name="element"/>, based on the <see cref="FrameworkElement.TemplatedParent"/> as the binding source.
-        /// </summary>
-        /// <param name="element">Element</param>
-        /// <param name="target">Identifies the property where the binding should be established.</param>
-        /// <param name="source">A property path that describes a path to single dependency property.</param>
-        public void BindChildToTemplatedParent(FrameworkElement element, DependencyProperty target, DependencyProperty source)
-        {
-            if (target == null)
-                throw new ArgumentNullException("target");
-            if (source == null)
-                throw new ArgumentNullException("source");
 
-            if (element != null)
+        private static void CoerceLength(ref double componentLength, double trackLength)
+        {
+            Debug.Assert(trackLength >= 0, "trackLength >= 0");
+
+            if (componentLength < 0.0)
             {
-                var binding = new Binding
-                {
-                    Source = this.TemplatedParent,
-                    Path = new PropertyPath(source)
-                };
-                element.SetBinding(target, binding);
+                componentLength = 0.0;
             }
+            else if ((componentLength > trackLength) || double.IsNaN(componentLength))
+            {
+                componentLength = trackLength;
+            }
+
+            Debug.Assert(componentLength >= 0.0 && componentLength <= trackLength, "componentLength >= 0.0 && componentLength <= trackLength");
         }
 
-        /// <summary>
-        /// Attaches a binding to this element, based on the templated parent relatively.
-        /// </summary>
-        /// <param name="target">Identifies the property where the binding should be established.</param>
-        /// <param name="source">A property path that describes a path to single dependency property.</param>
-        public void BindToTemplatedParent(DependencyProperty target, DependencyProperty source)
+        private static Size MeasureThumb(Thumb thumb, bool isVertical, Size availableSize, Size desiredSize)
         {
-            if (target == null)
-                throw new ArgumentNullException("target");
-            if (source == null)
-                throw new ArgumentNullException("source");
+            Debug.Assert(!desiredSize.IsEmpty, "!desiredSize.IsEmpty");
 
-            var binding = new Binding
+            if (thumb != null)
             {
-                RelativeSource = RelativeSource.TemplatedParent,
-                Path = new PropertyPath(source)
-            };
-            this.SetBinding(target, binding);
+                thumb.Measure(availableSize);
+                if (!thumb.DesiredSize.IsEmpty)
+                {
+                    Debug.Assert(thumb.DesiredSize.Height >= 0, "thumb.DesiredSize.Height >= 0");
+                    Debug.Assert(thumb.DesiredSize.Width >= 0, "thumb.DesiredSize.Width >= 0");
+                    if (isVertical)
+                    {
+                        // making desired width of vertical slider as a max of thumbs widthes
+                        desiredSize.Width = Math.Max(desiredSize.Width, thumb.DesiredSize.Width);
+                        // making desired height of vertical slider as a sum of thumbs hightes
+                        desiredSize.Height += thumb.DesiredSize.Height;
+                    }
+                    else
+                    {
+                        // making desired width of horizontal slider as a sum of thumbs widthes
+                        desiredSize.Width += thumb.DesiredSize.Width;
+                        // making desired height of horizontal slider as a max of thumbs hightes
+                        Debug.Assert(desiredSize.Height >= 0, "desiredSize.Height >= 0");
+                        desiredSize.Height = Math.Max(desiredSize.Height, thumb.DesiredSize.Height);
+                    }
+                }
+            }
+
+            Debug.Assert(!desiredSize.IsEmpty, "!desiredSize.IsEmpty");
+            return desiredSize;
         }
 
         private void UpdateComponent(Control oldValue, Control newValue)
         {
             if (Equals(oldValue, newValue))
+            {
                 return;
+            }
 
             if (this.m_VisualChildren == null)
             {
                 this.m_VisualChildren = new Visual[c_MaxVisualChildrenCount];
             }
+
             if (oldValue != null)
             {
                 this.RemoveVisualChild(oldValue);
             }
-            Debug.Assert(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
+
+            Debug.Assert(this.m_VisualChildren != null, "this.m_VisualChildren != null");
+            Debug.Assert(this.m_VisualChildren.Length == c_MaxVisualChildrenCount, "this.m_VisualChildren.Length == c_MaxVisualChildrenCount");
+
             int index = 0;
             while (index < this.m_VisualChildren.Length)
             {
@@ -584,6 +706,7 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     break;
                 }
+
                 if (Equals(this.m_VisualChildren[index], oldValue))
                 {
                     while (index < (this.m_VisualChildren.Length - 1) &&
@@ -598,28 +721,15 @@ namespace SaneDevelopment.WPF.Controls
                     index++;
                 }
             }
-            Debug.Assert(index < this.m_VisualChildren.Length);
+
+            Debug.Assert(index < this.m_VisualChildren.Length, "index < this.m_VisualChildren.Length");
             this.m_VisualChildren[index] = newValue;
             this.AddVisualChild(newValue);
             this.InvalidateMeasure();
             this.InvalidateArrange();
-            Debug.Assert(this.m_VisualChildren != null && this.m_VisualChildren.Length == c_MaxVisualChildrenCount);
-        }
 
-        private static void CoerceLength(ref double componentLength, double trackLength)
-        {
-            Debug.Assert(trackLength >= 0);
-
-            if (componentLength < 0.0)
-            {
-                componentLength = 0.0;
-            }
-            else if ((componentLength > trackLength) || double.IsNaN(componentLength))
-            {
-                componentLength = trackLength;
-            }
-
-            Debug.Assert(componentLength >= 0.0 && componentLength <= trackLength);
+            Debug.Assert(this.m_VisualChildren != null, "this.m_VisualChildren != null");
+            Debug.Assert(this.m_VisualChildren.Length == c_MaxVisualChildrenCount, "this.m_VisualChildren.Length == c_MaxVisualChildrenCount");
         }
 
         private void ComputeLengths(
@@ -631,12 +741,12 @@ namespace SaneDevelopment.WPF.Controls
             out double endThumbLength,
             out double increaseButtonLength)
         {
-            Debug.Assert(!arrangeSize.IsEmpty);
+            Debug.Assert(!arrangeSize.IsEmpty, "!arrangeSize.IsEmpty");
 
-            double minimum = ValueToDouble(this.Minimum), maximum = ValueToDouble(this.Maximum);
+            double minimum = this.ValueToDouble(this.Minimum), maximum = this.ValueToDouble(this.Maximum);
             double interval = Math.Max(0.0, maximum - minimum); // the "length" of available interval of values
-            double decreaseAreaInterval = Math.Min(interval, ValueToDouble(this.StartValue) - minimum); // interval "length" from minimum to start value ("left" area)
-            double increaseAreaInterval = Math.Min(interval, maximum - ValueToDouble(this.EndValue)); // interval "length" from end value to maximum ("right" area)
+            double decreaseAreaInterval = Math.Min(interval, this.ValueToDouble(this.StartValue) - minimum); // interval "length" from minimum to start value ("left" area)
+            double increaseAreaInterval = Math.Min(interval, maximum - this.ValueToDouble(this.EndValue)); // interval "length" from end value to maximum ("right" area)
 
             double height;
             if (isVertical)
@@ -651,382 +761,24 @@ namespace SaneDevelopment.WPF.Controls
                 startThumbLength = (this.StartThumb == null) ? 0.0 : this.StartThumb.DesiredSize.Width;
                 endThumbLength = (this.EndThumb == null) ? 0.0 : this.EndThumb.DesiredSize.Width;
             }
+
             CoerceLength(ref startThumbLength, height);
             CoerceLength(ref endThumbLength, height);
 
             double trackLength = height - (startThumbLength + endThumbLength);
-            Debug.Assert(trackLength >= 0);
-            this.Density = interval / trackLength;
+            Debug.Assert(trackLength >= 0, "trackLength >= 0");
+            this.m_Density = interval / trackLength;
 
-            decreaseButtonLength = decreaseAreaInterval / this.Density;
+            decreaseButtonLength = decreaseAreaInterval / this.m_Density;
             CoerceLength(ref decreaseButtonLength, trackLength);
 
-            increaseButtonLength = increaseAreaInterval / this.Density;
+            increaseButtonLength = increaseAreaInterval / this.m_Density;
             CoerceLength(ref increaseButtonLength, trackLength);
 
             rangeThumbLength = trackLength - (decreaseButtonLength + increaseButtonLength);
             CoerceLength(ref rangeThumbLength, trackLength);
         }
 
-        #region Control Parts
-
-        /// <summary>
-        /// Button for decreasing interval
-        /// </summary>
-        public virtual RepeatButton DecreaseRepeatButton
-        {
-            get
-            {
-                return this.m_DecreaseButton;
-            }
-            set
-            {
-                if (Equals(this.m_DecreaseButton, value))
-                {
-                    throw new NotSupportedException();
-                }
-                this.UpdateComponent(this.m_DecreaseButton, value);
-                this.m_DecreaseButton = value;
-                if (this.m_DecreaseButton != null)
-                {
-                    CommandManager.InvalidateRequerySuggested();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Button for increasing interval
-        /// </summary>
-        public virtual RepeatButton IncreaseRepeatButton
-        {
-            get
-            {
-                return this.m_IncreaseButton;
-            }
-            set
-            {
-                if (Equals(this.m_IncreaseButton, value))
-                {
-                    throw new NotSupportedException();
-                }
-                this.UpdateComponent(this.m_IncreaseButton, value);
-                this.m_IncreaseButton = value;
-                if (this.m_IncreaseButton != null)
-                {
-                    CommandManager.InvalidateRequerySuggested();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Start interval thumb
-        /// </summary>
-        public virtual Thumb StartThumb
-        {
-            get
-            {
-                return this.m_StartThumb;
-            }
-            set
-            {
-                this.UpdateComponent(this.m_StartThumb, value);
-                this.m_StartThumb = value;
-            }
-        }
-
-        /// <summary>
-        /// Interval (range) thumb
-        /// </summary>
-        public virtual Thumb RangeThumb
-        {
-            get
-            {
-                return this.m_RangeThumb;
-            }
-            set
-            {
-                this.UpdateComponent(this.m_RangeThumb, value);
-                this.m_RangeThumb = value;
-            }
-        }
-
-        /// <summary>
-        /// End interval thumb
-        /// </summary>
-        public virtual Thumb EndThumb
-        {
-            get
-            {
-                return this.m_EndThumb;
-            }
-            set
-            {
-                this.UpdateComponent(this.m_EndThumb, value);
-                this.m_EndThumb = value;
-            }
-        }
-
-        #endregion
-
-        private double Density
-        {
-            get
-            {
-                return this.m_Density;
-            }
-            set
-            {
-                this.m_Density = value;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Track that uses <c>double</c> as values and inteval type
-    /// </summary>
-    public class NumericRangeTrack : RangeTrack<double, double>
-    {
-        static NumericRangeTrack()
-        {
-            Type thisType = typeof(NumericRangeTrack);
-
-            MinimumProperty.OverrideMetadata(
-                thisType,
-                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsArrange));
-            MaximumProperty.OverrideMetadata(
-                thisType,
-                new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsArrange));
-            StartValueProperty.OverrideMetadata(
-                thisType,
-                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
-            EndValueProperty.OverrideMetadata(
-                thisType,
-                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
-        }
-
-        /// <summary>
-        /// Converts <c>double</c> to value type
-        /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Always <paramref name="value"/></returns>
-        protected override double DoubleToValue(double value)
-        {
-            return value;
-        }
-        
-        /// <summary>
-        /// Convert received value to <c>double</c>
-        /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Always <paramref name="value"/></returns>
-        protected override double ValueToDouble(double value)
-        {
-            return value;
-        }
-
-        #region Control Parts
-        // ReSharper disable RedundantOverridenMember
-
-        /// <summary>
-        /// Button for decreasing interval
-        /// </summary>
-        public override RepeatButton DecreaseRepeatButton
-        {
-            get
-            {
-                return base.DecreaseRepeatButton;
-            }
-            set
-            {
-                base.DecreaseRepeatButton = value;
-            }
-        }
-        
-        /// <summary>
-        /// Button for increasing interval
-        /// </summary>
-        public override RepeatButton IncreaseRepeatButton
-        {
-            get
-            {
-                return base.IncreaseRepeatButton;
-            }
-            set
-            {
-                base.IncreaseRepeatButton = value;
-            }
-        }
-
-        /// <summary>
-        /// Start interval thumb
-        /// </summary>
-        public override Thumb StartThumb
-        {
-            get
-            {
-                return base.StartThumb;
-            }
-            set
-            {
-                base.StartThumb = value;
-            }
-        }
-        
-        /// <summary>
-        /// Interval (range) thumb
-        /// </summary>
-        public override Thumb RangeThumb
-        {
-            get
-            {
-                return base.RangeThumb;
-            }
-            set
-            {
-                base.RangeThumb = value;
-            }
-        }
-        
-        /// <summary>
-        /// End interval thumb
-        /// </summary>
-        public override Thumb EndThumb
-        {
-            get
-            {
-                return base.EndThumb;
-            }
-            set
-            {
-                base.EndThumb = value;
-            }
-        }
-
-        // ReSharper restore RedundantOverridenMember
-        #endregion Control Parts
-    }
-
-    /// <summary>
-    /// Track that uses <see cref="DateTime"/> as values type and <see cref="TimeSpan"/> as inteval type
-    /// </summary>
-    public class DateTimeRangeTrack : RangeTrack<DateTime, TimeSpan>
-    {
-        static DateTimeRangeTrack()
-        {
-            Type thisType = typeof(DateTimeRangeTrack);
-
-            DateTime from = new DateTime(1900, 1, 1), to = new DateTime(2000, 1, 1);
-
-            MinimumProperty.OverrideMetadata(thisType,
-                new FrameworkPropertyMetadata(from, FrameworkPropertyMetadataOptions.AffectsArrange));
-            MaximumProperty.OverrideMetadata(thisType,
-                new FrameworkPropertyMetadata(to, FrameworkPropertyMetadataOptions.AffectsArrange));
-            StartValueProperty.OverrideMetadata(thisType,
-                new FrameworkPropertyMetadata(from, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
-            EndValueProperty.OverrideMetadata(thisType,
-                new FrameworkPropertyMetadata(to, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange));
-        }
-
-        /// <summary>
-        /// Converts <c>double</c> to <see cref="DateTime"/>
-        /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Date initialized to a <paramref name="value"/> number of ticks.</returns>
-        protected override DateTime DoubleToValue(double value)
-        {
-            return (value > 10.0) ? new DateTime((long)value) : DateTime.MinValue;
-        }
-        
-        /// <summary>
-        /// Converts date to number.
-        /// </summary>
-        /// <param name="value">Date to convert</param>
-        /// <returns>The number of ticks that represent the date and time of <paramref name="value"/>.</returns>
-        protected override double ValueToDouble(DateTime value)
-        {
-            return value.Ticks;
-        }
-
-        #region Control Parts
-        // ReSharper disable RedundantOverridenMember
-
-        /// <summary>
-        /// Button for decreasing interval
-        /// </summary>
-        public override RepeatButton DecreaseRepeatButton
-        {
-            get
-            {
-                return base.DecreaseRepeatButton;
-            }
-            set
-            {
-                base.DecreaseRepeatButton = value;
-            }
-        }
-        
-        /// <summary>
-        /// Button for increasing interval
-        /// </summary>
-        public override RepeatButton IncreaseRepeatButton
-        {
-            get
-            {
-                return base.IncreaseRepeatButton;
-            }
-            set
-            {
-                base.IncreaseRepeatButton = value;
-            }
-        }
-
-        /// <summary>
-        /// Start interval thumb
-        /// </summary>
-        public override Thumb StartThumb
-        {
-            get
-            {
-                return base.StartThumb;
-            }
-            set
-            {
-                base.StartThumb = value;
-            }
-        }
-        
-        /// <summary>
-        /// Interval (range) thumb
-        /// </summary>
-        public override Thumb RangeThumb
-        {
-            get
-            {
-                return base.RangeThumb;
-            }
-            set
-            {
-                base.RangeThumb = value;
-            }
-        }
-        
-        /// <summary>
-        /// End interval thumb
-        /// </summary>
-        public override Thumb EndThumb
-        {
-            get
-            {
-                return base.EndThumb;
-            }
-            set
-            {
-                base.EndThumb = value;
-            }
-        }
-
-        // ReSharper restore RedundantOverridenMember
-        #endregion Control Parts
+#pragma warning restore SA1201 // Elements should appear in the correct order
     }
 }
-

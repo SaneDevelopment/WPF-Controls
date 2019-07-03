@@ -18,7 +18,6 @@ namespace SaneDevelopment.WPF.Controls
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -54,6 +53,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             this.IsRangeValueChanging = false;
         }
+
+#pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable SA1202 // Elements should be ordered by access
 
         #region Abstract methods
 
@@ -136,42 +138,49 @@ namespace SaneDevelopment.WPF.Controls
         #endregion IRanged<T, TInterval>
 
         /// <summary>
-        /// Indicator of changing the value of the whole interval (i.e. start and end values together), but not the one of the values.
+        /// Gets or sets a value indicating whether indicator of changing the value of the whole interval (i.e. start and end values together), but not the one of the values.
         /// If it is ON (<c>true</c>), then method <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/> never invokes,
         /// and therefore event <see cref="RangeBaseControl{T, TInterval}.RangeValueChanged"/> never raises.
         /// Also, methods, that can change <see cref="RangeBaseControl{T, TInterval}.IsRangeValueChanging"/>
         /// must trace these changes and call <see cref="RangeBaseControl{T, TInterval}.OnRangeValueChanged(TInterval,TInterval)"/> in appropriate moment.
         /// </summary>
+        /// <value>A value indicating whether indicator of changing the value of the whole interval (i.e. start and end values together), but not the one of the values.</value>
         protected bool IsRangeValueChanging { get; set; }
 
         /// <summary>
-        /// Whether or not is enabled validation over min range value.
+        /// Gets or sets a value indicating whether or not is enabled validation over min range value.
         /// By default it is <c>true</c>, but in derived classes it can be turned OFF.
         /// Also, it turns OFF when such validation can't be performed by objective reasons,
         /// e.g. when <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/> mode is ON.
         /// </summary>
+        /// <value>A value indicating whether or not is enabled validation over min range value.</value>
         protected bool MinRangeValueEnabled
         {
-            get { return m_MinRangeValueEnabled; }
+            get
+            {
+                return this.m_MinRangeValueEnabled;
+            }
 
             set
             {
-                if (value != m_MinRangeValueEnabled)
+                if (value != this.m_MinRangeValueEnabled)
                 {
-                    m_MinRangeValueEnabled = value;
-                    CoerceValue(MinRangeValueProperty);
+                    this.m_MinRangeValueEnabled = value;
+                    this.CoerceValue(MinRangeValueProperty);
                 }
             }
         }
 
         /// <summary>
-        /// Default value of property <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
+        /// Gets a value indicating whether default value of property <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
         /// which will be set to when such validation become available.
         /// E.g. when <see cref="RangeBaseControl{T, TInterval}.IsSingleValue"/> mode comes to OFF (<c>false</c>).
         ///
         /// In derived classes this property can be overridden to control mentioned mechanism,
         /// suitable for every control individually by default.
         /// </summary>
+        /// <value>A value indicating whether default value of property <see cref="RangeBaseControl{T, TInterval}.MinRangeValueEnabled"/>,
+        /// which will be set to when such validation become available.</value>
         protected virtual bool DefaultMinRangeValueEnabled
         {
             get { return c_DefaultMinRangeValueEnabled; }
@@ -189,9 +198,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var e = new RangeDragCompletedEventArgs<T>(oldStartValue, oldEndValue, newStartValue, newEndValue)
             {
-                RoutedEvent = ValueChangedEvent
+                RoutedEvent = ValueChangedEvent,
             };
-            RaiseEvent(e);
+            this.RaiseEvent(e);
         }
 
         #region IRangeTrackTemplatedParent<T>
@@ -206,7 +215,7 @@ namespace SaneDevelopment.WPF.Controls
         {
             if (track == null)
             {
-                throw new ArgumentNullException("track");
+                throw new ArgumentNullException(nameof(track));
             }
 
             var templatedParentControl = templatedParent as RangeBaseControl<T, TInterval>;
@@ -226,20 +235,26 @@ namespace SaneDevelopment.WPF.Controls
         #region IsSingleValue Property
 
         /// <summary>
-        /// This object behaves like a single value object, i.e. start value equals to end value,
+        /// Gets or sets a value indicating whether this object behaves like a single value object, i.e. start value equals to end value,
         /// so interval (range) value equals to zero.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>A value indicating whether this object behaves like a single value object, i.e. start value equals to end value,
+        /// so interval (range) value equals to zero.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public bool IsSingleValue
         {
             get
             {
-                var res = GetValue(IsSingleValueProperty);
-                Debug.Assert(res != null);
+                var res = this.GetValue(IsSingleValueProperty);
+                Debug.Assert(res != null, "res != null");
                 return (bool)res;
             }
 
-            set { SetValue(IsSingleValueProperty, value); }
+            set
+            {
+                this.SetValue(IsSingleValueProperty, value);
+            }
         }
 
         /// <summary>
@@ -254,12 +269,15 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIsSingleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
-            Debug.Assert(args.NewValue != null);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>, "obj is RangeBaseControl<T, TInterval>");
+            Debug.Assert(args.NewValue != null, "args.NewValue != null");
 
             var element = obj as RangeBaseControl<T, TInterval>;
-            Debug.Assert(element != null);
-            if (element == null) return;
+            Debug.Assert(element != null, "element != null");
+            if (element == null)
+            {
+                return;
+            }
 
             var newValue = (bool)args.NewValue;
             if (newValue)
@@ -290,15 +308,17 @@ namespace SaneDevelopment.WPF.Controls
         #region Minimum
 
         /// <summary>
-        /// Minimum available value.
+        /// Gets or sets minimum available value.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>Minimum available value.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public T Minimum
         {
             get
             {
                 var res = this.GetValue(MinimumProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
 
@@ -311,7 +331,7 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Minimum"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
             nameof(Minimum),
             typeof(T),
@@ -330,9 +350,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(d != null);
-            Debug.Assert(e.OldValue != null);
-            Debug.Assert(e.NewValue != null);
+            Debug.Assert(d != null, "d != null");
+            Debug.Assert(e.OldValue != null, "e.OldValue != null");
+            Debug.Assert(e.NewValue != null, "e.NewValue != null");
 
             var element = (RangeBaseControl<T, TInterval>)d;
             element.CoerceValue(MaximumProperty);
@@ -347,15 +367,17 @@ namespace SaneDevelopment.WPF.Controls
         #region Maximum
 
         /// <summary>
-        /// Maximum available value.
+        /// Gets or sets maximum available value.
         /// </summary>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>Maximum available value.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public T Maximum
         {
             get
             {
                 var res = this.GetValue(MaximumProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
 
@@ -366,16 +388,14 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Maximum"/>
+        /// Dependency property for <see cref="RangeBaseControl{T, TInterval}.Maximum"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        // [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
             nameof(Maximum),
             typeof(T),
             typeof(RangeBaseControl<T, TInterval>),
-            new FrameworkPropertyMetadata(
-                OnMaximumChanged,
-                CoerceMaximum),
+            new FrameworkPropertyMetadata(OnMaximumChanged, CoerceMaximum),
             IsValidValue);
 
         private static object CoerceMaximum(DependencyObject d, object value)
@@ -400,9 +420,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximumChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(d != null);
-            Debug.Assert(e.OldValue != null);
-            Debug.Assert(e.NewValue != null);
+            Debug.Assert(d != null, "d != null");
+            Debug.Assert(e.OldValue != null, "e.OldValue != null");
+            Debug.Assert(e.NewValue != null, "e.NewValue != null");
 
             var element = (RangeBaseControl<T, TInterval>)d;
             element.CoerceValue(MinRangeValueProperty);
@@ -416,15 +436,17 @@ namespace SaneDevelopment.WPF.Controls
         #region StartValue
 
         /// <summary>
-        /// Start interval value.
+        /// Gets or sets start interval value.
         /// </summary>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>Start interval value.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public T StartValue
         {
             get
             {
                 var res = this.GetValue(StartValueProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
 
@@ -451,10 +473,13 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceStartValue(DependencyObject d, object value)
         {
-            Debug.Assert(d is RangeBaseControl<T, TInterval>);
+            Debug.Assert(d is RangeBaseControl<T, TInterval>, "d is RangeBaseControl<T, TInterval>");
 
             var base2 = d as RangeBaseControl<T, TInterval>;
-            if (base2 == null) return value;
+            if (base2 == null)
+            {
+                return value;
+            }
 
             if (value != null)
             {
@@ -474,7 +499,7 @@ namespace SaneDevelopment.WPF.Controls
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
             {
-                this.RoutedEvent = this.StartValueChangedEvent
+                RoutedEvent = StartValueChangedEvent,
             };
             this.RaiseEvent(e);
 
@@ -486,9 +511,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnStartValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(d != null);
-            Debug.Assert(e.OldValue != null);
-            Debug.Assert(e.NewValue != null);
+            Debug.Assert(d != null, "d != null");
+            Debug.Assert(e.OldValue != null, "e.OldValue != null");
+            Debug.Assert(e.NewValue != null, "e.NewValue != null");
 
             var element = (RangeBaseControl<T, TInterval>)d;
             if (element.IsSingleValue)
@@ -508,15 +533,17 @@ namespace SaneDevelopment.WPF.Controls
         #region EndValue
 
         /// <summary>
-        /// End interval value.
+        /// Gets or sets end interval value.
         /// </summary>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>End interval value.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public T EndValue
         {
             get
             {
                 var res = this.GetValue(EndValueProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (T)res;
             }
 
@@ -543,11 +570,14 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceEndValue(DependencyObject d, object value)
         {
-            Debug.Assert(d is RangeBaseControl<T, TInterval>);
+            Debug.Assert(d is RangeBaseControl<T, TInterval>, "d is RangeBaseControl<T, TInterval>");
 
             var base2 = d as RangeBaseControl<T, TInterval>;
-            Debug.Assert(base2 != null);
-            if (base2 == null) return value;
+            Debug.Assert(base2 != null, "base2 != null");
+            if (base2 == null)
+            {
+                return value;
+            }
 
             if (value != null)
             {
@@ -567,7 +597,7 @@ namespace SaneDevelopment.WPF.Controls
         {
             var e = new RoutedPropertyChangedEventArgs<T>(oldValue, newValue)
             {
-                this.RoutedEvent = this.EndValueChangedEvent
+                RoutedEvent = EndValueChangedEvent,
             };
             this.RaiseEvent(e);
 
@@ -579,9 +609,9 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnEndValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(d != null);
-            Debug.Assert(e.OldValue != null);
-            Debug.Assert(e.NewValue != null);
+            Debug.Assert(d != null, "d != null");
+            Debug.Assert(e.OldValue != null, "e.OldValue != null");
+            Debug.Assert(e.NewValue != null, "e.NewValue != null");
 
             var element = (RangeBaseControl<T, TInterval>)d;
             if (element.IsSingleValue)
@@ -601,19 +631,24 @@ namespace SaneDevelopment.WPF.Controls
         #region MinRangeValue
 
         /// <summary>
-        /// Minimum available interval (range) value.
+        /// Gets or sets minimum available interval (range) value.
         /// </summary>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>Minimum available interval (range) value.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public TInterval MinRangeValue
         {
             get
             {
                 var res = this.GetValue(MinRangeValueProperty);
-                Debug.Assert(res != null);
-                return (TInterval) res;
+                Debug.Assert(res != null, "res != null");
+                return (TInterval)res;
             }
 
-            set { this.SetValue(MinRangeValueProperty, value); }
+            set
+            {
+                this.SetValue(MinRangeValueProperty, value);
+            }
         }
 
         /// <summary>
@@ -634,11 +669,14 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinRangeValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>, "obj is RangeBaseControl<T, TInterval>");
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null, "element != null");
-            if (element == null) return;
+            if (element == null)
+            {
+                return;
+            }
 
             element.CoerceValue(StartValueProperty);
             element.CoerceValue(EndValueProperty);
@@ -646,10 +684,10 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceMinRangeValue(DependencyObject element, object value)
         {
-            Debug.Assert(element is RangeBaseControl<T, TInterval>);
+            Debug.Assert(element is RangeBaseControl<T, TInterval>, "element is RangeBaseControl<T, TInterval>");
 
             var cntrl = element as RangeBaseControl<T, TInterval>;
-            Debug.Assert(cntrl != null);
+            Debug.Assert(cntrl != null, "cntrl != null");
             if (cntrl != null)
             {
                 value = cntrl.CoerceMinRangeValue(value);
@@ -663,19 +701,24 @@ namespace SaneDevelopment.WPF.Controls
         #region RangeValue
 
         /// <summary>
-        /// Current interval (range) value.
+        /// Gets current interval (range) value.
         /// </summary>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>Current interval (range) value.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public TInterval RangeValue
         {
             get
             {
                 var res = this.GetValue(RangeValueProperty);
-                Debug.Assert(res != null);
-                return (TInterval) res;
+                Debug.Assert(res != null, "res != null");
+                return (TInterval)res;
             }
 
-            private set { this.SetValue(RangeValuePropertyKey, value); }
+            private set
+            {
+                this.SetValue(RangeValuePropertyKey, value);
+            }
         }
 
         private static readonly DependencyPropertyKey RangeValuePropertyKey =
@@ -693,13 +736,16 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnRangeValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is RangeBaseControl<T, TInterval>);
-            Debug.Assert(args.OldValue is TInterval);
-            Debug.Assert(args.NewValue is TInterval);
+            Debug.Assert(obj is RangeBaseControl<T, TInterval>, "obj is RangeBaseControl<T, TInterval>");
+            Debug.Assert(args.OldValue is TInterval, "args.OldValue is TInterval");
+            Debug.Assert(args.NewValue is TInterval, "args.NewValue is TInterval");
 
             var element = obj as RangeBaseControl<T, TInterval>;
             Debug.Assert(element != null, "element != null");
-            if (element == null) return;
+            if (element == null)
+            {
+                return;
+            }
 
             if (!element.IsRangeValueChanging)
             {
@@ -729,14 +775,15 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets or sets a value to be added to or subtracted from the <see cref="StartValue"/> or <see cref="EndValue"/> of control.
         /// Uses when change by arrows keys.
         /// </summary>
-        /// <returns>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</returns>
-        [Bindable(true), Category("Behavior")]
+        /// <value>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public TInterval SmallChange
         {
             get
             {
                 var res = this.GetValue(SmallChangeProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (TInterval)res;
             }
 
@@ -765,14 +812,15 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets or sets a value to be added to or subtracted from the <see cref="StartValue"/> or <see cref="EndValue"/> of control.
         /// Uses when change by Page Up or Page Down.
         /// </summary>
-        /// <returns>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</returns>
-        [Category("Behavior"), Bindable(true)]
+        /// <value>Value to add to or subtract from the <see cref="StartValue"/> or <see cref="EndValue"/> of the element.</value>
+        [Category("Behavior")]
+        [Bindable(true)]
         public TInterval LargeChange
         {
             get
             {
                 var res = this.GetValue(LargeChangeProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (TInterval)res;
             }
 
@@ -943,6 +991,8 @@ namespace SaneDevelopment.WPF.Controls
         {
             return DependencyPropertyUtil.IsValidChange(typeof(TInterval), value);
         }
+#pragma warning restore SA1202 // Elements should be ordered by access
+#pragma warning restore SA1201 // Elements should appear in the correct order
     }
 
 #pragma warning restore CA1501 // Avoid excessive inheritance
