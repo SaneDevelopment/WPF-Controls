@@ -1,93 +1,86 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright file="ZoomBar.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library
+// Sane Development WPF Controls Library.
 //
-//   The BSD 3-Clause License
+// The BSD 3-Clause License.
 //
-//   Copyright (c) Sane Development
-//   All rights reserved.
+// Copyright (c) Sane Development.
+// All rights reserved.
 //
-//   Redistribution and use in source and binary forms, with or without modification,
-//   are permitted provided that the following conditions are met:
-//
-//   - Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   - Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   - Neither the name of the Sane Development nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-//   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-//   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-//   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-//   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
-//   BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-//   OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-//   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-//   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-//   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-//   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// See LICENSE file for full license information.
 //
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-
 namespace SaneDevelopment.WPF.Controls
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Controls.Primitives;
+    using System.Windows.Data;
+    using System.Windows.Input;
+    using System.Windows.Media;
+
+#pragma warning disable CA1501 // Avoid excessive inheritance
+
     /// <summary>
     /// Zoom bar is a content control, that allows to scale ("zoom") its content
     /// by cutting edges of adjustable length.
     /// Can be used as a sort of preview control.
     /// </summary>
-    [TemplatePart(Name = "PART_ContentContainer", Type = typeof(FrameworkElement))]
-    [TemplatePart(Name = "PART_LeftThumb", Type = typeof(Thumb))]
-    [TemplatePart(Name = "PART_RangeSlider", Type = typeof(SimpleNumericRangeSlider))]
-    [TemplatePart(Name = "PART_RightThumb", Type = typeof(Thumb))]
-    [TemplatePart(Name = "PART_ShiftLeftButton", Type = typeof(ButtonBase))]
-    [TemplatePart(Name = "PART_ShiftRightButton", Type = typeof(ButtonBase))]
+    [TemplatePart(Name = ContentContainerPartName, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = LeftThumbPartName, Type = typeof(Thumb))]
+    [TemplatePart(Name = RangeSliderPartName, Type = typeof(SimpleNumericRangeSlider))]
+    [TemplatePart(Name = RightThumbPartName, Type = typeof(Thumb))]
+    [TemplatePart(Name = ShiftLeftButtonPartName, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = ShiftRightButtonPartName, Type = typeof(ButtonBase))]
     [Description("Sane Zoombar")]
     public class ZoomBar : ContentControl, IRanged<double, double>
     {
-        #region Private fields
+#pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable SA1201 // Elements should appear in the correct order
 
-        private const string c_ShiftLeftCommandName = "ShiftLeftCommand";
-        private const string c_ShiftRightCommandName = "ShiftRightCommand";
+#pragma warning disable SA1303 // Const field names should begin with upper-case letter
+#pragma warning disable SA1310 // Field names should not contain underscore
 
-        #endregion Private fields
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string ContentContainerPartName = "PART_ContentContainer";
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
-        static ZoomBar()
-        {
-            InitializeCommands();
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string LeftThumbPartName = "PART_LeftThumb";
 
-            // Listen to MouseLeftButtonDown event to determine if slide should move focus to itself
-            EventManager.RegisterClassHandler(typeof(ZoomBar),
-                Mouse.MouseDownEvent, new MouseButtonEventHandler(OnMouseLeftButtonDown), true);
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string RightThumbPartName = "PART_RightThumb";
 
-            Debug.Assert(DefaultMinimum < DefaultMaximum, "DefaultMinimum <= DefaultMaximum");
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string RangeSliderPartName = "PART_RangeSlider";
 
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ZoomBar),
-                new FrameworkPropertyMetadata(typeof(ZoomBar)));
-        }
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string ShiftLeftButtonPartName = "PART_ShiftLeftButton";
+
+        /// <summary>
+        /// Pre-defined name of the part track inside slider XAML.
+        /// </summary>
+        public const string ShiftRightButtonPartName = "PART_ShiftRightButton";
 
         #region Default constants
 
         /// <summary>
-        /// Default value for <see cref="MinimumProperty"/>
+        /// Default value for <see cref="MinimumProperty"/>.
         /// </summary>
         public const double DefaultMinimum = 0.0;
 
@@ -134,50 +127,85 @@ namespace SaneDevelopment.WPF.Controls
         public const double DefaultSelectionBorderOpacity = 0.5;
 
         /// <summary>
-        /// Default value of start and end thumbs size (width or height depending on <see cref="Orientation"/>)
+        /// Default value of start and end thumbs size (width or height depending on <see cref="Orientation"/>).
         /// </summary>
         public const double DefaultThumbSize = 10.0;
 
         #endregion
 
+#pragma warning restore SA1310 // Field names should not contain underscore
+#pragma warning restore SA1303 // Const field names should begin with upper-case letter
+
+        static ZoomBar()
+        {
+            InitializeCommands();
+
+            // Listen to MouseLeftButtonDown event to determine if slide should move focus to itself
+            EventManager.RegisterClassHandler(
+                typeof(ZoomBar),
+                Mouse.MouseDownEvent,
+                new MouseButtonEventHandler(OnMouseLeftButtonDown),
+                true);
+
+            Debug.Assert(DefaultMinimum < DefaultMaximum, "DefaultMinimum <= DefaultMaximum");
+
+            DefaultStyleKeyProperty.OverrideMetadata(
+                typeof(ZoomBar),
+                new FrameworkPropertyMetadata(typeof(ZoomBar)));
+        }
+
+        #region Parts
+
         /// <summary>
-        /// Gets or sets container for content of a control
+        /// Gets or sets container for content of a control.
         /// </summary>
+        /// <value>Container for content of a control.</value>
         protected FrameworkElement ContentContainer { get; set; }
 
         /// <summary>
         /// Gets or sets slider that provides selection area.
         /// </summary>
+        /// <value>Slider that provides selection area.</value>
         protected SimpleNumericRangeSlider RangeSlider { get; set; }
 
         /// <summary>
         /// Gets or sets start thumb.
         /// </summary>
+        /// <value>Start thumb.</value>
         protected Thumb StartThumb { get; set; }
 
         /// <summary>
         /// Gets or sets end thumb.
         /// </summary>
+        /// <value>End thumb.</value>
         protected Thumb EndThumb { get; set; }
 
         /// <summary>
         /// Gets or sets shift left (down) button.
         /// </summary>
+        /// <value>Shift left (down) button.</value>
         protected ButtonBase ShiftLeftButton { get; set; }
 
         /// <summary>
         /// Gets or sets shift right (up) button.
         /// </summary>
+        /// <value>Shift right (up) button.</value>
         protected ButtonBase ShiftRightButton { get; set; }
+
+        #endregion Parts
 
         private void RefreshContentIndentValues()
         {
             if (this.ContentContainer == null)
+            {
                 return;
+            }
 
             var generalTransform = this.ContentContainer.TransformToAncestor(this);
             if (generalTransform == null)
+            {
                 return;
+            }
 
             Point relativePoint = generalTransform.Transform(new Point(0, 0));
             double leftIndent = this.Orientation == Orientation.Horizontal ?
@@ -212,6 +240,7 @@ namespace SaneDevelopment.WPF.Controls
                     bottom = this.StartThumb.ActualHeight + this.StartThumb.Margin.Bottom + this.StartThumb.Margin.Top;
                 }
             }
+
             if (this.EndThumb != null)
             {
                 if (this.Orientation == Orientation.Horizontal)
@@ -232,29 +261,35 @@ namespace SaneDevelopment.WPF.Controls
         #region Orientation Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.Orientation"/>
+        /// Dependency property for <see cref="ZoomBar.Orientation"/>.
         /// </summary>
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(
-                "Orientation",
+                nameof(Orientation),
                 typeof(Orientation),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsRender),
                 DependencyPropertyUtil.IsValidOrientation);
 
         /// <summary>
-        /// Control orientation
+        /// Gets or sets control orientation.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>Control orientation.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public Orientation Orientation
         {
             get
             {
-                var res = GetValue(OrientationProperty);
-                Debug.Assert(res != null);
-                return (Orientation) res;
+                var res = this.GetValue(OrientationProperty);
+                Debug.Assert(res != null, "res != null");
+                return (Orientation)res;
             }
-            set { SetValue(OrientationProperty, value); }
+
+            set
+            {
+                this.SetValue(OrientationProperty, value);
+            }
         }
 
         #endregion
@@ -262,30 +297,29 @@ namespace SaneDevelopment.WPF.Controls
         #region Minimum
 
         /// <summary>
-        /// Gets the minimum value
+        /// Gets the minimum value.
         /// </summary>
+        /// <value>The minimum value.</value>
         [Category("Common")]
         public double Minimum
         {
             get
             {
-                var res = GetValue(MinimumProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(MinimumProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey MinimumPropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "Minimum",
+                nameof(Minimum),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultMinimum));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.Minimum"/>
+        /// Dependency property for <see cref="ZoomBar.Minimum"/>.
         /// </summary>
         public static readonly DependencyProperty MinimumProperty = MinimumPropertyKey.DependencyProperty;
 
@@ -296,28 +330,27 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets the maximum value.
         /// </summary>
+        /// <value>The maximum value.</value>
         [Category("Common")]
         public double Maximum
         {
             get
             {
-                var res = GetValue(MaximumProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(MaximumProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey MaximumPropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "Maximum",
+                nameof(Maximum),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultMaximum));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.Maximum"/>
+        /// Dependency property for <see cref="ZoomBar.Maximum"/>.
         /// </summary>
         public static readonly DependencyProperty MaximumProperty = MaximumPropertyKey.DependencyProperty;
 
@@ -328,49 +361,51 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the shift value.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The shift value.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public double ShiftValue
         {
             get
             {
-                var res = GetValue(ShiftValueProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(ShiftValueProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(ShiftValueProperty, value); }
+
+            set
+            {
+                this.SetValue(ShiftValueProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.ShiftValue"/>
+        /// Dependency property for <see cref="ZoomBar.ShiftValue"/>.
         /// </summary>
         public static readonly DependencyProperty ShiftValueProperty =
             DependencyProperty.Register(
-                "ShiftValue",
+                nameof(ShiftValue),
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(DefaultShiftValue,
-                    OnShiftValueChanged,
-                    CoerceShiftValue));
+                new FrameworkPropertyMetadata(DefaultShiftValue, OnShiftValueChanged, CoerceShiftValue));
 
         private static void OnShiftValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-        { }
+        {
+        }
 
         private static object CoerceShiftValue(DependencyObject element, object value)
         {
-            Debug.Assert(element is ZoomBar);
+            Debug.Assert(element is ZoomBar, "element is ZoomBar");
 
+            var defaultMetadata = ShiftValueProperty.DefaultMetadata;
             double newValue =
                 DependencyPropertyUtil.ExtractDouble(
                     value,
-                    ShiftValueProperty.DefaultMetadata == null
-                        ? 0.0
-                        : (double) (ShiftValueProperty.DefaultMetadata.DefaultValue ?? DefaultShiftValue));
+                    defaultMetadata == null ? 0.0 : (double)(defaultMetadata.DefaultValue ?? DefaultShiftValue));
 
             var zoombar = element as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (zoombar != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 if (newValue < MinShiftValue)
                 {
@@ -392,42 +427,47 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the selection start value.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The selection start value.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public double SelectionStart
         {
             get
             {
-                var res = GetValue(SelectionStartProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(SelectionStartProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(SelectionStartProperty, value); }
+
+            set
+            {
+                this.SetValue(SelectionStartProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionStart"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionStart"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionStartProperty =
             DependencyProperty.Register(
-                "SelectionStart",
+                nameof(SelectionStart),
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(DefaultSelectionStart,
+                new FrameworkPropertyMetadata(
+                    DefaultSelectionStart,
                     FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnSelectionStartChanged,
                     CoerceSelectionStart));
 
         private static void OnSelectionStartChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is ZoomBar);
-            Debug.Assert(args.OldValue is double);
-            Debug.Assert(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar, "obj is ZoomBar");
+            Debug.Assert(args.OldValue is double, "args.OldValue is double");
+            Debug.Assert(args.NewValue is double, "args.NewValue is double");
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (zoombar != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 zoombar.OnSelectionStartChanged((double)args.OldValue, (double)args.NewValue);
             }
@@ -435,18 +475,17 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceSelectionStart(DependencyObject d, object value)
         {
-            Debug.Assert(d is ZoomBar);
-            Debug.Assert(value != null);
+            Debug.Assert(d is ZoomBar, "d is ZoomBar");
+            Debug.Assert(value != null, "value != null");
 
             var base2 = d as ZoomBar;
-            Debug.Assert(base2 != null);
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
+            Debug.Assert(base2 != null, "base2 != null");
             if (base2 != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 var doubleVal = (double)value;
                 value = DependencyPropertyUtil.CoerceRangeStartValue(base2, doubleVal);
             }
+
             return value;
         }
 
@@ -459,9 +498,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
             {
-                RoutedEvent = SelectionStartChangedEvent
+                RoutedEvent = SelectionStartChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         #endregion
@@ -471,62 +510,67 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the selection end value.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The selection end value.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public double SelectionEnd
         {
             get
             {
-                var res = GetValue(SelectionEndProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(SelectionEndProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(SelectionEndProperty, value); }
+
+            set
+            {
+                this.SetValue(SelectionEndProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionEnd"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionEnd"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionEndProperty =
             DependencyProperty.Register(
-                "SelectionEnd",
+                nameof(SelectionEnd),
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(DefaultSelectionEnd,
+                new FrameworkPropertyMetadata(
+                    DefaultSelectionEnd,
                     FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnSelectionEndChanged,
                     CoerceSelectionEnd));
 
         private static void OnSelectionEndChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is ZoomBar);
-            Debug.Assert(args.OldValue is double);
-            Debug.Assert(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar, "obj is ZoomBar");
+            Debug.Assert(args.OldValue is double, "args.OldValue is double");
+            Debug.Assert(args.NewValue is double, "args.NewValue is double");
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
-            if (zoombar == null) return;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
+            if (zoombar == null)
+            {
+                return;
+            }
 
             zoombar.OnSelectionEndChanged((double)args.OldValue, (double)args.NewValue);
         }
 
         private static object CoerceSelectionEnd(DependencyObject d, object value)
         {
-            Debug.Assert(d is ZoomBar);
-            Debug.Assert(value != null);
+            Debug.Assert(d is ZoomBar, "d is ZoomBar");
+            Debug.Assert(value != null, "value != null");
 
             var base2 = d as ZoomBar;
-            Debug.Assert(base2 != null);
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
+            Debug.Assert(base2 != null, "base2 != null");
             if (base2 != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 var doubleVal = (double)value;
                 value = DependencyPropertyUtil.CoerceRangeEndValue(base2, doubleVal);
             }
+
             return value;
         }
 
@@ -539,9 +583,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
             {
-                RoutedEvent = SelectionEndChangedEvent
+                RoutedEvent = SelectionEndChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         #endregion
@@ -551,47 +595,51 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the minimum value of selection range.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The minimum value of selection range.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public double MinSelectionRange
         {
             get
             {
-                var res = GetValue(MinSelectionRangeProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(MinSelectionRangeProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(MinSelectionRangeProperty, value); }
+
+            set
+            {
+                this.SetValue(MinSelectionRangeProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.MinSelectionRange"/>
+        /// Dependency property for <see cref="ZoomBar.MinSelectionRange"/>.
         /// </summary>
         public static readonly DependencyProperty MinSelectionRangeProperty =
             DependencyProperty.Register(
-                "MinSelectionRange",
+                nameof(MinSelectionRange),
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(0.0,
+                new FrameworkPropertyMetadata(
+                    0.0,
                     FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     null,
                     CoerceMinSelectionRangeValue));
 
         private static object CoerceMinSelectionRangeValue(DependencyObject element, object value)
         {
-            Debug.Assert(element is ZoomBar);
+            Debug.Assert(element is ZoomBar, "element is ZoomBar");
 
             var cntrl = element as ZoomBar;
             Debug.Assert(cntrl != null, "cntrl != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (cntrl != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
+                var defaultMetadata = MinSelectionRangeProperty.DefaultMetadata;
                 double newValue =
                     DependencyPropertyUtil.ExtractDouble(
                         value,
-                        MinSelectionRangeProperty.DefaultMetadata == null
-                            ? 0.0
-                            : (double) (MinSelectionRangeProperty.DefaultMetadata.DefaultValue ?? 0.0));
+                        defaultMetadata == null ? 0.0 : (double)(defaultMetadata.DefaultValue ?? 0.0));
 
                 if (DoubleUtil.LessThan(newValue, 0.0))
                 {
@@ -619,44 +667,44 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets current selection range value.
         /// </summary>
+        /// <value>Current selection range value.</value>
         [Category("Common")]
         public double SelectionRange
         {
             get
             {
-                var res = GetValue(SelectionRangeProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(SelectionRangeProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            private set { SetValue(SelectionRangePropertyKey, value); }
+
+            private set
+            {
+                this.SetValue(SelectionRangePropertyKey, value);
+            }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey SelectionRangePropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
                 "SelectionRange",
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(c_DefaultSelectionRange,
-                    OnSelectionRangeChanged));
+                new FrameworkPropertyMetadata(c_DefaultSelectionRange, OnSelectionRangeChanged));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionRange"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionRange"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionRangeProperty = SelectionRangePropertyKey.DependencyProperty;
 
         private static void OnSelectionRangeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is ZoomBar);
-            Debug.Assert(args.OldValue is double);
-            Debug.Assert(args.NewValue is double);
+            Debug.Assert(obj is ZoomBar, "obj is ZoomBar");
+            Debug.Assert(args.OldValue is double, "args.OldValue is double");
+            Debug.Assert(args.NewValue is double, "args.NewValue is double");
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (zoombar != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 zoombar.OnSelectionRangeChanged((double)args.OldValue, (double)args.NewValue);
             }
@@ -671,9 +719,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue)
             {
-                RoutedEvent = SelectionRangeChangedEvent
+                RoutedEvent = SelectionRangeChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         #endregion
@@ -684,29 +732,32 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets the left/bottom indent value of control content relative to left/bottom control edge.
         /// Indicates the current placement of content relative to the control in whole.
         /// </summary>
+        /// <value>The left/bottom indent value of control content relative to left/bottom control edge.</value>
         [Category("Layout")]
         public double LeftContentIndent
         {
             get
             {
-                var res = GetValue(LeftContentIndentProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(LeftContentIndentProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            private set { SetValue(LeftContentIndentPropertyKey, value); }
+
+            private set
+            {
+                this.SetValue(LeftContentIndentPropertyKey, value);
+            }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey LeftContentIndentPropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "LeftContentIndent",
+                nameof(LeftContentIndent),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(0.0));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.LeftContentIndent"/>
+        /// Dependency property for <see cref="ZoomBar.LeftContentIndent"/>.
         /// </summary>
         public static readonly DependencyProperty LeftContentIndentProperty = LeftContentIndentPropertyKey.DependencyProperty;
 
@@ -718,29 +769,32 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets the right/top indent value of control content relative to right/top control edge.
         /// Indicates the current placement of content relative to the control in whole.
         /// </summary>
+        /// <value>The right/top indent value of control content relative to right/top control edge.</value>
         [Category("Layout")]
         public double RightContentIndent
         {
             get
             {
-                var res = GetValue(RightContentIndentProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(RightContentIndentProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            private set { SetValue(RightContentIndentPropertyKey, value); }
+
+            private set
+            {
+                this.SetValue(RightContentIndentPropertyKey, value);
+            }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey RightContentIndentPropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "RightContentIndent",
+                nameof(RightContentIndent),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(0.0));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.RightContentIndent"/>
+        /// Dependency property for <see cref="ZoomBar.RightContentIndent"/>.
         /// </summary>
         public static readonly DependencyProperty RightContentIndentProperty = RightContentIndentPropertyKey.DependencyProperty;
 
@@ -749,51 +803,50 @@ namespace SaneDevelopment.WPF.Controls
         #region IsSelectionDragging
 
         /// <summary>
-        /// Gets the indicator whether control is in process of dragging (changing) the selection range
+        /// Gets a value indicating whether control is in process of dragging (changing) the selection range
         /// via movement of any of thumbs.
         /// Indicates that user is in process of choosing the selection value by moving a thumbs.
         /// </summary>
+        /// <value>A value indicating whether control is in process of dragging (changing) the selection range
+        /// via movement of any of thumbs.</value>
         [Category("Common")]
         public bool IsSelectionDragging
         {
             get
             {
-                var res = GetValue(IsSelectionDraggingProperty);
-                Debug.Assert(res != null);
-                return (bool) res;
+                var res = this.GetValue(IsSelectionDraggingProperty);
+                Debug.Assert(res != null, "res != null");
+                return (bool)res;
             }
-            private set { SetValue(IsSelectionDraggingPropertyKey, value); }
+
+            private set
+            {
+                this.SetValue(IsSelectionDraggingPropertyKey, value);
+            }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey IsSelectionDraggingPropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "IsSelectionDragging",
+                nameof(IsSelectionDragging),
                 typeof(bool),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(false,
-                    OnIsSelectionDraggingChanged));
+                new FrameworkPropertyMetadata(false, OnIsSelectionDraggingChanged));
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.IsSelectionDragging"/>
+        /// Dependency property for <see cref="ZoomBar.IsSelectionDragging"/>.
         /// </summary>
         public static readonly DependencyProperty IsSelectionDraggingProperty = IsSelectionDraggingPropertyKey.DependencyProperty;
 
         private static void OnIsSelectionDraggingChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Debug.Assert(obj is ZoomBar);
-            Debug.Assert(args.OldValue is bool);
-            Debug.Assert(args.NewValue is bool);
+            Debug.Assert(obj is ZoomBar, "obj is ZoomBar");
+            Debug.Assert(args.OldValue is bool, "args.OldValue is bool");
+            Debug.Assert(args.NewValue is bool, "args.NewValue is bool");
 
             var zoombar = obj as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (zoombar != null)
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
-                Debug.Assert(args.OldValue is bool);
-                Debug.Assert(args.NewValue is bool);
                 zoombar.OnIsSelectionDraggingChanged((bool)args.OldValue, (bool)args.NewValue);
             }
         }
@@ -807,9 +860,9 @@ namespace SaneDevelopment.WPF.Controls
         {
             var newEventArgs = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
             {
-                RoutedEvent = IsSelectionDraggingChangedEvent
+                RoutedEvent = IsSelectionDraggingChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         #endregion
@@ -817,31 +870,38 @@ namespace SaneDevelopment.WPF.Controls
         #region IsRaiseSelectionChangedWhileDragging Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.IsRaiseSelectionChangedWhileDragging"/>
+        /// Dependency property for <see cref="ZoomBar.IsRaiseSelectionChangedWhileDragging"/>.
         /// </summary>
         public static readonly DependencyProperty IsRaiseSelectionChangedWhileDraggingProperty =
             DependencyProperty.Register(
-                "IsRaiseSelectionChangedWhileDragging",
+                nameof(IsRaiseSelectionChangedWhileDragging),
                 typeof(bool),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender),
                 DependencyPropertyUtil.IsValidBoolValue);
 
         /// <summary>
-        /// Gets of sets indicator whether to raise <see cref="ZoomBar.SelectionChanged"/> event
+        /// Gets or sets a value indicating whether to raise <see cref="ZoomBar.SelectionChanged"/> event
         /// when control is in process of changing a selection value via dragging a thumb.
         /// In other word when <see cref="ZoomBar.IsSelectionDragging"/> is <c>true</c>.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>A value indicating whether to raise <see cref="ZoomBar.SelectionChanged"/> event
+        /// when control is in process of changing a selection value via dragging a thumb.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public bool IsRaiseSelectionChangedWhileDragging
         {
             get
             {
-                var res = GetValue(IsRaiseSelectionChangedWhileDraggingProperty);
-                Debug.Assert(res != null);
-                return (bool) res;
+                var res = this.GetValue(IsRaiseSelectionChangedWhileDraggingProperty);
+                Debug.Assert(res != null, "res != null");
+                return (bool)res;
             }
-            set { SetValue(IsRaiseSelectionChangedWhileDraggingProperty, value); }
+
+            set
+            {
+                this.SetValue(IsRaiseSelectionChangedWhileDraggingProperty, value);
+            }
         }
 
         #endregion
@@ -850,11 +910,11 @@ namespace SaneDevelopment.WPF.Controls
         #region AutoToolTipValueConverter Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverter"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverter"/>.
         /// </summary>
         public static readonly DependencyProperty AutoToolTipValueConverterProperty =
             DependencyProperty.Register(
-                "AutoToolTipValueConverter",
+                nameof(AutoToolTipValueConverter),
                 typeof(IRangeValueToStringConverter<double>),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(null));
@@ -863,11 +923,13 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets or sets the converter of selection values to their string representations for showing in autotooltips.
         /// If not <c>null</c> then <see cref="ZoomBar.AutoToolTipFormat"/> ignores.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The converter of selection values to their string representations for showing in autotooltips.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public IRangeValueToStringConverter<double> AutoToolTipValueConverter
         {
-            get { return (IRangeValueToStringConverter<double>)GetValue(AutoToolTipValueConverterProperty); }
-            set { SetValue(AutoToolTipValueConverterProperty, value); }
+            get { return (IRangeValueToStringConverter<double>)this.GetValue(AutoToolTipValueConverterProperty); }
+            set { this.SetValue(AutoToolTipValueConverterProperty, value); }
         }
 
         #endregion
@@ -875,11 +937,11 @@ namespace SaneDevelopment.WPF.Controls
         #region AutoToolTipValueConverterParameter Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverterParameter"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipValueConverterParameter"/>.
         /// </summary>
         public static readonly DependencyProperty AutoToolTipValueConverterParameterProperty =
             DependencyProperty.Register(
-                "AutoToolTipValueConverterParameter",
+                nameof(AutoToolTipValueConverterParameter),
                 typeof(object),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(null));
@@ -887,11 +949,13 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the parameter for <see cref="AutoToolTipValueConverter"/>.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The parameter for <see cref="AutoToolTipValueConverter"/>.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public object AutoToolTipValueConverterParameter
         {
-            get { return GetValue(AutoToolTipValueConverterParameterProperty); }
-            set { SetValue(AutoToolTipValueConverterParameterProperty, value); }
+            get { return this.GetValue(AutoToolTipValueConverterParameterProperty); }
+            set { this.SetValue(AutoToolTipValueConverterParameterProperty, value); }
         }
 
         #endregion
@@ -899,30 +963,32 @@ namespace SaneDevelopment.WPF.Controls
         #region AutoToolTipFormat Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.AutoToolTipFormat"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipFormat"/>.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")] public static readonly
-            DependencyProperty AutoToolTipFormatProperty
+        public static readonly DependencyProperty AutoToolTipFormatProperty
                 = DependencyProperty.Register(
-                    "AutoToolTipFormat",
-                    typeof (string),
-                    typeof (ZoomBar),
+                    nameof(AutoToolTipFormat),
+                    typeof(string),
+                    typeof(ZoomBar),
                     new FrameworkPropertyMetadata());
 
         /// <summary>
         /// Gets or sets the format string for showing a values in the auto tooltips.
         /// Uses only if <see cref="ZoomBar.AutoToolTipValueConverter"/> is <c>null</c>.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The format string for showing a values in the auto tooltips.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public string AutoToolTipFormat
         {
             get
             {
-                return (string)GetValue(AutoToolTipFormatProperty);
+                return (string)this.GetValue(AutoToolTipFormatProperty);
             }
+
             set
             {
-                SetValue(AutoToolTipFormatProperty, value);
+                this.SetValue(AutoToolTipFormatProperty, value);
             }
         }
 
@@ -931,30 +997,33 @@ namespace SaneDevelopment.WPF.Controls
         #region AutoToolTipPrecision Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.AutoToolTipPrecision"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipPrecision"/>.
         /// </summary>
         public static readonly DependencyProperty AutoToolTipPrecisionProperty = DependencyProperty.Register(
-            "AutoToolTipPrecision",
+            nameof(AutoToolTipPrecision),
             typeof(int),
             typeof(ZoomBar),
             new FrameworkPropertyMetadata(4),
             DependencyPropertyUtil.IsValidAutoToolTipPrecision);
 
         /// <summary>
-        /// Floating-point precision of numbers for showing in the auto tooltips in UI.
+        /// Gets or sets floating-point precision of numbers for showing in the auto tooltips in UI.
         /// </summary>
-        [Bindable(true), Category("Appearance")]
+        /// <value>Floating-point precision of numbers for showing in the auto tooltips in UI.</value>
+        [Bindable(true)]
+        [Category("Appearance")]
         public int AutoToolTipPrecision
         {
             get
             {
-                var res = GetValue(AutoToolTipPrecisionProperty);
-                Debug.Assert(res != null);
+                var res = this.GetValue(AutoToolTipPrecisionProperty);
+                Debug.Assert(res != null, "res != null");
                 return (int)res;
             }
+
             set
             {
-                SetValue(AutoToolTipPrecisionProperty, value);
+                this.SetValue(AutoToolTipPrecisionProperty, value);
             }
         }
 
@@ -963,31 +1032,34 @@ namespace SaneDevelopment.WPF.Controls
         #region AutoToolTipPlacement Property
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.AutoToolTipPlacement"/>
+        /// Dependency property for <see cref="ZoomBar.AutoToolTipPlacement"/>.
         /// </summary>
         public static readonly DependencyProperty AutoToolTipPlacementProperty
             = DependencyProperty.Register(
-                "AutoToolTipPlacement",
-                typeof (AutoToolTipPlacement),
-                typeof (ZoomBar),
+                nameof(AutoToolTipPlacement),
+                typeof(AutoToolTipPlacement),
+                typeof(ZoomBar),
                 new FrameworkPropertyMetadata(AutoToolTipPlacement.BottomRight),
                 DependencyPropertyUtil.IsValidAutoToolTipPlacement);
 
         /// <summary>
-        /// The placement where automatic <see cref="System.Windows.Controls.ToolTip"/> is positioned on the control.
+        /// Gets or sets the placement where automatic <see cref="System.Windows.Controls.ToolTip"/> is positioned on the control.
         /// </summary>
-        [Bindable(true), Category("Behavior")]
+        /// <value>The placement where automatic <see cref="System.Windows.Controls.ToolTip"/> is positioned on the control.</value>
+        [Bindable(true)]
+        [Category("Behavior")]
         public AutoToolTipPlacement AutoToolTipPlacement
         {
             get
             {
-                var res = GetValue(AutoToolTipPlacementProperty);
-                Debug.Assert(res != null);
+                var res = this.GetValue(AutoToolTipPlacementProperty);
+                Debug.Assert(res != null, "res != null");
                 return (AutoToolTipPlacement)res;
             }
+
             set
             {
-                SetValue(AutoToolTipPlacementProperty, value);
+                this.SetValue(AutoToolTipPlacementProperty, value);
             }
         }
 
@@ -999,49 +1071,53 @@ namespace SaneDevelopment.WPF.Controls
         #region ThumbSize
 
         /// <summary>
-        /// Size (width or height) of start and end thumbs
+        /// Gets or sets size (width or height) of start and end thumbs.
         /// </summary>
-        [Bindable(true), Category("Layout")]
+        /// <value>Size (width or height) of start and end thumbs.</value>
+        [Bindable(true)]
+        [Category("Layout")]
         public double ThumbSize
         {
             get
             {
-                var res = GetValue(ThumbSizeProperty);
-                Debug.Assert(res != null);
+                var res = this.GetValue(ThumbSizeProperty);
+                Debug.Assert(res != null, "res != null");
                 return (double)res;
             }
-            set { SetValue(ThumbSizeProperty, value); }
+
+            set
+            {
+                this.SetValue(ThumbSizeProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.ThumbSize"/>
+        /// Dependency property for <see cref="ZoomBar.ThumbSize"/>.
         /// </summary>
         public static readonly DependencyProperty ThumbSizeProperty =
             DependencyProperty.Register(
-                "ThumbSize",
+                nameof(ThumbSize),
                 typeof(double),
                 typeof(ZoomBar),
-                new FrameworkPropertyMetadata(DefaultThumbSize,
+                new FrameworkPropertyMetadata(
+                    DefaultThumbSize,
                     FrameworkPropertyMetadataOptions.Journal | FrameworkPropertyMetadataOptions.AffectsArrange,
                     null,
                     CoerceThumbSizeValue));
 
         private static object CoerceThumbSizeValue(DependencyObject element, object value)
         {
-            Debug.Assert(element is ZoomBar);
+            Debug.Assert(element is ZoomBar, "element is ZoomBar");
 
             var cntrl = element as ZoomBar;
             Debug.Assert(cntrl != null, "cntrl != null");
-            // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (cntrl != null)
-            // ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
+                var defaultMetadata = ThumbSizeProperty.DefaultMetadata;
                 double newValue =
                     DependencyPropertyUtil.ExtractDouble(
                         value,
-                        ThumbSizeProperty.DefaultMetadata == null
-                            ? 0.0
-                            : (double)(ThumbSizeProperty.DefaultMetadata.DefaultValue ?? 0.0));
+                        defaultMetadata == null ? 0.0 : (double)(defaultMetadata.DefaultValue ?? 0.0));
 
                 if (DoubleUtil.LessThan(newValue, 0.0))
                 {
@@ -1062,19 +1138,21 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets or sets the <see cref="Brush"/> for the "not selected" area,
         /// i.e. area of control located beyond currently selected range.
         /// </summary>
+        /// <value>The <see cref="Brush"/> for the "not selected" area,
+        /// i.e. area of control located beyond currently selected range.</value>
         [Category("Brush")]
         public Brush NotSelectedBackground
         {
-            get { return (Brush)GetValue(NotSelectedBackgroundProperty); }
-            set { SetValue(NotSelectedBackgroundProperty, value); }
+            get { return (Brush)this.GetValue(NotSelectedBackgroundProperty); }
+            set { this.SetValue(NotSelectedBackgroundProperty, value); }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.NotSelectedBackground"/>
+        /// Dependency property for <see cref="ZoomBar.NotSelectedBackground"/>.
         /// </summary>
         public static readonly DependencyProperty NotSelectedBackgroundProperty =
             DependencyProperty.Register(
-                "NotSelectedBackground",
+                nameof(NotSelectedBackground),
                 typeof(Brush),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(Brushes.White));
@@ -1087,24 +1165,30 @@ namespace SaneDevelopment.WPF.Controls
         /// Gets or sets the opacity for the "not selected" area,
         /// i.e. area of control located beyond currently selected range.
         /// </summary>
+        /// <value>The opacity for the "not selected" area,
+        /// i.e. area of control located beyond currently selected range.</value>
         [Category("Appearance")]
         public double NotSelectedOpacity
         {
             get
             {
-                var res = GetValue(NotSelectedOpacityProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(NotSelectedOpacityProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(NotSelectedOpacityProperty, value); }
+
+            set
+            {
+                this.SetValue(NotSelectedOpacityProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.NotSelectedOpacity"/>
+        /// Dependency property for <see cref="ZoomBar.NotSelectedOpacity"/>.
         /// </summary>
         public static readonly DependencyProperty NotSelectedOpacityProperty =
             DependencyProperty.Register(
-                "NotSelectedOpacity",
+                nameof(NotSelectedOpacity),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultNotSelectedOpacity));
@@ -1116,19 +1200,20 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the <see cref="Brush"/> for the background of border of selection area.
         /// </summary>
+        /// <value>The <see cref="Brush"/> for the background of border of selection area.</value>
         [Category("Brush")]
         public Brush SelectionBorderBackground
         {
-            get { return (Brush)GetValue(SelectionBorderBackgroundProperty); }
-            set { SetValue(SelectionBorderBackgroundProperty, value); }
+            get { return (Brush)this.GetValue(SelectionBorderBackgroundProperty); }
+            set { this.SetValue(SelectionBorderBackgroundProperty, value); }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionBorderBackground"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderBackground"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionBorderBackgroundProperty =
             DependencyProperty.Register(
-                "SelectionBorderBackground",
+                nameof(SelectionBorderBackground),
                 typeof(Brush),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(Brushes.Red));
@@ -1140,24 +1225,29 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the opacity for the border of selection area.
         /// </summary>
+        /// <value>The opacity for the border of selection area.</value>
         [Category("Appearance")]
         public double SelectionBorderOpacity
         {
             get
             {
-                var res = GetValue(SelectionBorderOpacityProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(SelectionBorderOpacityProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(SelectionBorderOpacityProperty, value); }
+
+            set
+            {
+                this.SetValue(SelectionBorderOpacityProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionBorderOpacity"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderOpacity"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionBorderOpacityProperty =
             DependencyProperty.Register(
-                "SelectionBorderOpacity",
+                nameof(SelectionBorderOpacity),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultSelectionBorderOpacity));
@@ -1169,27 +1259,32 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Gets or sets the thickness for the border of selection area.
         /// </summary>
+        /// <value>The thickness for the border of selection area.</value>
         public double SelectionBorderThickness
         {
             get
             {
-                var res = GetValue(SelectionBorderThicknessProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(SelectionBorderThicknessProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            set { SetValue(SelectionBorderThicknessProperty, value); }
+
+            set
+            {
+                this.SetValue(SelectionBorderThicknessProperty, value);
+            }
         }
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionBorderThickness"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionBorderThickness"/>.
         /// </summary>
         public static readonly DependencyProperty SelectionBorderThicknessProperty =
             DependencyProperty.Register(
-                "SelectionBorderThickness",
+                nameof(SelectionBorderThickness),
                 typeof(double),
                 typeof(ZoomBar),
                 new FrameworkPropertyMetadata(DefaultSelectionBorderThickness));
-        
+
         #endregion
 
         #endregion Visual style properties
@@ -1201,11 +1296,11 @@ namespace SaneDevelopment.WPF.Controls
         #region IsSelectionDraggingChanged
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.IsSelectionDraggingChanged"/>
+        /// Dependency property for <see cref="ZoomBar.IsSelectionDraggingChanged"/>.
         /// </summary>
         public static readonly RoutedEvent IsSelectionDraggingChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "IsSelectionDraggingChanged",
+                nameof(IsSelectionDraggingChanged),
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<bool>),
                 typeof(ZoomBar));
@@ -1215,8 +1310,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event RoutedPropertyChangedEventHandler<bool> IsSelectionDraggingChanged
         {
-            add { AddHandler(IsSelectionDraggingChangedEvent, value); }
-            remove { RemoveHandler(IsSelectionDraggingChangedEvent, value); }
+            add { this.AddHandler(IsSelectionDraggingChangedEvent, value); }
+            remove { this.RemoveHandler(IsSelectionDraggingChangedEvent, value); }
         }
 
         #endregion IsSelectionDraggingChanged
@@ -1224,11 +1319,11 @@ namespace SaneDevelopment.WPF.Controls
         #region SelectionStartChanged
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionStartChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionStartChanged"/>.
         /// </summary>
         public static readonly RoutedEvent SelectionStartChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "SelectionStartChanged",
+                nameof(SelectionStartChanged),
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<double>),
                 typeof(ZoomBar));
@@ -1238,8 +1333,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionStartChanged
         {
-            add { AddHandler(SelectionStartChangedEvent, value); }
-            remove { RemoveHandler(SelectionStartChangedEvent, value); }
+            add { this.AddHandler(SelectionStartChangedEvent, value); }
+            remove { this.RemoveHandler(SelectionStartChangedEvent, value); }
         }
 
         #endregion SelectionStartChanged
@@ -1247,11 +1342,11 @@ namespace SaneDevelopment.WPF.Controls
         #region SelectionEndChanged
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionEndChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionEndChanged"/>.
         /// </summary>
         public static readonly RoutedEvent SelectionEndChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "SelectionEndChanged",
+                nameof(SelectionEndChanged),
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<double>),
                 typeof(ZoomBar));
@@ -1261,8 +1356,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionEndChanged
         {
-            add { AddHandler(SelectionEndChangedEvent, value); }
-            remove { RemoveHandler(SelectionEndChangedEvent, value); }
+            add { this.AddHandler(SelectionEndChangedEvent, value); }
+            remove { this.RemoveHandler(SelectionEndChangedEvent, value); }
         }
 
         #endregion SelectionEndChanged
@@ -1270,11 +1365,11 @@ namespace SaneDevelopment.WPF.Controls
         #region SelectionRangeChanged
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionRangeChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionRangeChanged"/>.
         /// </summary>
         public static readonly RoutedEvent SelectionRangeChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "SelectionRangeChanged",
+                nameof(SelectionRangeChanged),
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<double>),
                 typeof(ZoomBar));
@@ -1284,8 +1379,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event RoutedPropertyChangedEventHandler<double> SelectionRangeChanged
         {
-            add { AddHandler(SelectionRangeChangedEvent, value); }
-            remove { RemoveHandler(SelectionRangeChangedEvent, value); }
+            add { this.AddHandler(SelectionRangeChangedEvent, value); }
+            remove { this.RemoveHandler(SelectionRangeChangedEvent, value); }
         }
 
         #endregion SelectionRangeChanged
@@ -1293,11 +1388,11 @@ namespace SaneDevelopment.WPF.Controls
         #region SelectionChanged
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionChanged"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionChanged"/>.
         /// </summary>
         public static readonly RoutedEvent SelectionChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "SelectionChanged",
+                nameof(SelectionChanged),
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<SelectionDragCompletedEventArgs>),
                 typeof(ZoomBar));
@@ -1308,8 +1403,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event EventHandler<SelectionDragCompletedEventArgs> SelectionChanged
         {
-            add { AddHandler(SelectionChangedEvent, value); }
-            remove { RemoveHandler(SelectionChangedEvent, value); }
+            add { this.AddHandler(SelectionChangedEvent, value); }
+            remove { this.RemoveHandler(SelectionChangedEvent, value); }
         }
 
         #endregion SelectionChanged
@@ -1317,11 +1412,11 @@ namespace SaneDevelopment.WPF.Controls
         #region SelectionDragCompleted
 
         /// <summary>
-        /// Dependency property for <see cref="ZoomBar.SelectionDragCompleted"/>
+        /// Dependency property for <see cref="ZoomBar.SelectionDragCompleted"/>.
         /// </summary>
         public static readonly RoutedEvent SelectionDragCompletedEvent =
             EventManager.RegisterRoutedEvent(
-                "SelectionDragCompleted",
+                nameof(SelectionDragCompleted),
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<SelectionDragCompletedEventArgs>),
                 typeof(ZoomBar));
@@ -1331,8 +1426,8 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public event EventHandler<SelectionDragCompletedEventArgs> SelectionDragCompleted
         {
-            add { AddHandler(SelectionDragCompletedEvent, value); }
-            remove { RemoveHandler(SelectionDragCompletedEvent, value); }
+            add { this.AddHandler(SelectionDragCompletedEvent, value); }
+            remove { this.RemoveHandler(SelectionDragCompletedEvent, value); }
         }
 
         #endregion SelectionDragCompleted
@@ -1342,20 +1437,22 @@ namespace SaneDevelopment.WPF.Controls
         #region Commands
 
         /// <summary>
-        /// Routed command for decreasing (left/down) of selection range in whole.
+        /// Gets routed command for decreasing (left/down) of selection range in whole.
         /// </summary>
+        /// <value>Routed command for decreasing (left/down) of selection range in whole.</value>
         public static RoutedCommand ShiftLeftCommand { get; private set; }
 
         /// <summary>
-        /// Routed command for increasing (right/up) of selection range in whole.
+        /// Gets routed command for increasing (right/up) of selection range in whole.
         /// </summary>
+        /// <value>Routed command for increasing (right/up) of selection range in whole.</value>
         public static RoutedCommand ShiftRightCommand { get; private set; }
 
 
         private static void InitializeCommands()
         {
-            ShiftLeftCommand = new RoutedCommand(c_ShiftLeftCommandName, typeof(ZoomBar));
-            ShiftRightCommand = new RoutedCommand(c_ShiftRightCommandName, typeof(ZoomBar));
+            ShiftLeftCommand = new RoutedCommand(nameof(ShiftLeftCommand), typeof(ZoomBar));
+            ShiftRightCommand = new RoutedCommand(nameof(ShiftRightCommand), typeof(ZoomBar));
 
             CommandHelpers.RegisterCommandHandler(
                 typeof(ZoomBar),
@@ -1422,19 +1519,19 @@ namespace SaneDevelopment.WPF.Controls
         /// <summary>
         /// Handler for <see cref="ShiftLeftCommand"/>.
         /// </summary>
-        /// <param name="shiftValue">Shift value</param>
+        /// <param name="shiftValue">Shift value.</param>
         protected virtual void OnShiftLeft(double shiftValue)
         {
-            DoShift(-shiftValue);
+            this.DoShift(-shiftValue);
         }
 
         /// <summary>
         /// Handler for <see cref="ShiftRightCommand"/>.
         /// </summary>
-        /// <param name="shiftValue">Shift value</param>
+        /// <param name="shiftValue">Shift value.</param>
         protected virtual void OnShiftRight(double shiftValue)
         {
-            DoShift(shiftValue);
+            this.DoShift(shiftValue);
         }
 
         /// <summary>
@@ -1443,13 +1540,15 @@ namespace SaneDevelopment.WPF.Controls
         /// if it negative - shift left/down,
         /// if it positive - shift right/up.
         /// </summary>
-        /// <param name="shiftValue">Shift value</param>
+        /// <param name="shiftValue">Shift value.</param>
         public void DoShift(double shiftValue)
         {
-            if (DoubleUtil.LessThanOrClose(Math.Abs(shiftValue), double.Epsilon) || RangeSlider == null)
+            if (DoubleUtil.LessThanOrClose(Math.Abs(shiftValue), double.Epsilon) || this.RangeSlider == null)
+            {
                 return;
+            }
 
-            RangeSlider.MoveRangeToNextTick(Math.Abs(shiftValue), shiftValue < 0.0);
+            this.RangeSlider.MoveRangeToNextTick(Math.Abs(shiftValue), shiftValue < 0.0);
         }
 
         #endregion Commands
@@ -1463,78 +1562,79 @@ namespace SaneDevelopment.WPF.Controls
             // TODO: replace all calls to GetTemplateChild by the FindName
             // as it recommended in http://social.msdn.microsoft.com/forums/en-US/wpf/thread/eb509920-e2c3-43d7-987b-6f67cbd544c9
 
-            RangeSlider = GetTemplateChild("PART_RangeSlider") as SimpleNumericRangeSlider;
-            if (RangeSlider != null)
+            this.RangeSlider = this.GetTemplateChild(RangeSliderPartName) as SimpleNumericRangeSlider;
+            if (this.RangeSlider != null)
             {
-                RangeSlider.ApplyTemplate();
+                this.RangeSlider.ApplyTemplate();
 
                 var binding = new Binding
                     {
                         Source = this,
                         Path = new PropertyPath(SelectionStartProperty),
-                        Mode = BindingMode.TwoWay
+                        Mode = BindingMode.TwoWay,
                     };
-                RangeSlider.SetBinding(SimpleNumericRangeSlider.StartValueProperty, binding);
+                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.StartValueProperty, binding);
 
                 binding = new Binding
                     {
                         Source = this,
                         Path = new PropertyPath(SelectionEndProperty),
-                        Mode = BindingMode.TwoWay
+                        Mode = BindingMode.TwoWay,
                     };
-                RangeSlider.SetBinding(SimpleNumericRangeSlider.EndValueProperty, binding);
+                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.EndValueProperty, binding);
 
-                binding = new Binding {Source = this, Path = new PropertyPath(MinSelectionRangeProperty)};
-                RangeSlider.SetBinding(SimpleNumericRangeSlider.MinRangeValueProperty, binding);
+                binding = new Binding { Source = this, Path = new PropertyPath(MinSelectionRangeProperty) };
+                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.MinRangeValueProperty, binding);
 
                 // initialize interval (range) here, because it set only inside RangeSlider_RangeValueChanged
-                SelectionRange = RangeSlider.RangeValue;
+                this.SelectionRange = this.RangeSlider.RangeValue;
 
-                RangeSlider.RangeValueChanged += this.RangeSlider_RangeValueChanged;
-                RangeSlider.ValueChanged += this.RangeSlider_ValueChanged;
-                RangeSlider.IsRangeDraggingChanged += this.RangeSlider_IsRangeDraggingChanged;
-                RangeSlider.RangeDragCompleted += this.RangeSlider_RangeDragCompleted;
+                this.RangeSlider.RangeValueChanged += this.RangeSlider_RangeValueChanged;
+                this.RangeSlider.ValueChanged += this.RangeSlider_ValueChanged;
+                this.RangeSlider.IsRangeDraggingChanged += this.RangeSlider_IsRangeDraggingChanged;
+                this.RangeSlider.RangeDragCompleted += this.RangeSlider_RangeDragCompleted;
 
-                var track = RangeSlider.Track;
+                var track = this.RangeSlider.Track;
                 if (track != null)
                 {
-                    StartThumb = track.StartThumb;
-                    if (StartThumb != null)
+                    this.StartThumb = track.StartThumb;
+                    if (this.StartThumb != null)
                     {
-                        StartThumb.SizeChanged += this.Thumb_SizeChanged;
+                        this.StartThumb.SizeChanged += this.Thumb_SizeChanged;
 
-                        StartThumb.Focusable = false;
+                        this.StartThumb.Focusable = false;
                     }
 
-                    EndThumb = track.EndThumb;
-                    if (EndThumb != null)
+                    this.EndThumb = track.EndThumb;
+                    if (this.EndThumb != null)
                     {
-                        EndThumb.SizeChanged += this.Thumb_SizeChanged;
+                        this.EndThumb.SizeChanged += this.Thumb_SizeChanged;
 
-                        EndThumb.Focusable = false;
+                        this.EndThumb.Focusable = false;
                     }
                 }
             }
 
-            ContentContainer = GetTemplateChild("PART_ContentContainer") as FrameworkElement;
-            if (ContentContainer != null)
+            this.ContentContainer = this.GetTemplateChild(ContentContainerPartName) as FrameworkElement;
+            if (this.ContentContainer != null)
             {
-                //ContentContainer.ApplyTemplate(); // don't know whether it necessary here, or not... need research!
+                // this.ContentContainer.ApplyTemplate(); // don't know whether it necessary here, or not... need research!
 
-                ContentContainer.SizeChanged += this.Content_SizeChanged;
+                this.ContentContainer.SizeChanged += this.Content_SizeChanged;
             }
 
-            ShiftLeftButton = GetTemplateChild("PART_ShiftLeftButton") as ButtonBase;
-            if (ShiftLeftButton != null)
+            this.ShiftLeftButton = this.GetTemplateChild(ShiftLeftButtonPartName) as ButtonBase;
+            if (this.ShiftLeftButton != null)
             {
-                ShiftLeftButton.Focusable = false;
-                ShiftLeftButton.Command = ShiftLeftCommand;
+                this.ShiftLeftButton.Focusable = false;
+                this.ShiftLeftButton.Command = ShiftLeftCommand;
             }
-            ShiftRightButton = GetTemplateChild("PART_ShiftRightButton") as ButtonBase;
-            if (ShiftRightButton != null)
+
+            this.ShiftRightButton = this.GetTemplateChild(ShiftRightButtonPartName) as ButtonBase;
+            if (this.ShiftRightButton != null)
             {
-                ShiftRightButton.Focusable = false;
-                ShiftRightButton.Command = ShiftRightCommand;
+                this.ShiftRightButton.Focusable = false;
+                this.ShiftRightButton.Command = ShiftRightCommand;
             }
         }
 
@@ -1547,41 +1647,41 @@ namespace SaneDevelopment.WPF.Controls
         {
             if (oldTemplate != null)
             {
-                if (ContentContainer != null)
+                if (this.ContentContainer != null)
                 {
-                    ContentContainer.SizeChanged -= this.Content_SizeChanged;
+                    this.ContentContainer.SizeChanged -= this.Content_SizeChanged;
 
-                    ContentContainer = null;
+                    this.ContentContainer = null;
                 }
 
-                if (RangeSlider != null)
+                if (this.RangeSlider != null)
                 {
-                    BindingOperations.ClearAllBindings(RangeSlider);
+                    BindingOperations.ClearAllBindings(this.RangeSlider);
 
-                    RangeSlider.RangeValueChanged -= this.RangeSlider_RangeValueChanged;
-                    RangeSlider.ValueChanged -= this.RangeSlider_ValueChanged;
-                    RangeSlider.IsRangeDraggingChanged -= this.RangeSlider_IsRangeDraggingChanged;
-                    RangeSlider.RangeDragCompleted -= this.RangeSlider_RangeDragCompleted;
+                    this.RangeSlider.RangeValueChanged -= this.RangeSlider_RangeValueChanged;
+                    this.RangeSlider.ValueChanged -= this.RangeSlider_ValueChanged;
+                    this.RangeSlider.IsRangeDraggingChanged -= this.RangeSlider_IsRangeDraggingChanged;
+                    this.RangeSlider.RangeDragCompleted -= this.RangeSlider_RangeDragCompleted;
 
-                    RangeSlider = null;
+                    this.RangeSlider = null;
                 }
 
-                if (StartThumb != null)
+                if (this.StartThumb != null)
                 {
-                    StartThumb.SizeChanged -= this.Thumb_SizeChanged;
+                    this.StartThumb.SizeChanged -= this.Thumb_SizeChanged;
 
-                    StartThumb = null;
+                    this.StartThumb = null;
                 }
 
-                if (EndThumb != null)
+                if (this.EndThumb != null)
                 {
-                    EndThumb.SizeChanged -= this.Thumb_SizeChanged;
+                    this.EndThumb.SizeChanged -= this.Thumb_SizeChanged;
 
-                    EndThumb = null;
+                    this.EndThumb = null;
                 }
 
-                ShiftLeftButton = null;
-                ShiftRightButton = null;
+                this.ShiftLeftButton = null;
+                this.ShiftRightButton = null;
             }
 
             base.OnTemplateChanged(oldTemplate, newTemplate);
@@ -1592,19 +1692,18 @@ namespace SaneDevelopment.WPF.Controls
         /// The purpose of this handle is to move input focus to ZoomBar when user pressed
         /// mouse left button on any part of slider that is not focusable.
         /// </summary>
-        /// <param name="sender"><see cref="ZoomBar"/></param>
-        /// <param name="e">Data for event</param>
+        /// <param name="sender"><see cref="ZoomBar"/>.</param>
+        /// <param name="e">Data for event.</param>
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.Assert(sender is ZoomBar);
+            Debug.Assert(sender is ZoomBar, "sender is ZoomBar");
 
             var zoombar = sender as ZoomBar;
             Debug.Assert(zoombar != null, "zoombar != null");
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable HeuristicUnreachableCode
-            if (zoombar == null) return;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
+            if (zoombar == null)
+            {
+                return;
+            }
 
             // When someone click on a part in the ZoomBar and it's not focusable
             // ZoomBar needs to take the focus in order to process keyboard correctly
@@ -1616,124 +1715,133 @@ namespace SaneDevelopment.WPF.Controls
 
         private void RangeSlider_RangeValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            SelectionRange = e.NewValue;
+            this.SelectionRange = e.NewValue;
         }
 
         private void RangeSlider_ValueChanged(object sender, RangeDragCompletedEventArgs<double> e)
         {
             var newEventArgs = new SelectionDragCompletedEventArgs(e.OldStartValue, e.OldEndValue, e.NewStartValue, e.NewEndValue)
             {
-                RoutedEvent = SelectionChangedEvent
+                RoutedEvent = SelectionChangedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         private void RangeSlider_IsRangeDraggingChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
-            IsSelectionDragging = e.NewValue;
+            this.IsSelectionDragging = e.NewValue;
         }
 
         private void RangeSlider_RangeDragCompleted(object sender, RangeDragCompletedEventArgs<double> e)
         {
             var newEventArgs = new SelectionDragCompletedEventArgs(e.OldStartValue, e.OldEndValue, e.NewStartValue, e.NewEndValue)
             {
-                RoutedEvent = SelectionDragCompletedEvent
+                RoutedEvent = SelectionDragCompletedEvent,
             };
-            RaiseEvent(newEventArgs);
+            this.RaiseEvent(newEventArgs);
         }
 
         private void Content_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!e.WidthChanged)
+            {
                 return;
-            RefreshContentIndentValues();
+            }
+
+            this.RefreshContentIndentValues();
         }
 
         private void Thumb_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ResizeContentContainerMargin();
-            RefreshContentIndentValues();
+            this.ResizeContentContainerMargin();
+            this.RefreshContentIndentValues();
         }
 
         #region IRanged<double, double>
 
         /// <summary>
-        /// Gets the indicator that this object behaves like a single value object, i.e. start value equals to end value,
+        /// Gets a value indicating whether this object behaves like a single value object, i.e. start value equals to end value,
         /// so interval (range) value equals to zero.
         /// </summary>
+        /// <value>A value indicating whether this object behaves like a single value object, i.e. start value equals to end value,
+        /// so interval (range) value equals to zero.</value>
         public bool IsSingleValue
         {
             get { return false; }
         }
 
         /// <summary>
-        /// Method for converting <c>double</c> to value type
+        /// Method for converting <c>double</c> to value type.
         /// </summary>
-        /// <param name="value">Value to convert from</param>
-        /// <returns>Always <paramref name="value"/></returns>
+        /// <param name="value">Value to convert from.</param>
+        /// <returns>Always <paramref name="value"/>.</returns>
         public double DoubleToValue(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Method for converting value type to <c>double</c>
+        /// Method for converting value type to <c>double</c>.
         /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Always <paramref name="value"/></returns>
+        /// <param name="value">Value to convert.</param>
+        /// <returns>Always <paramref name="value"/>.</returns>
         public double ValueToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Method for converting <c>double</c> to interval type
+        /// Method for converting <c>double</c> to interval type.
         /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Always <paramref name="value"/></returns>
+        /// <param name="value">Value to convert.</param>
+        /// <returns>Always <paramref name="value"/>.</returns>
         public double DoubleToInterval(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Method for converting interval value to <c>double</c>
+        /// Method for converting interval value to <c>double</c>.
         /// </summary>
-        /// <param name="value">Value to convert</param>
-        /// <returns>Always <paramref name="value"/></returns>
+        /// <param name="value">Value to convert.</param>
+        /// <returns>Always <paramref name="value"/>.</returns>
         public double IntervalToDouble(double value)
         {
             return value;
         }
 
         /// <summary>
-        /// Gets start interval value
+        /// Gets start interval value.
         /// </summary>
-        /// <returns><see cref="SelectionStart"/></returns>
+        /// <value><see cref="SelectionStart"/>.</value>
         public double StartValue
         {
-            get { return SelectionStart; }
+            get { return this.SelectionStart; }
         }
 
         /// <summary>
-        /// Gets end interval value
+        /// Gets end interval value.
         /// </summary>
-        /// <returns><see cref="SelectionEnd"/></returns>
+        /// <value><see cref="SelectionEnd"/>.</value>
         public double EndValue
         {
-            get { return SelectionEnd; }
+            get { return this.SelectionEnd; }
         }
 
         /// <summary>
-        /// Gets minimum available interval (range) value
+        /// Gets minimum available interval (range) value.
         /// </summary>
-        /// <returns><see cref="MinSelectionRange"/></returns>
+        /// <value><see cref="MinSelectionRange"/>.</value>
         public double MinRangeValue
         {
-            get { return MinSelectionRange; }
+            get { return this.MinSelectionRange; }
         }
 
         #endregion // IRanged<double, double>
+
+#pragma warning restore SA1201 // Elements should appear in the correct order
+#pragma warning restore SA1202 // Elements should be ordered by access
     }
 
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

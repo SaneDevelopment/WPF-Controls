@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.3\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.3\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.2.9.3\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.3\build\Microsoft.NetFramework.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetCore.Analyzers.2.9.3\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.3\build\Microsoft.NetCore.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\build\Microsoft.CodeQuality.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.3\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.3\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -16,6 +21,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,8 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.Debug.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\SaneDevelopment.WPF.Controls.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\SaneDevelopment.WPF.Controls.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,7 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\SaneDevelopment.WPF.Controls.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\SaneDevelopment.WPF.Controls.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -74,15 +82,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHelpers.cs" />
-    <Compile Include="DateTimeCollection.cs" />
+    <Compile Include="DateTimeCollection\DateTimeCollection.cs" />
+    <Compile Include="DateTimeCollection\DateTimeCollectionConverter.cs" />
+    <Compile Include="DateTimeCollection\DateTimeCollectionValueSerializer.cs" />
     <Compile Include="DependencyPropertyUtil.cs" />
     <Compile Include="DoubleUtil.cs" />
-    <Compile Include="EventArgs.cs" />
+    <Compile Include="EventArgs\RangeDragCompletedEventArgs.cs" />
+    <Compile Include="EventArgs\SelectionDragCompletedEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="GridSplitter.cs" />
-    <Compile Include="GridSplitterAutomationPeer.cs" />
-    <Compile Include="LabeledTickBar.cs" />
-    <Compile Include="LinqToVisualTree\Extensions.cs" />
+    <Compile Include="GridSplitter\GridSplitter.cs" />
+    <Compile Include="GridSplitter\GridSplitterAutomationPeer.cs" />
+    <Compile Include="IDoubleToStringConverter.cs" />
+    <Compile Include="LabeledTickBar\LabeledTickBar.cs" />
+    <Compile Include="Interactivity\ParameterizedEventArgs.cs" />
+    <Compile Include="Interactivity\TriggersCollection.cs" />
+    <Compile Include="LinqToVisualTree\EnumerableTreeExtensions.cs" />
+    <Compile Include="LinqToVisualTree\ILinqTree.cs" />
+    <Compile Include="LinqToVisualTree\TreeExtensions.cs" />
     <Compile Include="LinqToVisualTree\VisualTreeAdapter.cs" />
     <Compile Include="Interactivity\ParameterizedCallMethodAction.cs" />
     <Compile Include="Properties\LocalizationResource.Designer.cs">
@@ -103,16 +119,36 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="RangeBaseControl.cs" />
-    <Compile Include="RangeTrack.cs" />
-    <Compile Include="SaneDataGrid.cs" />
-    <Compile Include="SimpleRangeSliders.cs" />
+    <Compile Include="RangeControls\DateTimeRangeTrack.cs" />
+    <Compile Include="DefaultDateTimeTickLabelToStringConverter.cs" />
+    <Compile Include="RangeControls\IRanged.cs" />
+    <Compile Include="RangeControls\IRangeTrackTemplatedParent.cs" />
+    <Compile Include="RangeControls\IRangeValueToStringConverter.cs" />
+    <Compile Include="RangeControls\NumericRangeTrack.cs" />
+    <Compile Include="RangeControls\RangeBaseControl.cs" />
+    <Compile Include="RangeControls\RangeThumbType.cs" />
+    <Compile Include="RangeControls\RangeTrack.cs" />
+    <Compile Include="RangeControls\RangeValueData.cs" />
+    <Compile Include="RangeControls\SimpleDateTimeRangeSlider.cs" />
+    <Compile Include="RangeControls\SimpleNumericRangeSlider.cs" />
+    <Compile Include="RangeControls\SimpleRangeSlider.cs" />
+    <Compile Include="SaneDataGrid\SaneDataGrid.cs" />
     <Compile Include="Interactivity\SupplementaryInteraction.cs" />
-    <Compile Include="TicksUtils.cs" />
-    <Compile Include="UncheckableRadioButton.cs" />
+    <Compile Include="Ticks\DateTimeTicksCollection.cs" />
+    <Compile Include="Ticks\DoubleTicksCollection.cs" />
+    <Compile Include="Ticks\ITicksCollection.cs" />
+    <Compile Include="UncheckableRadioButton\UncheckableRadioButton.cs" />
     <Compile Include="ValidationHelper.cs" />
-    <Compile Include="ValueConverters.cs" />
-    <Compile Include="ZoomBar.cs" />
+    <Compile Include="ValueConverters\DoubleToDateTimeStringConverter.cs" />
+    <Compile Include="ValueConverters\DoubleToTimeSpanStringConverter.cs" />
+    <Compile Include="ValueConverters\NullableDateTimeToDoubleConverter.cs" />
+    <Compile Include="ValueConverters\NullableDateTimeToStringConverter.cs" />
+    <Compile Include="ValueConverters\NullableInt64ToTimeSpanConverter.cs" />
+    <Compile Include="ValueConverters\NullableTimeSpanToDoubleConverter.cs" />
+    <Compile Include="ValueConverters\NullableTimeSpanToStringConverter.cs" />
+    <Compile Include="ValueConverters\SolidColorBrushToColorConverter.cs" />
+    <Compile Include="ValueConverters\ThicknessMultiConverter.cs" />
+    <Compile Include="RangeControls\ZoomBar.cs" />
     <EmbeddedResource Include="Properties\LocalizationResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizationResource.Designer.cs</LastGenOutput>
@@ -127,8 +163,32 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.3\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\analyzers\dotnet\cs\Humanizer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.3\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.3\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.2.9.3\build\Microsoft.CodeQuality.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.3\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.2.9.3\build\Microsoft.NetCore.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.3\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.2.9.3\build\Microsoft.NetFramework.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.3\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.3\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

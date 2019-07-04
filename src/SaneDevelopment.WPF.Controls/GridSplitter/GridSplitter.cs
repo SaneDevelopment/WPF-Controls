@@ -1,53 +1,30 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright file="GridSplitter.cs" company="Sane Development">
 //
-//   Sane Development WPF Controls Library
+// Sane Development WPF Controls Library.
 //
-//   The BSD 3-Clause License
+// The BSD 3-Clause License.
 //
-//   Copyright (c) Sane Development
-//   All rights reserved.
+// Copyright (c) Sane Development.
+// All rights reserved.
 //
-//   Redistribution and use in source and binary forms, with or without modification,
-//   are permitted provided that the following conditions are met:
-//
-//   - Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   - Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   - Neither the name of the Sane Development nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-//   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-//   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-//   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-//   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
-//   BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-//   OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-//   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-//   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-//   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-//   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// See LICENSE file for full license information.
 //
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Automation.Peers;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-
 namespace SaneDevelopment.WPF.Controls
 {
+    using System;
+    using System.Collections;
+    using System.Windows;
+    using System.Windows.Automation.Peers;
+    using System.Windows.Controls;
+    using System.Windows.Controls.Primitives;
+    using System.Windows.Documents;
+    using System.Windows.Input;
+    using System.Windows.Media;
+
     // NOTE: This is a fixed version GridSplitter to demonstrate where
     // the bug is in the original System.WindowsControls.GridSplitter code.
     // https://connect.microsoft.com/VisualStudio/feedback/details/483010/wpf-gridsplitter-randomly-jumps-when-resizing
@@ -56,68 +33,73 @@ namespace SaneDevelopment.WPF.Controls
 
     // See comments for 'MoveSplitter' method below
 
+#pragma warning disable CA1501 // Avoid excessive inheritance
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
+#pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable SA1100 // Do not prefix calls with base unless local implementation exists
+#pragma warning disable SA1204 // Static elements should appear before instance elements
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
+#pragma warning disable SA1600 // Elements should be documented
+#pragma warning disable SA1005 // Single line comments should begin with single space
+#pragma warning disable SA1609 // Property documentation should have value
+#pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable SA1623 // Property summary documentation should match accessors
+#pragma warning disable SA1306 // Field names should begin with lower-case letter
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable SA1129 // Do not use default value type constructor
+#pragma warning disable SA1401 // Fields should be private
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable CA1801 // Review unused parameters
+
     /// <summary>
-    /// Represents the control that redistributes space between columns or rows of a <see cref="T:System.Windows.Controls.Grid" /> control. 
+    /// Represents the control that redistributes space between columns or rows of a <see cref="Grid"/> control.
     /// </summary>
     [StyleTypedProperty(Property = "PreviewStyle", StyleTargetType = typeof(Control))]
     [Obsolete("Use System.Windows.Controls.GridSplitter instead")]
     public class GridSplitter : Thumb
     {
-// ReSharper disable InconsistentNaming
-// ReSharper disable RedundantDelegateCreation
-// ReSharper disable RedundantNameQualifier
-// ReSharper disable UnusedVariable
-// ReSharper disable RedundantBaseQualifier
-// ReSharper disable SuggestUseVarKeywordEvident
-// ReSharper disable RedundantCast
-// ReSharper disable ParameterHidesMember
-// ReSharper disable UseObjectOrCollectionInitializer
-// ReSharper disable CompareOfFloatsByEqualityOperator
-// ReSharper disable ConvertIfStatementToConditionalTernaryExpression
-// ReSharper disable UnusedParameter.Local
-// ReSharper disable PossibleNullReferenceException
-// ReSharper disable FieldCanBeMadeReadOnly.Local
-// ReSharper disable RedundantIfElseBlock
         private ResizeData _resizeData;
 
         /// <summary>
-        /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.DragIncrement" /> dependency property. 
+        /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.DragIncrement" /> dependency property.
         /// </summary>
         /// <returns>The identifier for the <see cref="P:System.Windows.Controls.GridSplitter.DragIncrement" /> dependency property.</returns>
         public static readonly DependencyProperty DragIncrementProperty = DependencyProperty.Register(
-            "DragIncrement", typeof(double), typeof(GridSplitter),
+            "DragIncrement",
+            typeof(double),
+            typeof(GridSplitter),
             new FrameworkPropertyMetadata(1.0),
             new ValidateValueCallback(GridSplitter.IsValidDelta));
-        
+
         /// <summary>
         /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.KeyboardIncrement" /> dependency property.
         /// </summary>
         /// <returns>The identifier for the <see cref="P:System.Windows.Controls.GridSplitter.KeyboardIncrement" /> dependency property.</returns>
         public static readonly DependencyProperty KeyboardIncrementProperty = DependencyProperty.Register("KeyboardIncrement", typeof(double), typeof(GridSplitter), new FrameworkPropertyMetadata(10.0), new ValidateValueCallback(GridSplitter.IsValidDelta));
-        
+
         /// <summary>
         /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.PreviewStyle" /> dependency property.
         /// </summary>
         public static readonly DependencyProperty PreviewStyleProperty = DependencyProperty.Register("PreviewStyle", typeof(Style), typeof(GridSplitter), new FrameworkPropertyMetadata(null));
-        
+
         /// <summary>
         /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.ResizeBehavior" /> dependency property.
         /// </summary>
         public static readonly DependencyProperty ResizeBehaviorProperty = DependencyProperty.Register("ResizeBehavior", typeof(GridResizeBehavior), typeof(GridSplitter), new FrameworkPropertyMetadata(GridResizeBehavior.BasedOnAlignment), new ValidateValueCallback(GridSplitter.IsValidResizeBehavior));
-        
+
         /// <summary>
         /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.ResizeDirection" /> dependency property.
         /// </summary>
         /// <returns>The identifier for the <see cref="P:System.Windows.Controls.GridSplitter.ResizeDirection" /> dependency property.</returns>
         public static readonly DependencyProperty ResizeDirectionProperty = DependencyProperty.Register("ResizeDirection", typeof(GridResizeDirection), typeof(GridSplitter), new FrameworkPropertyMetadata(GridResizeDirection.Auto, new PropertyChangedCallback(GridSplitter.UpdateCursor)), new ValidateValueCallback(GridSplitter.IsValidResizeDirection));
-        
+
         /// <summary>
         /// Identifies the <see cref="P:System.Windows.Controls.GridSplitter.ShowsPreview" /> dependency property.
         /// </summary>
         /// <returns>The identifier for the <see cref="P:System.Windows.Controls.GridSplitter.ShowsPreview" /> dependency property.</returns>
         public static readonly DependencyProperty ShowsPreviewProperty = DependencyProperty.Register("ShowsPreview", typeof(bool), typeof(GridSplitter), new FrameworkPropertyMetadata(false));
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static GridSplitter()
         {
             EventManager.RegisterClassHandler(typeof(GridSplitter), Thumb.DragStartedEvent, new DragStartedEventHandler(GridSplitter.OnDragStarted));
@@ -129,7 +111,6 @@ namespace SaneDevelopment.WPF.Controls
             FrameworkElement.CursorProperty.OverrideMetadata(typeof(GridSplitter), new FrameworkPropertyMetadata(null, new CoerceValueCallback(GridSplitter.CoerceCursor)));
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "parent", Justification = "Microsoft realisation")]
         private void CancelResize()
         {
             DependencyObject parent = base.Parent;
@@ -142,6 +123,7 @@ namespace SaneDevelopment.WPF.Controls
                 SetDefinitionLength(this._resizeData.Definition1, this._resizeData.OriginalDefinition1Length);
                 SetDefinitionLength(this._resizeData.Definition2, this._resizeData.OriginalDefinition2Length);
             }
+
             this._resizeData = null;
         }
 
@@ -160,10 +142,10 @@ namespace SaneDevelopment.WPF.Controls
                         return Cursors.SizeNS;
                 }
             }
+
             return value;
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Microsoft realisation")]
         private double GetActualLength(DefinitionBase definition)
         {
             ColumnDefinition definition2 = definition as ColumnDefinition;
@@ -171,6 +153,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return definition2.ActualWidth;
             }
+
             return ((RowDefinition)definition).ActualHeight;
         }
 
@@ -190,6 +173,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 minSizeValue2 = Math.Max(minSizeValue2, this._resizeData.SplitterLength);
             }
+
             if (this._resizeData.SplitBehavior == SplitBehavior.Split)
             {
                 minDelta = -Math.Min((double)(actualLength1 - minSizeValue1), (double)(maxSizeValue2 - actualLength2));
@@ -214,6 +198,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return resizeBehavior;
             }
+
             if (direction != GridResizeDirection.Columns)
             {
                 switch (base.VerticalAlignment)
@@ -238,8 +223,10 @@ namespace SaneDevelopment.WPF.Controls
                     case HorizontalAlignment.Right:
                         return GridResizeBehavior.CurrentAndNext;
                 }
+
                 return GridResizeBehavior.PreviousAndNext;
             }
+
         Label_0058:
             return GridResizeBehavior.PreviousAndNext;
         }
@@ -251,14 +238,17 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return resizeDirection;
             }
+
             if (base.HorizontalAlignment != HorizontalAlignment.Stretch)
             {
                 return GridResizeDirection.Columns;
             }
+
             if ((base.VerticalAlignment == VerticalAlignment.Stretch) && (base.ActualWidth <= base.ActualHeight))
             {
                 return GridResizeDirection.Columns;
             }
+
             return GridResizeDirection.Rows;
         }
 
@@ -268,6 +258,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return grid.RowDefinitions[index];
             }
+
             return grid.ColumnDefinitions[index];
         }
 
@@ -285,9 +276,13 @@ namespace SaneDevelopment.WPF.Controls
                 // CTW
                 this._resizeData.ParentUsesLayoutRounding = parent.UseLayoutRounding;
                 if (!this.SetupDefinitionsToResize())
+                {
                     this._resizeData = null;
+                }
                 else
+                {
                     this.SetupPreview();
+                }
             }
         }
 
@@ -299,7 +294,7 @@ namespace SaneDevelopment.WPF.Controls
         private static bool IsValidDelta(object o)
         {
             double d = (double)o;
-            return ((d > 0.0) && !double.IsPositiveInfinity(d));
+            return (d > 0.0) && !double.IsPositiveInfinity(d);
         }
 
         private static bool IsValidResizeBehavior(object o)
@@ -307,8 +302,9 @@ namespace SaneDevelopment.WPF.Controls
             GridResizeBehavior behavior = (GridResizeBehavior)o;
             if (((behavior != GridResizeBehavior.BasedOnAlignment) && (behavior != GridResizeBehavior.CurrentAndNext)) && (behavior != GridResizeBehavior.PreviousAndCurrent))
             {
-                return (behavior == GridResizeBehavior.PreviousAndNext);
+                return behavior == GridResizeBehavior.PreviousAndNext;
             }
+
             return true;
         }
 
@@ -317,8 +313,9 @@ namespace SaneDevelopment.WPF.Controls
             GridResizeDirection direction = (GridResizeDirection)o;
             if ((direction != GridResizeDirection.Auto) && (direction != GridResizeDirection.Columns))
             {
-                return (direction == GridResizeDirection.Rows);
+                return direction == GridResizeDirection.Rows;
             }
+
             return true;
         }
 
@@ -328,19 +325,24 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return false;
             }
+
             this.InitializeData(false);
             if (this._resizeData == null)
             {
                 return false;
             }
+
             if (base.FlowDirection == FlowDirection.RightToLeft)
             {
                 horizontalChange = -horizontalChange;
             }
+
             this.MoveSplitter(horizontalChange, verticalChange);
             this._resizeData = null;
             return true;
         }
+
+
 
         // This is what the original MS.Internal.DoubleUtil looks like
         // in assembly WindowsBase.dll
@@ -366,14 +368,16 @@ namespace SaneDevelopment.WPF.Controls
         //internal static class LayoutDoubleUtil
         //{
         //    ...
+
         internal static bool AreClose(double value1, double value2)
         {
             if (value1 == value2)
             {
                 return true;
             }
+
             double num = value1 - value2;
-            return ((num < 1.53E-06) && (num > -1.53E-06));
+            return (num < 1.53E-06) && (num > -1.53E-06);
         }
 
         //}
@@ -385,8 +389,9 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return true;
             }
+
             double num = value1 - value2;
-            return ((num <= 1) && (num >= -1));
+            return (num <= 1) && (num >= -1);
         }
 
         // See above comments
@@ -406,10 +411,14 @@ namespace SaneDevelopment.WPF.Controls
 
                 // Updated code uses LayoutDoubleUtil.AreClose(...) as commented above
                 bool areClose;
-                if (_resizeData.ParentUsesLayoutRounding)
+                if (this._resizeData.ParentUsesLayoutRounding)
+                {
                     areClose = AreCloseWithLayoutRounding((double)(actualLength1 + actualLength2), (double)(this._resizeData.OriginalDefinition1ActualLength + this._resizeData.OriginalDefinition2ActualLength));
+                }
                 else
+                {
                     areClose = AreClose((double)(actualLength1 + actualLength2), (double)(this._resizeData.OriginalDefinition1ActualLength + this._resizeData.OriginalDefinition2ActualLength));
+                }
 
                 if ((this._resizeData.SplitBehavior == SplitBehavior.Split) && !areClose)
                 {
@@ -424,6 +433,7 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         changeSize = -changeSize;
                     }
+
                     changeSize = Math.Min(Math.Max(changeSize, deltaMin), deltaMax);
                     double newLength1 = actualLength1 + changeSize;
                     double newLength2 = (actualLength1 + actualLength2) - newLength1;
@@ -441,7 +451,6 @@ namespace SaneDevelopment.WPF.Controls
             return new GridSplitterAutomationPeer(this);
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e", Justification = "Microsoft realisation")]
         private void OnDragCompleted(DragCompletedEventArgs e)
         {
             if (this._resizeData != null)
@@ -451,6 +460,7 @@ namespace SaneDevelopment.WPF.Controls
                     this.MoveSplitter(this._resizeData.Adorner.OffsetX, this._resizeData.Adorner.OffsetY);
                     this.RemovePreviewAdorner();
                 }
+
                 this._resizeData = null;
             }
         }
@@ -492,7 +502,6 @@ namespace SaneDevelopment.WPF.Controls
             (sender as GridSplitter).OnDragDelta(e);
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e", Justification = "Microsoft realisation")]
         private void OnDragStarted(DragStartedEventArgs e)
         {
             this.InitializeData(this.ShowsPreview);
@@ -507,9 +516,13 @@ namespace SaneDevelopment.WPF.Controls
         /// Called when a key is pressed.
         /// </summary>
         /// <param name="e">A <see cref="T:System.Windows.Input.KeyEventArgs" /> that contains the event data.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Microsoft realisation")]
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (e == null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+
             switch (e.Key)
             {
                 case Key.Left:
@@ -533,6 +546,7 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         break;
                     }
+
                     this.CancelResize();
                     e.Handled = true;
                     return;
@@ -598,6 +612,7 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         SetDefinitionLength(base2, new GridLength(this.GetActualLength(base2), GridUnitType.Star));
                     }
+
                     num++;
                 }
             }
@@ -636,6 +651,7 @@ namespace SaneDevelopment.WPF.Controls
                         num3 = num + 1;
                         break;
                 }
+
                 int num5 = (this._resizeData.ResizeDirection == GridResizeDirection.Columns) ? this._resizeData.Grid.ColumnDefinitions.Count : this._resizeData.Grid.RowDefinitions.Count;
                 if ((num2 >= 0) && (num3 < num5))
                 {
@@ -658,9 +674,11 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         this._resizeData.SplitBehavior = !flag ? SplitBehavior.Resize1 : SplitBehavior.Resize2;
                     }
+
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -683,9 +701,8 @@ namespace SaneDevelopment.WPF.Controls
             o.CoerceValue(FrameworkElement.CursorProperty);
         }
 
-
         /// <summary>
-        /// Gets or sets the minimum distance that a user must drag a mouse to resize rows or columns with a <see cref="T:System.Windows.Controls.GridSplitter" /> control. 
+        /// Gets or sets the minimum distance that a user must drag a mouse to resize rows or columns with a <see cref="T:System.Windows.Controls.GridSplitter" /> control.
         /// </summary>
         /// <returns>A value that represents the minimum distance that a user must use the mouse to drag a <see cref="T:System.Windows.Controls.GridSplitter" /> to resize rows or columns. The default is 1.</returns>
         public double DragIncrement
@@ -694,6 +711,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (double)base.GetValue(DragIncrementProperty);
             }
+
             set
             {
                 base.SetValue(DragIncrementProperty, value);
@@ -710,6 +728,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (double)base.GetValue(KeyboardIncrementProperty);
             }
+
             set
             {
                 base.SetValue(KeyboardIncrementProperty, value);
@@ -726,6 +745,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (Style)base.GetValue(PreviewStyleProperty);
             }
+
             set
             {
                 base.SetValue(PreviewStyleProperty, value);
@@ -742,6 +762,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (GridResizeBehavior)base.GetValue(ResizeBehaviorProperty);
             }
+
             set
             {
                 base.SetValue(ResizeBehaviorProperty, value);
@@ -758,6 +779,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (GridResizeDirection)base.GetValue(ResizeDirectionProperty);
             }
+
             set
             {
                 base.SetValue(ResizeDirectionProperty, value);
@@ -774,6 +796,7 @@ namespace SaneDevelopment.WPF.Controls
             {
                 return (bool)base.GetValue(ShowsPreviewProperty);
             }
+
             set
             {
                 base.SetValue(ShowsPreviewProperty, value);
@@ -811,8 +834,9 @@ namespace SaneDevelopment.WPF.Controls
             {
                 if (index != 0)
                 {
-                    throw new ArgumentOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index));
                 }
+
                 return this._decorator;
             }
 
@@ -823,6 +847,7 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     return this.Translation.X;
                 }
+
                 set
                 {
                     this.Translation.X = value;
@@ -835,6 +860,7 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     return this.Translation.Y;
                 }
+
                 set
                 {
                     this.Translation.Y = value;
@@ -877,25 +903,37 @@ namespace SaneDevelopment.WPF.Controls
             public static GridLength UserSizeValueCache(DefinitionBase def)
             {
                 if (def is RowDefinition)
+                {
                     return (GridLength)def.GetValue(RowDefinition.HeightProperty);
+                }
                 else
+                {
                     return (GridLength)def.GetValue(ColumnDefinition.WidthProperty);
+                }
             }
 
             public static double UserMinSizeValueCache(DefinitionBase def)
             {
                 if (def is RowDefinition)
+                {
                     return (double)def.GetValue(RowDefinition.MinHeightProperty);
+                }
                 else
+                {
                     return (double)def.GetValue(ColumnDefinition.MinWidthProperty);
+                }
             }
 
             public static double UserMaxSizeValueCache(DefinitionBase def)
             {
                 if (def is RowDefinition)
+                {
                     return (double)def.GetValue(RowDefinition.MaxHeightProperty);
+                }
                 else
+                {
                     return (double)def.GetValue(ColumnDefinition.MaxWidthProperty);
+                }
             }
         }
 
@@ -903,22 +941,26 @@ namespace SaneDevelopment.WPF.Controls
         {
             Split,
             Resize1,
-            Resize2
+            Resize2,
         }
-// ReSharper restore RedundantIfElseBlock
-// ReSharper restore FieldCanBeMadeReadOnly.Local
-// ReSharper restore PossibleNullReferenceException
-// ReSharper restore UnusedParameter.Local
-// ReSharper restore ConvertIfStatementToConditionalTernaryExpression
-// ReSharper restore CompareOfFloatsByEqualityOperator
-// ReSharper restore UseObjectOrCollectionInitializer
-// ReSharper restore ParameterHidesMember
-// ReSharper restore RedundantCast
-// ReSharper restore SuggestUseVarKeywordEvident
-// ReSharper restore RedundantBaseQualifier
-// ReSharper restore UnusedVariable
-// ReSharper restore RedundantNameQualifier
-// ReSharper restore RedundantDelegateCreation
-// ReSharper restore InconsistentNaming
     }
+
+#pragma warning disable CA1801 // Review unused parameters
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore SA1401 // Fields should be private
+#pragma warning restore SA1129 // Do not use default value type constructor
+#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore SA1306 // Field names should begin with lower-case letter
+#pragma warning restore SA1623 // Property summary documentation should match accessors
+#pragma warning restore SA1201 // Elements should appear in the correct order
+#pragma warning restore SA1609 // Property documentation should have value
+#pragma warning restore SA1005 // Single line comments should begin with single space
+#pragma warning restore SA1600 // Elements should be documented
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+#pragma warning restore SA1204 // Static elements should appear before instance elements
+#pragma warning restore SA1100 // Do not prefix calls with base unless local implementation exists
+#pragma warning restore SA1202 // Elements should be ordered by access
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }
