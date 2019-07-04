@@ -19,6 +19,8 @@ namespace SaneDevelopment.WPF.Controls
     using System.Windows.Controls;
     using System.Windows.Input;
 
+#pragma warning disable CA1501 // Avoid excessive inheritance
+
     /// <summary>
     /// Control behaves absolutely like a <see cref="DataGrid"/>,
     /// but never "swallow" (handles) <see cref="UIElement.MouseWheelEvent"/> event (as <see cref="DataGrid"/> does).
@@ -36,4 +38,6 @@ namespace SaneDevelopment.WPF.Controls
                 true);
         }
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

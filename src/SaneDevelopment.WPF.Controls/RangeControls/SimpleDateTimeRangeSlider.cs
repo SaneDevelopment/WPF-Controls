@@ -18,13 +18,15 @@ namespace SaneDevelopment.WPF.Controls
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Media;
     using SaneDevelopment.WPF.Controls.Properties;
+
+#pragma warning disable CA1501 // Avoid excessive inheritance
 
     /// <summary>
     /// Range slider, that uses <see cref="DateTime"/> as type for values and <see cref="TimeSpan"/> for interval.
@@ -34,18 +36,27 @@ namespace SaneDevelopment.WPF.Controls
     [Description("Simple Date&Time Range Slider")]
     public class SimpleDateTimeRangeSlider : SimpleRangeSlider<DateTime, TimeSpan>
     {
+#pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable SA1201 // Elements should appear in the correct order
+
         /// <summary>
-        /// Format string used when <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is <c>null</c> or empty
+        /// Format string used when <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is <c>null</c> or empty.
         /// </summary>
         public const string DefaultAutoToolTipFormat = "dd-MM-yyyy HH:mm:ss";
 
         #region Private fields
+
+#pragma warning disable SA1308 // Variable names should not be prefixed
+#pragma warning disable SA1311 // Static readonly fields should begin with upper-case letter
 
         private static readonly TimeSpan s_DefaultTickFrequency = TimeSpan.FromDays(365);
         private static readonly TimeSpan s_DefaultLargeChange = TimeSpan.FromDays(365);
 
         private static readonly DateTime s_DefaultMinimum = new DateTime(1900, 1, 1);
         private static readonly DateTime s_DefaultMaximum = new DateTime(9999, 12, 31);
+
+#pragma warning restore SA1311 // Static readonly fields should begin with upper-case letter
+#pragma warning restore SA1308 // Variable names should not be prefixed
 
         #endregion Private fields
 
@@ -97,7 +108,32 @@ namespace SaneDevelopment.WPF.Controls
             DefaultStyleKeyProperty.OverrideMetadata(thisType, new FrameworkPropertyMetadata(thisType));
         }
 
-        #region override functions
+        #region Overrides
+
+        /// <summary>
+        /// Gets current interval (range) value.
+        /// </summary>
+        /// <value>Current interval (range) value.</value>
+        protected override TimeSpan CurrentRangeValue
+        {
+            get
+            {
+                return this.EndValue - this.StartValue;
+            }
+        }
+
+        /// <summary>
+        /// Gets the collection of tick marks of <see cref="DateTime"/> type.
+        /// </summary>
+        /// <value>The collection of tick marks of <see cref="DateTime"/> type.</value>
+        protected override ITicksCollection<DateTime> TypedTicksCollection
+        {
+            get
+            {
+                var ticks = this.Ticks;
+                return ticks == null ? null : new DateTimeTicksCollection(this.Ticks);
+            }
+        }
 
         /// <summary>
         /// Converts number to date.
@@ -193,31 +229,8 @@ namespace SaneDevelopment.WPF.Controls
         }
 
         /// <summary>
-        /// Current interval (range) value.
-        /// </summary>
-        protected override TimeSpan CurrentRangeValue
-        {
-            get
-            {
-                return this.EndValue - this.StartValue;
-            }
-        }
-
-        /// <summary>
-        /// Gets the collection of tick marks of <see cref="DateTime"/> type.
-        /// </summary>
-        protected override ITicksCollection<DateTime> TypedTicksCollection
-        {
-            get
-            {
-                var ticks = this.Ticks;
-                return ticks == null ? null : new DateTimeTicksCollection(this.Ticks);
-            }
-        }
-
-        /// <summary>
         /// Gets the string representation of <paramref name="value"/> for showing in tooltips.
-        /// 
+        ///
         /// For conversion uses either <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverter"/>
         /// with parameter <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipValueConverterParameter"/>,
         /// or a format string from <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/>
@@ -262,7 +275,7 @@ namespace SaneDevelopment.WPF.Controls
         /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
         /// on the increasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c>.</returns>
         protected override bool IncreaseStartValueCommandCanExecute()
         {
             bool res = this.IsSingleValue
@@ -275,7 +288,7 @@ namespace SaneDevelopment.WPF.Controls
         /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
         /// on the increasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c>.</returns>
         protected override bool IncreaseEndValueCommandCanExecute()
         {
             return this.EndValue < this.Maximum;
@@ -285,7 +298,7 @@ namespace SaneDevelopment.WPF.Controls
         /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
         /// on the decreasing of start value routed command.
         /// </summary>
-        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c>.</returns>
         protected override bool DecreaseStartValueCommandCanExecute()
         {
             return this.Minimum < this.StartValue;
@@ -295,7 +308,7 @@ namespace SaneDevelopment.WPF.Controls
         /// The handler for the <see cref="System.Windows.Input.CommandBinding.CanExecute"/> event
         /// on the decreasing of end value routed command.
         /// </summary>
-        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c></returns>
+        /// <returns><c>true</c> if command associated with this event can be executed on the command target; otherwise, <c>false</c>.</returns>
         protected override bool DecreaseEndValueCommandCanExecute()
         {
             bool res = this.IsSingleValue
@@ -346,7 +359,7 @@ namespace SaneDevelopment.WPF.Controls
             base.OnTickFrequencyChanged(oldTickFrequency, newTickFrequency);
         }
 
-        #endregion
+        #endregion Overrides
 
         #region Dependency Properties
 
@@ -358,6 +371,7 @@ namespace SaneDevelopment.WPF.Controls
         /// Can be used for binding with framework elements that works with <see cref="double"/> values,
         /// e.g. <see cref="Slider"/>.
         /// </summary>
+        /// <value>The value of <see cref="RangeBaseControl{T, TInterval}.Minimum"/> interpreted as <c>double</c>.</value>
         [Category("Behavior")]
         [Bindable(true)]
         public double MinimumAsDouble
@@ -365,8 +379,8 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MinimumAsDoubleProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
 
             private set
@@ -399,6 +413,7 @@ namespace SaneDevelopment.WPF.Controls
         /// Can be used for binding with framework elements that works with <see cref="double"/> values,
         /// e.g. <see cref="Slider"/>.
         /// </summary>
+        /// <value>The value of <see cref="RangeBaseControl{T, TInterval}.Maximum"/> interpreted as <c>double</c>.</value>
         [Category("Behavior")]
         [Bindable(true)]
         public double MaximumAsDouble
@@ -406,7 +421,7 @@ namespace SaneDevelopment.WPF.Controls
             get
             {
                 var res = this.GetValue(MaximumAsDoubleProperty);
-                Debug.Assert(res != null);
+                Debug.Assert(res != null, "res != null");
                 return (double)res;
             }
 
@@ -434,41 +449,47 @@ namespace SaneDevelopment.WPF.Controls
 
         #region Ticks
 
+#pragma warning disable CA2227 // Collection properties should be read only
+
         /// <summary>
         /// Gets or sets collection of numeric tick marks.
         /// If <see cref="SimpleDateTimeRangeSlider.Ticks"/> is not <c>null</c>
         /// slider ignores <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/>
         /// and draws only tick marks from this collection.
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [Bindable(true), Category("Appearance")]
+        /// <value>Collection of numeric tick marks.</value>
+        [Bindable(true)]
+        [Category("Appearance")]
         public DateTimeCollection Ticks
         {
             get
             {
-                return (DateTimeCollection)GetValue(TicksProperty);
+                return (DateTimeCollection)this.GetValue(TicksProperty);
             }
+
             set
             {
-                SetValue(TicksProperty, value);
+                this.SetValue(TicksProperty, value);
             }
         }
 
+#pragma warning restore CA2227 // Collection properties should be read only
+
         /// <summary>
-        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.Ticks"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.Ticks"/>.
         /// </summary>
         public static readonly DependencyProperty TicksProperty
             = DependencyProperty.Register(
-                "Ticks",
-                typeof (DateTimeCollection),
-                typeof (SimpleDateTimeRangeSlider),
+                nameof(Ticks),
+                typeof(DateTimeCollection),
+                typeof(SimpleDateTimeRangeSlider),
                 // the default value is necessary for readonly dependency property evaluated by changes from another property
                 // without that the initial value of readonly property wont be initialized correctly
-                new FrameworkPropertyMetadata((new DateTimeCollection()).GetAsFrozen(), OnTicksChanged));
+                new FrameworkPropertyMetadata(new DateTimeCollection().GetAsFrozen(), OnTicksChanged));
 
         private static void OnTicksChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(d is SimpleDateTimeRangeSlider);
+            Debug.Assert(d is SimpleDateTimeRangeSlider, "d is SimpleDateTimeRangeSlider");
 
             var element = (SimpleDateTimeRangeSlider)d;
             if (element.IsSnapToTickEnabled)
@@ -479,9 +500,10 @@ namespace SaneDevelopment.WPF.Controls
                 // (but not necessarily).
                 element.AlignValuesToTicks();
             }
+
             element.TicksAsDouble = element.Ticks == null
                                         ? null
-                                        : new DoubleCollection(element.Ticks.Select(tick => (double) tick.Ticks));
+                                        : new DoubleCollection(element.Ticks.Select(tick => (double)tick.Ticks));
         }
 
         #endregion
@@ -490,30 +512,30 @@ namespace SaneDevelopment.WPF.Controls
 
         /// <summary>
         /// Gets the value of <see cref="SimpleDateTimeRangeSlider.Ticks"/> interpreted as <c>double</c>.
-        /// 
+        ///
         /// Can be used for binding with framework elements that works with <see cref="double"/> values,
         /// e.g. <see cref="TickBar"/>.
         /// </summary>
-        [Category("Appearance"), Bindable(true)]
+        /// <value>The value of <see cref="SimpleDateTimeRangeSlider.Ticks"/> interpreted as <c>double</c>.</value>
+        [Category("Appearance")]
+        [Bindable(true)]
         public DoubleCollection TicksAsDouble
         {
-            get { return (DoubleCollection)GetValue(TicksAsDoubleProperty); }
-            private set { SetValue(TicksAsDoublePropertyKey, value); }
+            get { return (DoubleCollection)this.GetValue(TicksAsDoubleProperty); }
+            private set { this.SetValue(TicksAsDoublePropertyKey, value); }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey TicksAsDoublePropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "TicksAsDouble",
+                nameof(TicksAsDouble),
                 typeof(DoubleCollection),
                 typeof(SimpleDateTimeRangeSlider),
                 // the default value is necessary for readonly dependency property evaluated by changes from another property
                 // without that the initial value of readonly property wont be initialized correctly
-                new FrameworkPropertyMetadata((new DoubleCollection()).GetAsFrozen()));
+                new FrameworkPropertyMetadata(new DoubleCollection().GetAsFrozen()));
 
         /// <summary>
-        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TicksAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TicksAsDouble"/>.
         /// </summary>
         public static readonly DependencyProperty TicksAsDoubleProperty = TicksAsDoublePropertyKey.DependencyProperty;
 
@@ -523,27 +545,31 @@ namespace SaneDevelopment.WPF.Controls
 
         /// <summary>
         /// Gets the value of <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> interpreted as collection of <c>double</c> numbers.
-        /// 
+        ///
         /// Can be used for binding with framework elements that works with <see cref="double"/> values,
         /// e.g. <see cref="TickBar"/>.
         /// </summary>
-        [Category("Appearance"), Bindable(true)]
+        /// <value>The value of <see cref="SimpleRangeSlider{T, TInterval}.TickFrequency"/> interpreted as collection of <c>double</c> numbers.</value>
+        [Category("Appearance")]
+        [Bindable(true)]
         public double TickFrequencyAsDouble
         {
             get
             {
-                var res = GetValue(TickFrequencyAsDoubleProperty);
-                Debug.Assert(res != null);
-                return (double) res;
+                var res = this.GetValue(TickFrequencyAsDoubleProperty);
+                Debug.Assert(res != null, "res != null");
+                return (double)res;
             }
-            private set { SetValue(TickFrequencyAsDoublePropertyKey, value); }
+
+            private set
+            {
+                this.SetValue(TickFrequencyAsDoublePropertyKey, value);
+            }
         }
 
-// ReSharper disable InconsistentNaming
         private static readonly DependencyPropertyKey TickFrequencyAsDoublePropertyKey =
-// ReSharper restore InconsistentNaming
             DependencyProperty.RegisterReadOnly(
-                "TickFrequencyAsDouble",
+                nameof(TickFrequencyAsDouble),
                 typeof(double),
                 typeof(SimpleDateTimeRangeSlider),
                 // the default value is necessary for readonly dependency property evaluated by changes from another property
@@ -551,12 +577,17 @@ namespace SaneDevelopment.WPF.Controls
                 new FrameworkPropertyMetadata((double)s_DefaultTickFrequency.Ticks));
 
         /// <summary>
-        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>
+        /// Dependency property for <see cref="SimpleDateTimeRangeSlider.TickFrequencyAsDouble"/>.
         /// </summary>
         public static readonly DependencyProperty TickFrequencyAsDoubleProperty = TickFrequencyAsDoublePropertyKey.DependencyProperty;
 
         #endregion
 
         #endregion
+
+#pragma warning restore SA1201 // Elements should appear in the correct order
+#pragma warning restore SA1202 // Elements should be ordered by access
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

@@ -132,7 +132,7 @@
     <Compile Include="RangeControls\SimpleDateTimeRangeSlider.cs" />
     <Compile Include="RangeControls\SimpleNumericRangeSlider.cs" />
     <Compile Include="RangeControls\SimpleRangeSlider.cs" />
-    <Compile Include="SaneDataGrid.cs" />
+    <Compile Include="SaneDataGrid\SaneDataGrid.cs" />
     <Compile Include="Interactivity\SupplementaryInteraction.cs" />
     <Compile Include="Ticks\DateTimeTicksCollection.cs" />
     <Compile Include="Ticks\DoubleTicksCollection.cs" />

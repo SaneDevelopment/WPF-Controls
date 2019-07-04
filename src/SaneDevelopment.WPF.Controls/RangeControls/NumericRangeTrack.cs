@@ -19,6 +19,8 @@ namespace SaneDevelopment.WPF.Controls
     using System.Windows;
     using System.Windows.Controls.Primitives;
 
+#pragma warning disable CA1501 // Avoid excessive inheritance
+
     /// <summary>
     /// Track that uses <c>double</c> as values and inteval type.
     /// </summary>
@@ -182,4 +184,6 @@ namespace SaneDevelopment.WPF.Controls
             return value;
         }
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

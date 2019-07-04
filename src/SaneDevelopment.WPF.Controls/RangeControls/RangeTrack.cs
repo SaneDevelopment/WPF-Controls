@@ -24,6 +24,8 @@ namespace SaneDevelopment.WPF.Controls
     using System.Windows.Input;
     using System.Windows.Media;
 
+#pragma warning disable CA1501 // Avoid excessive inheritance
+
     /// <summary>
     /// Control primitive, that manages positions of three <see cref="Thumb"/>s and two <see cref="RepeatButton"/>s,
     /// which uses for changing of <see cref="RangeTrack{T, TInterval}.StartValue"/> and <see cref="RangeTrack{T, TInterval}.EndValue"/>.
@@ -781,4 +783,6 @@ namespace SaneDevelopment.WPF.Controls
 
 #pragma warning restore SA1201 // Elements should appear in the correct order
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }

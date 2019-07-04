@@ -25,6 +25,8 @@ namespace SaneDevelopment.WPF.Controls
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
 
+#pragma warning disable CA1501 // Avoid excessive inheritance
+
     /// <summary>
     /// Common class for range sliders.
     ///
@@ -2854,4 +2856,6 @@ namespace SaneDevelopment.WPF.Controls
 #pragma warning restore SA1202 // Elements should be ordered by access
 #pragma warning restore CA1000 // Do not declare static members on generic types
     }
+
+#pragma warning restore CA1501 // Avoid excessive inheritance
 }
