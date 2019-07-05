@@ -1,0 +1,15 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Sane Development",
+      "copyrightText": "{projectName}.\n\n{licenseName}.\n\nCopyright (c) {companyName}.\nAll rights reserved.\n\nSee {licenseFile} file for full license information.",
+      "headerDecoration": "-----------------------------------------------------------------------",
+      "variables": {
+        "licenseName": "The BSD 3-Clause License",
+        "licenseFile": "LICENSE",
+        "projectName": "Sane Development WPF Controls Library Unit Tests"
+      }
+    }
+  }
+}
