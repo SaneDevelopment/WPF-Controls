@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>..\SaneDevelopment.WPF.Controls.ruleset</CodeAnalysisRuleSet>
