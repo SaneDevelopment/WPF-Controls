@@ -52,6 +52,9 @@ namespace SaneDevelopment.WPF.Controls
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable CA1801 // Review unused parameters
 
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+
     /// <summary>
     /// Represents the control that redistributes space between columns or rows of a <see cref="Grid"/> control.
     /// </summary>
@@ -148,8 +151,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private double GetActualLength(DefinitionBase definition)
         {
-            ColumnDefinition definition2 = definition as ColumnDefinition;
-            if (definition2 != null)
+            if (definition is ColumnDefinition definition2)
             {
                 return definition2.ActualWidth;
             }
@@ -264,13 +266,14 @@ namespace SaneDevelopment.WPF.Controls
 
         private void InitializeData(bool ShowsPreview)
         {
-            Grid parent = base.Parent as Grid;
-            if (parent != null)
+            if (base.Parent is Grid parent)
             {
-                this._resizeData = new ResizeData();
-                this._resizeData.Grid = parent;
-                this._resizeData.ShowsPreview = ShowsPreview;
-                this._resizeData.ResizeDirection = this.GetEffectiveResizeDirection();
+                this._resizeData = new ResizeData
+                {
+                    Grid = parent,
+                    ShowsPreview = ShowsPreview,
+                    ResizeDirection = this.GetEffectiveResizeDirection(),
+                };
                 this._resizeData.ResizeBehavior = this.GetEffectiveResizeBehavior(this._resizeData.ResizeDirection);
                 this._resizeData.SplitterLength = Math.Min(base.ActualWidth, base.ActualHeight);
                 // CTW
@@ -426,9 +429,7 @@ namespace SaneDevelopment.WPF.Controls
                 }
                 else
                 {
-                    double deltaMin;
-                    double deltaMax;
-                    this.GetDeltaConstraints(out deltaMin, out deltaMax);
+                    this.GetDeltaConstraints(out double deltaMin, out double deltaMax);
                     if (base.FlowDirection != this._resizeData.Grid.FlowDirection)
                     {
                         changeSize = -changeSize;
@@ -814,13 +815,17 @@ namespace SaneDevelopment.WPF.Controls
             public PreviewAdorner(GridSplitter GridSplitter, Style previewStyle)
                 : base(GridSplitter)
             {
-                Control control = new Control();
-                control.Style = previewStyle;
-                control.IsEnabled = false;
+                Control control = new Control
+                {
+                    Style = previewStyle,
+                    IsEnabled = false,
+                };
                 this.Translation = new TranslateTransform();
-                this._decorator = new Decorator();
-                this._decorator.Child = control;
-                this._decorator.RenderTransform = this.Translation;
+                this._decorator = new Decorator
+                {
+                    Child = control,
+                    RenderTransform = this.Translation,
+                };
                 base.AddVisualChild(this._decorator);
             }
 
@@ -944,6 +949,9 @@ namespace SaneDevelopment.WPF.Controls
             Resize2,
         }
     }
+
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
 
 #pragma warning disable CA1801 // Review unused parameters
 #pragma warning disable CA1822 // Mark members as static

@@ -56,6 +56,7 @@ namespace SaneDevelopment.WPF.Controls
 
 #pragma warning disable SA1201 // Elements should appear in the correct order
 #pragma warning disable SA1202 // Elements should be ordered by access
+#pragma warning disable IDE1006 // Naming Styles
 
         #region Abstract methods
 
@@ -218,8 +219,7 @@ namespace SaneDevelopment.WPF.Controls
                 throw new ArgumentNullException(nameof(track));
             }
 
-            var templatedParentControl = templatedParent as RangeBaseControl<T, TInterval>;
-            if (templatedParentControl != null)
+            if (templatedParent is RangeBaseControl<T, TInterval>)
             {
                 track.BindToTemplatedParent(RangeTrack<T, TInterval>.MinimumProperty, MinimumProperty);
                 track.BindToTemplatedParent(RangeTrack<T, TInterval>.MaximumProperty, MaximumProperty);
@@ -400,8 +400,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static object CoerceMaximum(DependencyObject d, object value)
         {
-            var base2 = d as RangeBaseControl<T, TInterval>;
-            if (base2 != null)
+            if (d is RangeBaseControl<T, TInterval> base2)
             {
                 value = base2.CoerceMaximum(value);
             }
@@ -475,8 +474,7 @@ namespace SaneDevelopment.WPF.Controls
         {
             Debug.Assert(d is RangeBaseControl<T, TInterval>, "d is RangeBaseControl<T, TInterval>");
 
-            var base2 = d as RangeBaseControl<T, TInterval>;
-            if (base2 == null)
+            if (!(d is RangeBaseControl<T, TInterval> base2))
             {
                 return value;
             }
@@ -991,6 +989,8 @@ namespace SaneDevelopment.WPF.Controls
         {
             return DependencyPropertyUtil.IsValidChange(typeof(TInterval), value);
         }
+
+#pragma warning restore IDE1006 // Naming Styles
 #pragma warning restore SA1202 // Elements should be ordered by access
 #pragma warning restore SA1201 // Elements should appear in the correct order
     }

@@ -103,8 +103,7 @@ namespace SaneDevelopment.WPF.Controls
                 return null;
             }
 
-            DateTime dt;
-            if (DateTime.TryParse(s, out dt))
+            if (DateTime.TryParse(s, out DateTime dt))
             {
                 return dt;
             }

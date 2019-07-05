@@ -24,24 +24,25 @@ namespace SaneDevelopment.WPF.Controls.Samples
     public sealed class DoubleRangeValueToStringConverter : IRangeValueToStringConverter<double>
     {
 #pragma warning disable SA1308 // Variable names should not be prefixed
+#pragma warning disable SA1311 // Static readonly fields should begin with upper-case letter
 
         /// <summary>
         /// Suppose we use ZoomBar as a slider for date interval [01-01-2000..31-12-2000].
         /// </summary>
-        private static DateTime s_DateFrom = new DateTime(2000, 1, 1);
+        private static readonly DateTime s_DateFrom = new DateTime(2000, 1, 1);
 
         /// <summary>
         /// Suppose we use ZoomBar as a slider for date interval [01-01-2000..31-12-2000].
         /// </summary>
-        private static DateTime s_DateTo = new DateTime(2000, 12, 31);
+        private static readonly DateTime s_DateTo = new DateTime(2000, 12, 31);
 
+#pragma warning restore SA1311 // Static readonly fields should begin with upper-case letter
 #pragma warning restore SA1308 // Variable names should not be prefixed
 
         /// <inheritdoc/>
         public string Convert(double value, RangeThumbType thumbType, object parameter)
         {
-            var zb = parameter as IRanged<double, double>;
-            if (zb == null)
+            if (!(parameter is IRanged<double, double> zb))
             {
                 throw new ArgumentOutOfRangeException(nameof(parameter));
             }

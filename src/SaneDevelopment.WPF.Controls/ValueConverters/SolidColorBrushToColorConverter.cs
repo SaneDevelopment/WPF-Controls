@@ -44,8 +44,7 @@ namespace SaneDevelopment.WPF.Controls
                 return DependencyProperty.UnsetValue;
             }
 
-            var brush = value as SolidColorBrush;
-            if (brush == null)
+            if (!(value is SolidColorBrush brush))
             {
                 return DependencyProperty.UnsetValue;
             }

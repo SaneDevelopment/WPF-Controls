@@ -386,8 +386,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         public void DoApplyTemplate()
         {
-            var templatedParent = this.TemplatedParent as IRangeTrackTemplatedParent<T, TInterval>;
-            if (templatedParent != null)
+            if (this.TemplatedParent is IRangeTrackTemplatedParent<T, TInterval> templatedParent)
             {
                 templatedParent.OnApplyRangeTrackTemplate(this.TemplatedParent, this);
             }
@@ -429,7 +428,7 @@ namespace SaneDevelopment.WPF.Controls
                     Source = this.TemplatedParent,
                     Path = new PropertyPath(source),
                 };
-                element.SetBinding(target, binding);
+                _ = element.SetBinding(target, binding);
             }
         }
 
@@ -455,7 +454,7 @@ namespace SaneDevelopment.WPF.Controls
                 RelativeSource = RelativeSource.TemplatedParent,
                 Path = new PropertyPath(source),
             };
-            this.SetBinding(target, binding);
+            _ = this.SetBinding(target, binding);
         }
 
 
@@ -481,18 +480,17 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            double decreaseButtonLength, startThumbLength, rangeThumbLength, endThumbLength, increaseButtonLength;
             Debug.Assert(finalSize.Width >= 0, "finalSize.Width >= 0");
             bool isVertical = this.Orientation == Orientation.Vertical;
 
             this.ComputeLengths(
                 finalSize,
                 isVertical,
-                out decreaseButtonLength,
-                out startThumbLength,
-                out rangeThumbLength,
-                out endThumbLength,
-                out increaseButtonLength);
+                out double decreaseButtonLength,
+                out double startThumbLength,
+                out double rangeThumbLength,
+                out double endThumbLength,
+                out double increaseButtonLength);
 
             var location = default(Point);
             Size size = finalSize;
@@ -606,7 +604,7 @@ namespace SaneDevelopment.WPF.Controls
             bool isVertical = this.Orientation == Orientation.Vertical;
             var desiredSize = new Size(0.0, 0.0);
             desiredSize = MeasureThumb(this.StartThumb, isVertical, availableSize, desiredSize);
-            MeasureThumb(this.RangeThumb, isVertical, availableSize, desiredSize);
+            _ = MeasureThumb(this.RangeThumb, isVertical, availableSize, desiredSize);
             desiredSize = MeasureThumb(this.EndThumb, isVertical, availableSize, desiredSize);
             return desiredSize;
         }

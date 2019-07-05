@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3AF1EE6C-8E5D-4694-8BB6-9012FA4B24F5}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		SaneDevelopment.WPF.Controls.ruleset = SaneDevelopment.WPF.Controls.ruleset
 	EndProjectSection
 EndProject

@@ -78,8 +78,7 @@ namespace SaneDevelopment.WPF.Controls.Interactivity
                 return;
             }
 
-            var newTriggers = e.NewValue as TriggersCollection;
-            if (newTriggers == null)
+            if (!(e.NewValue is TriggersCollection newTriggers))
             {
                 return;
             }

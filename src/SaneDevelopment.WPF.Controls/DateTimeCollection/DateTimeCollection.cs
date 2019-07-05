@@ -73,15 +73,13 @@ namespace SaneDevelopment.WPF.Controls
             Debug.Assert(!this.IsFrozen, "!this.IsFrozen");
 
             this.WritePreamble();
-            var is3 = collection as ICollection<DateTime>;
-            if (is3 != null)
+            if (collection is ICollection<DateTime> is3)
             {
                 this.m_Collection = new List<DateTime>(is3);
             }
             else
             {
-                var is2 = collection as ICollection;
-                if (is2 != null)
+                if (collection is ICollection is2)
                 {
                     this.m_Collection = new List<DateTime>(is2.OfType<DateTime>());
                 }
@@ -325,7 +323,7 @@ namespace SaneDevelopment.WPF.Controls
         {
             if (value is DateTime)
             {
-                this.Remove((DateTime)value);
+                _ = this.Remove((DateTime)value);
             }
         }
 
@@ -543,7 +541,7 @@ namespace SaneDevelopment.WPF.Controls
                 throw new NotSupportedException(LocalizationResource.CollectionIsFrozen);
             }
 
-            this.AddHelper(item);
+            _ = this.AddHelper(item);
         }
 
         /// <summary>

@@ -43,6 +43,7 @@ namespace SaneDevelopment.WPF.Controls
     {
 #pragma warning disable SA1202 // Elements should be ordered by access
 #pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable IDE1006 // Naming Styles
 
 #pragma warning disable SA1303 // Const field names should begin with upper-case letter
 #pragma warning disable SA1310 // Field names should not contain underscore
@@ -1470,8 +1471,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnShiftLeftCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var zoombar = sender as ZoomBar;
-            if (zoombar == null)
+            if (!(sender is ZoomBar zoombar))
             {
                 return;
             }
@@ -1482,8 +1482,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void ShiftLeftCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var zoombar = sender as ZoomBar;
-            if (zoombar == null)
+            if (!(sender is ZoomBar zoombar))
             {
                 e.CanExecute = false;
                 return;
@@ -1494,8 +1493,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnShiftRightCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var zoombar = sender as ZoomBar;
-            if (zoombar == null)
+            if (!(sender is ZoomBar zoombar))
             {
                 return;
             }
@@ -1506,8 +1504,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void ShiftRightCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var zoombar = sender as ZoomBar;
-            if (zoombar == null)
+            if (!(sender is ZoomBar zoombar))
             {
                 e.CanExecute = false;
                 return;
@@ -1548,7 +1545,7 @@ namespace SaneDevelopment.WPF.Controls
                 return;
             }
 
-            this.RangeSlider.MoveRangeToNextTick(Math.Abs(shiftValue), shiftValue < 0.0);
+            _ = this.RangeSlider.MoveRangeToNextTick(Math.Abs(shiftValue), shiftValue < 0.0);
         }
 
         #endregion Commands
@@ -1565,7 +1562,7 @@ namespace SaneDevelopment.WPF.Controls
             this.RangeSlider = this.GetTemplateChild(RangeSliderPartName) as SimpleNumericRangeSlider;
             if (this.RangeSlider != null)
             {
-                this.RangeSlider.ApplyTemplate();
+                _ = this.RangeSlider.ApplyTemplate();
 
                 var binding = new Binding
                     {
@@ -1573,7 +1570,7 @@ namespace SaneDevelopment.WPF.Controls
                         Path = new PropertyPath(SelectionStartProperty),
                         Mode = BindingMode.TwoWay,
                     };
-                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.StartValueProperty, binding);
+                _ = this.RangeSlider.SetBinding(SimpleNumericRangeSlider.StartValueProperty, binding);
 
                 binding = new Binding
                     {
@@ -1581,10 +1578,10 @@ namespace SaneDevelopment.WPF.Controls
                         Path = new PropertyPath(SelectionEndProperty),
                         Mode = BindingMode.TwoWay,
                     };
-                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.EndValueProperty, binding);
+                _ = this.RangeSlider.SetBinding(SimpleNumericRangeSlider.EndValueProperty, binding);
 
                 binding = new Binding { Source = this, Path = new PropertyPath(MinSelectionRangeProperty) };
-                this.RangeSlider.SetBinding(SimpleNumericRangeSlider.MinRangeValueProperty, binding);
+                _ = this.RangeSlider.SetBinding(SimpleNumericRangeSlider.MinRangeValueProperty, binding);
 
                 // initialize interval (range) here, because it set only inside RangeSlider_RangeValueChanged
                 this.SelectionRange = this.RangeSlider.RangeValue;
@@ -1839,6 +1836,7 @@ namespace SaneDevelopment.WPF.Controls
 
         #endregion // IRanged<double, double>
 
+#pragma warning restore IDE1006 // Naming Styles
 #pragma warning restore SA1201 // Elements should appear in the correct order
 #pragma warning restore SA1202 // Elements should be ordered by access
     }

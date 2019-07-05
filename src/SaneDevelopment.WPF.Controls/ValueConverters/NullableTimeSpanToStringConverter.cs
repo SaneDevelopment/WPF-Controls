@@ -103,8 +103,7 @@ namespace SaneDevelopment.WPF.Controls
                 return null;
             }
 
-            TimeSpan tm;
-            if (TimeSpan.TryParse(s, out tm))
+            if (TimeSpan.TryParse(s, out TimeSpan tm))
             {
                 return tm;
             }

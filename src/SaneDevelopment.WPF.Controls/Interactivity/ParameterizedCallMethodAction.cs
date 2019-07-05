@@ -173,9 +173,8 @@ namespace SaneDevelopment.WPF.Controls.Interactivity
         /// <param name="parameter">Initial parameter value.</param>
         protected override void Invoke(object parameter)
         {
-            if (parameter is EventArgs)
+            if (parameter is EventArgs typedArgs)
             {
-                var typedArgs = (EventArgs)parameter;
                 parameter = new ParameterizedEventArgs(
                     typedArgs,
                     this.Parameter,

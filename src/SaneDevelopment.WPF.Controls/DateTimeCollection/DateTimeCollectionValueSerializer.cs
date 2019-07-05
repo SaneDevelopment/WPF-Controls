@@ -69,8 +69,7 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns>A string representation of the specified object.</returns>
         public override string ConvertToString(object value, IValueSerializerContext context)
         {
-            var dates = value as DateTimeCollection;
-            if (dates == null)
+            if (!(value is DateTimeCollection dates))
             {
                 return base.ConvertToString(value, context);
             }

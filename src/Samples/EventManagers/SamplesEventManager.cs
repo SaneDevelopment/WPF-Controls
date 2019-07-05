@@ -253,7 +253,7 @@ namespace SaneDevelopment.WPF.Controls.Samples
             var collection = listBox.ItemsSource as DateTimeCollection;
             collection = collection == null ? new DateTimeCollection() : new DateTimeCollection(collection);
 
-            collection.Remove(dateToRemove);
+            _ = collection.Remove(dateToRemove);
 
             listBox.ItemsSource = collection;
         }

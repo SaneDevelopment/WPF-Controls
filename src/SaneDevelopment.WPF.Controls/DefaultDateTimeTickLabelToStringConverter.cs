@@ -54,12 +54,11 @@ namespace SaneDevelopment.WPF.Controls
                 return LocalizationResource.BadDateTimeTicksValue;
             }
 
-            var frmt = parameter as string;
 
             Debug.Assert(longTicks <= 0x2bca2875f4373fffL, "longTicks <= 0x2bca2875f4373fffL"); // DateTime.MaxValue.Ticks
             var dt = new DateTime(longTicks);
 
-            if (frmt == null)
+            if (!(parameter is string frmt))
             {
                 return dt.ToString(CultureInfo.CurrentCulture);
             }

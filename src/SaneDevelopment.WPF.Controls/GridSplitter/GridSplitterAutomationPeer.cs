@@ -102,7 +102,7 @@ namespace SaneDevelopment.WPF.Controls
                 throw new ArgumentOutOfRangeException(nameof(y));
             }
 
-            ((GridSplitter)base.Owner).KeyboardMoveSplitter(x, y);
+            _ = ((GridSplitter)base.Owner).KeyboardMoveSplitter(x, y);
         }
 
         /// <summary>

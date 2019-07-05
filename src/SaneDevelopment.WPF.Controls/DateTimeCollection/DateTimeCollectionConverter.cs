@@ -77,8 +77,7 @@ namespace SaneDevelopment.WPF.Controls
                 throw this.GetConvertFromException(null);
             }
 
-            var source = value as string;
-            if (source != null)
+            if (value is string source)
             {
                 return ParseCore(source, DefaultFormatString, StringItemsSeparator);
             }
@@ -96,8 +95,7 @@ namespace SaneDevelopment.WPF.Controls
         /// <returns>An <see cref="object"/> that represents the converted value.</returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            var dates = value as DateTimeCollection;
-            if ((dates != null) && destinationType == typeof(string))
+            if ((value is DateTimeCollection dates) && destinationType == typeof(string))
             {
                 return ConvertToStringCore(dates, DefaultFormatString, culture, StringItemsSeparator);
             }
@@ -138,10 +136,10 @@ namespace SaneDevelopment.WPF.Controls
             var builder = new StringBuilder();
             for (int i = 0; i < datesCopy.Count; i++)
             {
-                builder.AppendFormat(provider, format, new object[] { datesCopy[i] });
+                _ = builder.AppendFormat(provider, format, new object[] { datesCopy[i] });
                 if (i != (datesCopy.Count - 1))
                 {
-                    builder.Append(delimiter);
+                    _ = builder.Append(delimiter);
                 }
             }
 

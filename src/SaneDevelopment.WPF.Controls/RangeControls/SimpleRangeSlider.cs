@@ -54,6 +54,7 @@ namespace SaneDevelopment.WPF.Controls
 #pragma warning disable CA1000 // Do not declare static members on generic types
 #pragma warning disable SA1202 // Elements should be ordered by access
 #pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable IDE1006 // Naming Styles
 
         #region Private Fields
 
@@ -494,8 +495,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void IncreaseStartValueCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider == null)
+            if (!(sender is SimpleRangeSlider<T, TInterval> slider))
             {
                 e.CanExecute = false;
                 return;
@@ -506,8 +506,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void IncreaseEndValueCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider == null)
+            if (!(sender is SimpleRangeSlider<T, TInterval> slider))
             {
                 e.CanExecute = false;
                 return;
@@ -518,8 +517,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void DecreaseStartValueCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider == null)
+            if (!(sender is SimpleRangeSlider<T, TInterval> slider))
             {
                 e.CanExecute = false;
                 return;
@@ -530,8 +528,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void DecreaseEndValueCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider == null)
+            if (!(sender is SimpleRangeSlider<T, TInterval> slider))
             {
                 e.CanExecute = false;
                 return;
@@ -543,8 +540,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseRangeSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseRangeSmall();
             }
@@ -552,8 +548,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseStartSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseStartSmall();
             }
@@ -561,8 +556,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseEndSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseEndSmall();
             }
@@ -570,8 +564,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseSmallByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 switch (DetectCommandThumbType(e))
                 {
@@ -588,8 +581,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseRangeSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseRangeSmall();
             }
@@ -597,8 +589,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseStartSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseStartSmall();
             }
@@ -606,8 +597,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseEndSmallCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseEndSmall();
             }
@@ -615,8 +605,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseSmallByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 switch (DetectCommandThumbType(e))
                 {
@@ -633,8 +622,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximizeRangeValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnMaximizeRangeValue();
             }
@@ -642,8 +630,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximizeStartValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -658,8 +645,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximizeEndValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -674,8 +660,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMaximizeValueByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -699,8 +684,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimizeRangeValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnMinimizeRangeValue();
             }
@@ -708,8 +692,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimizeStartValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -724,8 +707,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimizeEndValueCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -740,8 +722,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnMinimizeValueByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 if (slider.IsSingleValue)
                 {
@@ -765,8 +746,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseRangeLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseRangeLarge();
             }
@@ -774,8 +754,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseStartLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseStartLarge();
             }
@@ -783,8 +762,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseEndLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnIncreaseEndLarge();
             }
@@ -792,8 +770,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnIncreaseLargeByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 switch (DetectCommandThumbType(e))
                 {
@@ -810,8 +787,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseRangeLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseRangeLarge();
             }
@@ -819,8 +795,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseStartLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseStartLarge();
             }
@@ -828,8 +803,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseEndLargeCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 slider.OnDecreaseEndLarge();
             }
@@ -837,8 +811,7 @@ namespace SaneDevelopment.WPF.Controls
 
         private static void OnDecreaseLargeByKeyCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var slider = sender as SimpleRangeSlider<T, TInterval>;
-            if (slider != null)
+            if (sender is SimpleRangeSlider<T, TInterval> slider)
             {
                 switch (DetectCommandThumbType(e))
                 {
@@ -1759,8 +1732,7 @@ namespace SaneDevelopment.WPF.Controls
             }
 
             // Show AutoToolTip if needed.
-            var thumb = e.OriginalSource as Thumb;
-            if (thumb == null)
+            if (!(e.OriginalSource is Thumb thumb))
             {
                 return;
             }
@@ -1873,9 +1845,7 @@ namespace SaneDevelopment.WPF.Controls
                 throw new ArgumentNullException(nameof(e));
             }
 
-            var thumb = e.OriginalSource as Thumb;
-
-            if (thumb == null)
+            if (!(e.OriginalSource is Thumb thumb))
             {
                 return;
             }
@@ -1937,8 +1907,7 @@ namespace SaneDevelopment.WPF.Controls
 
             base.OnApplyRangeTrackTemplate(templatedParent, track);
 
-            var templatedParentControl = templatedParent as SimpleRangeSlider<T, TInterval>;
-            if (templatedParentControl != null)
+            if (templatedParent is SimpleRangeSlider<T, TInterval>)
             {
                 track.BindToTemplatedParent(RangeTrack<T, TInterval>.OrientationProperty, OrientationProperty);
                 track.BindChildToTemplatedParent(track.DecreaseRepeatButton, RepeatButton.DelayProperty, DelayProperty);
@@ -2022,8 +1991,7 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     this.Track.StartThumb.SizeChanged += (s, e) =>
                         {
-                            var thumb = s as Thumb;
-                            if (thumb != null)
+                            if (s is Thumb thumb)
                             {
                                 this.StartReservedSpace = (this.Orientation == Orientation.Horizontal) ?
                                                          thumb.ActualWidth :
@@ -2036,8 +2004,7 @@ namespace SaneDevelopment.WPF.Controls
                 {
                     this.Track.EndThumb.SizeChanged += (s, e) =>
                         {
-                            var thumb = s as Thumb;
-                            if (thumb != null)
+                            if (s is Thumb thumb)
                             {
                                 this.EndReservedSpace = (this.Orientation == Orientation.Horizontal) ?
                                                        thumb.ActualWidth :
@@ -2124,7 +2091,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseRangeLarge()
         {
-            this.MoveRangeToNextTick(this.LargeChange, false);
+            _ = this.MoveRangeToNextTick(this.LargeChange, false);
         }
 
         /// <summary>
@@ -2132,7 +2099,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseStartLarge()
         {
-            this.MoveToNextTick(this.LargeChange, false, true);
+            _ = this.MoveToNextTick(this.LargeChange, false, true);
         }
 
         /// <summary>
@@ -2140,7 +2107,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseEndLarge()
         {
-            this.MoveToNextTick(this.LargeChange, false, false);
+            _ = this.MoveToNextTick(this.LargeChange, false, false);
         }
 
         /// <summary>
@@ -2148,7 +2115,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseRangeLarge()
         {
-            this.MoveRangeToNextTick(this.LargeChange, true);
+            _ = this.MoveRangeToNextTick(this.LargeChange, true);
         }
 
         /// <summary>
@@ -2156,7 +2123,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseStartLarge()
         {
-            this.MoveToNextTick(this.LargeChange, true, true);
+            _ = this.MoveToNextTick(this.LargeChange, true, true);
         }
 
         /// <summary>
@@ -2164,7 +2131,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseEndLarge()
         {
-            this.MoveToNextTick(this.LargeChange, true, false);
+            _ = this.MoveToNextTick(this.LargeChange, true, false);
         }
 
         /// <summary>
@@ -2172,7 +2139,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseRangeSmall()
         {
-            this.MoveRangeToNextTick(this.SmallChange, false);
+            _ = this.MoveRangeToNextTick(this.SmallChange, false);
         }
 
         /// <summary>
@@ -2180,7 +2147,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseStartSmall()
         {
-            this.MoveToNextTick(this.SmallChange, false, true);
+            _ = this.MoveToNextTick(this.SmallChange, false, true);
         }
 
         /// <summary>
@@ -2188,7 +2155,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnIncreaseEndSmall()
         {
-            this.MoveToNextTick(this.SmallChange, false, false);
+            _ = this.MoveToNextTick(this.SmallChange, false, false);
         }
 
         /// <summary>
@@ -2196,7 +2163,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseRangeSmall()
         {
-            this.MoveRangeToNextTick(this.SmallChange, true);
+            _ = this.MoveRangeToNextTick(this.SmallChange, true);
         }
 
         /// <summary>
@@ -2204,7 +2171,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseStartSmall()
         {
-            this.MoveToNextTick(this.SmallChange, true, true);
+            _ = this.MoveToNextTick(this.SmallChange, true, true);
         }
 
         /// <summary>
@@ -2212,7 +2179,7 @@ namespace SaneDevelopment.WPF.Controls
         /// </summary>
         protected virtual void OnDecreaseEndSmall()
         {
-            this.MoveToNextTick(this.SmallChange, true, false);
+            _ = this.MoveToNextTick(this.SmallChange, true, false);
         }
 
         /// <summary>
@@ -2323,17 +2290,17 @@ namespace SaneDevelopment.WPF.Controls
 
             if (thumbType == RangeThumbType.StartThumb || thumbType == RangeThumbType.RangeThumb)
             {
-                res.Append(this.GetAutoToolTipString(this.StartValue, thumbType) ?? string.Empty);
+                _ = res.Append(this.GetAutoToolTipString(this.StartValue, thumbType) ?? string.Empty);
             }
 
             if (thumbType == RangeThumbType.RangeThumb)
             {
-                res.Append(AutoToolTipTextRangeDelimiter);
+                _ = res.Append(AutoToolTipTextRangeDelimiter);
             }
 
             if (thumbType == RangeThumbType.EndThumb || thumbType == RangeThumbType.RangeThumb)
             {
-                res.Append(this.GetAutoToolTipString(this.EndValue, thumbType) ?? string.Empty);
+                _ = res.Append(this.GetAutoToolTipString(this.EndValue, thumbType) ?? string.Empty);
             }
 
             return res.ToString();
@@ -2684,7 +2651,7 @@ namespace SaneDevelopment.WPF.Controls
                     if (changed)
                     {
                         Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0), "!DoubleUtil.AreClose(doubleDirection, 0.0)");
-                        this.InternalMoveToNextTick(ref doubleDirection, true);
+                        _ = this.InternalMoveToNextTick(ref doubleDirection, true);
                     }
                 }
                 else if (doubleDirection < 0)
@@ -2694,7 +2661,7 @@ namespace SaneDevelopment.WPF.Controls
                     if (changed)
                     {
                         Debug.Assert(!DoubleUtil.AreClose(doubleDirection, 0.0), "!DoubleUtil.AreClose(doubleDirection, 0.0)");
-                        this.InternalMoveToNextTick(ref doubleDirection, false);
+                        _ = this.InternalMoveToNextTick(ref doubleDirection, false);
                     }
                 }
             }
@@ -2771,7 +2738,7 @@ namespace SaneDevelopment.WPF.Controls
             switch (thumbType)
             {
                 case RangeThumbType.StartThumb:
-                    this.UpdateValueByDelta(delta, true);
+                    _ = this.UpdateValueByDelta(delta, true);
                     break;
 
                 case RangeThumbType.RangeThumb:
@@ -2786,7 +2753,7 @@ namespace SaneDevelopment.WPF.Controls
                             if (DoubleUtil.LessThan(endValue, max))
                             {
                                 delta = this.UpdateValueByDelta(delta, false);
-                                this.UpdateValueByDelta(delta, true);
+                                _ = this.UpdateValueByDelta(delta, true);
                             }
                         }
                         else
@@ -2795,7 +2762,7 @@ namespace SaneDevelopment.WPF.Controls
                             if (DoubleUtil.GreaterThan(startValue, min))
                             {
                                 delta = this.UpdateValueByDelta(delta, true);
-                                this.UpdateValueByDelta(delta, false);
+                                _ = this.UpdateValueByDelta(delta, false);
                             }
                         }
                     }
@@ -2820,7 +2787,7 @@ namespace SaneDevelopment.WPF.Controls
                     break;
 
                 case RangeThumbType.EndThumb:
-                    this.UpdateValueByDelta(delta, false);
+                    _ = this.UpdateValueByDelta(delta, false);
                     break;
             }
         }
@@ -2852,6 +2819,7 @@ namespace SaneDevelopment.WPF.Controls
 
         #endregion Helper Functions
 
+#pragma warning restore IDE1006 // Naming Styles
 #pragma warning restore SA1201 // Elements should appear in the correct order
 #pragma warning restore SA1202 // Elements should be ordered by access
 #pragma warning restore CA1000 // Do not declare static members on generic types

@@ -22,14 +22,14 @@ dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
 
 # this. and Me. preferences
-dotnet_style_qualification_for_event = true:silent
-dotnet_style_qualification_for_field = true:silent
-dotnet_style_qualification_for_method = true:silent
-dotnet_style_qualification_for_property = true:silent
+dotnet_style_qualification_for_event = true:warning
+dotnet_style_qualification_for_field = true:warning
+dotnet_style_qualification_for_method = true:warning
+dotnet_style_qualification_for_property = true:warning
 
 # Language keywords vs BCL types preferences
-dotnet_style_predefined_type_for_locals_parameters_members = true:silent
-dotnet_style_predefined_type_for_member_access = true:silent
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
 
 # Parentheses preferences
 dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:silent
@@ -92,7 +92,7 @@ csharp_prefer_static_local_function = true:suggestion
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async
 
 # Code-block preferences
-csharp_prefer_braces = true:silent
+csharp_prefer_braces = true:warning
 csharp_prefer_simple_using_statement = true:suggestion
 
 # Expression-level preferences
@@ -151,7 +151,7 @@ csharp_space_between_square_brackets = false
 
 # Wrapping preferences
 csharp_preserve_single_line_blocks = true
-csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_statements = false
 
 #### Naming styles ####
 
@@ -168,6 +168,14 @@ dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
 dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_rule.private_const_field_should_be_begins_with_c_.severity = suggestion
+dotnet_naming_rule.private_const_field_should_be_begins_with_c_.symbols = private_const_field
+dotnet_naming_rule.private_const_field_should_be_begins_with_c_.style = begins_with_c_
+
+dotnet_naming_rule.private_static_field_should_be_begins_with_s_.severity = suggestion
+dotnet_naming_rule.private_static_field_should_be_begins_with_s_.symbols = private_static_field
+dotnet_naming_rule.private_static_field_should_be_begins_with_s_.style = begins_with_s_
 
 dotnet_naming_rule.private_field_should_be_begins_with_m_.severity = suggestion
 dotnet_naming_rule.private_field_should_be_begins_with_m_.symbols = private_field
@@ -191,6 +199,14 @@ dotnet_naming_symbols.private_field.applicable_kinds = field
 dotnet_naming_symbols.private_field.applicable_accessibilities = private, private_protected
 dotnet_naming_symbols.private_field.required_modifiers = 
 
+dotnet_naming_symbols.private_static_field.applicable_kinds = field
+dotnet_naming_symbols.private_static_field.applicable_accessibilities = private, private_protected
+dotnet_naming_symbols.private_static_field.required_modifiers = static
+
+dotnet_naming_symbols.private_const_field.applicable_kinds = field
+dotnet_naming_symbols.private_const_field.applicable_accessibilities = private, private_protected
+dotnet_naming_symbols.private_const_field.required_modifiers = const
+
 # Naming styles
 
 dotnet_naming_style.pascal_case.required_prefix = 
@@ -207,3 +223,13 @@ dotnet_naming_style.begins_with_m_.required_prefix = m_
 dotnet_naming_style.begins_with_m_.required_suffix = 
 dotnet_naming_style.begins_with_m_.word_separator = 
 dotnet_naming_style.begins_with_m_.capitalization = pascal_case
+
+dotnet_naming_style.begins_with_s_.required_prefix = s_
+dotnet_naming_style.begins_with_s_.required_suffix = 
+dotnet_naming_style.begins_with_s_.word_separator = 
+dotnet_naming_style.begins_with_s_.capitalization = pascal_case
+
+dotnet_naming_style.begins_with_c_.required_prefix = c_
+dotnet_naming_style.begins_with_c_.required_suffix = 
+dotnet_naming_style.begins_with_c_.word_separator = 
+dotnet_naming_style.begins_with_c_.capitalization = pascal_case

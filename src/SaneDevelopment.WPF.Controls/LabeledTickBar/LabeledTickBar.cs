@@ -375,53 +375,54 @@ namespace SaneDevelopment.WPF.Controls
                     }
                 }
 
-                Action<double, double> drawer = (tick, y) =>
+                void DrawVertical(double tick, double y)
+                {
+                    var formattedText = GetFormattedText(
+                        tick,
+                        textBrush,
+                        textTypeface,
+                        valueFormat,
+                        valueConverter,
+                        valueConverterParameter,
+                        pixelsPerDip);
+
+                    var textPoint = new Point(
+                        startPoint.X - (formattedText.Width / 2),
+                        y - (textPointShiftDirection * formattedText.Height));
+
+                    double newTextEdge = y + ((isDirectionReversed ? 1 : -1) * formattedText.Width / 2);
+
+                    bool drawThisText = true;
+                    if (eliminateOverlapping)
                     {
-                        var formattedText = GetFormattedText(
-                            tick,
-                            textBrush,
-                            textTypeface,
-                            valueFormat,
-                            valueConverter,
-                            valueConverterParameter,
-                            pixelsPerDip);
-
-                        var textPoint = new Point(
-                            startPoint.X - (formattedText.Width / 2),
-                            y - (textPointShiftDirection * formattedText.Height));
-
-                        double newTextEdge = y + ((isDirectionReversed ? 1 : -1) * formattedText.Width / 2);
-
-                        bool drawThisText = true;
-                        if (eliminateOverlapping)
+                        if (isDirectionReversed)
                         {
-                            if (isDirectionReversed)
-                            {
-                                drawThisText = DoubleUtil.GreaterThanOrClose(y - (formattedText.Width / 2), prevTextEdge) &&
-                                               DoubleUtil.LessThanOrClose(y + (formattedText.Width / 2), maxTextEdge);
-                            }
-                            else
-                            {
-                                drawThisText = DoubleUtil.LessThanOrClose(y + (formattedText.Width / 2), prevTextEdge) &&
-                                               DoubleUtil.GreaterThanOrClose(y - (formattedText.Width / 2), maxTextEdge);
-                            }
+                            drawThisText = DoubleUtil.GreaterThanOrClose(y - (formattedText.Width / 2), prevTextEdge) &&
+                                           DoubleUtil.LessThanOrClose(y + (formattedText.Width / 2), maxTextEdge);
                         }
-
-                        if (drawThisText)
+                        else
                         {
-                            var rotateTransform = new RotateTransform(
-                                270,
-                                textPoint.X + (formattedText.Width / 2),
-                                textPoint.Y + (textPointShiftDirection * formattedText.Height));
-                            dc.DrawEllipse(textBrush, pen, new Point(startPoint.X, y), pointRadius, pointRadius);
-                            dc.PushTransform(rotateTransform);
-                            dc.DrawText(formattedText, textPoint);
-                            dc.Pop();
-                            prevTextEdge = newTextEdge;
+                            drawThisText = DoubleUtil.LessThanOrClose(y + (formattedText.Width / 2), prevTextEdge) &&
+                                           DoubleUtil.GreaterThanOrClose(y - (formattedText.Width / 2), maxTextEdge);
                         }
-                    };
+                    }
+
+                    if (drawThisText)
+                    {
+                        var rotateTransform = new RotateTransform(
+                            270,
+                            textPoint.X + (formattedText.Width / 2),
+                            textPoint.Y + (textPointShiftDirection * formattedText.Height));
+                        dc.DrawEllipse(textBrush, pen, new Point(startPoint.X, y), pointRadius, pointRadius);
+                        dc.PushTransform(rotateTransform);
+                        dc.DrawText(formattedText, textPoint);
+                        dc.Pop();
+                        prevTextEdge = newTextEdge;
+                    }
+                }
+
                 // Draw Min tick
-                drawer(min, startPoint.Y);
+                DrawVertical(min, startPoint.Y);
 
                 // Draw ticks using specified Ticks collection
                 if ((ticks != null) && (ticks.Count > 0))
@@ -436,7 +437,7 @@ namespace SaneDevelopment.WPF.Controls
                         double adjustedTick = tick - min;
                         double y = (adjustedTick * logicalToPhysical) + startPoint.Y;
 
-                        drawer(tick, y);
+                        DrawVertical(tick, y);
                     }
                 }
 
@@ -447,12 +448,12 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         double y = (i * logicalToPhysical) + startPoint.Y;
 
-                        drawer(i + min, y);
+                        DrawVertical(i + min, y);
                     }
                 }
 
                 // Draw Max tick
-                drawer(max, endPoint.Y);
+                DrawVertical(max, endPoint.Y);
             }
             else
             {
@@ -472,47 +473,48 @@ namespace SaneDevelopment.WPF.Controls
                     }
                 }
 
-                Action<double, double> drawer = (tick, x) =>
+                void DrawHorizontal(double tick, double x)
+                {
+                    var formattedText = GetFormattedText(
+                        tick,
+                        textBrush,
+                        textTypeface,
+                        valueFormat,
+                        valueConverter,
+                        valueConverterParameter,
+                        pixelsPerDip);
+                    var textPoint = new Point(
+                        x - (formattedText.Width / 2),
+                        startPoint.Y + (textPointShiftDirection * formattedText.Height));
+                    double newTextEdge = textPoint.X + (isDirectionReversed ? 0.0 : formattedText.Width);
+
+                    bool drawThisText = true;
+                    if (eliminateOverlapping)
                     {
-                        var formattedText = GetFormattedText(
-                            tick,
-                            textBrush,
-                            textTypeface,
-                            valueFormat,
-                            valueConverter,
-                            valueConverterParameter,
-                            pixelsPerDip);
-                        var textPoint = new Point(
-                            x - (formattedText.Width / 2),
-                            startPoint.Y + (textPointShiftDirection * formattedText.Height));
-                        double newTextEdge = textPoint.X + (isDirectionReversed ? 0.0 : formattedText.Width);
-
-                        bool drawThisText = true;
-                        if (eliminateOverlapping)
+                        if (isDirectionReversed)
                         {
-                            if (isDirectionReversed)
-                            {
-                                drawThisText =
-                                    DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, prevTextEdge) &&
-                                    DoubleUtil.GreaterThanOrClose(textPoint.X, maxTextEdge);
-                            }
-                            else
-                            {
-                                drawThisText =
-                                    DoubleUtil.GreaterThanOrClose(textPoint.X, prevTextEdge) &&
-                                    DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, maxTextEdge);
-                            }
+                            drawThisText =
+                                DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, prevTextEdge) &&
+                                DoubleUtil.GreaterThanOrClose(textPoint.X, maxTextEdge);
                         }
-
-                        if (drawThisText)
+                        else
                         {
-                            dc.DrawEllipse(textBrush, pen, new Point(x, startPoint.Y), pointRadius, pointRadius);
-                            dc.DrawText(formattedText, textPoint);
-                            prevTextEdge = newTextEdge;
+                            drawThisText =
+                                DoubleUtil.GreaterThanOrClose(textPoint.X, prevTextEdge) &&
+                                DoubleUtil.LessThanOrClose(textPoint.X + formattedText.Width, maxTextEdge);
                         }
-                    };
+                    }
+
+                    if (drawThisText)
+                    {
+                        dc.DrawEllipse(textBrush, pen, new Point(x, startPoint.Y), pointRadius, pointRadius);
+                        dc.DrawText(formattedText, textPoint);
+                        prevTextEdge = newTextEdge;
+                    }
+                }
+
                 // Draw Min tick
-                drawer(min, startPoint.X);
+                DrawHorizontal(min, startPoint.X);
 
                 // Draw ticks using specified Ticks collection
                 if ((ticks != null) && (ticks.Count > 0))
@@ -527,7 +529,7 @@ namespace SaneDevelopment.WPF.Controls
                         double adjustedTick = tick - min;
                         double x = (adjustedTick * logicalToPhysical) + startPoint.X;
 
-                        drawer(tick, x);
+                        DrawHorizontal(tick, x);
                     }
                 }
 
@@ -538,12 +540,12 @@ namespace SaneDevelopment.WPF.Controls
                     {
                         double x = (i * logicalToPhysical) + startPoint.X;
 
-                        drawer(i + min, x);
+                        DrawHorizontal(i + min, x);
                     }
                 }
 
                 // Draw Max tick
-                drawer(max, endPoint.X);
+                DrawHorizontal(max, endPoint.X);
             }
         }
 

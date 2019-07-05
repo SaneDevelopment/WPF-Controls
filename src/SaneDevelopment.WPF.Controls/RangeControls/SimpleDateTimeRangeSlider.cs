@@ -38,6 +38,7 @@ namespace SaneDevelopment.WPF.Controls
     {
 #pragma warning disable SA1202 // Elements should be ordered by access
 #pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable IDE1006 // Naming Styles
 
         /// <summary>
         /// Format string used when <see cref="SimpleRangeSlider{T, TInterval}.AutoToolTipFormat"/> is <c>null</c> or empty.
@@ -585,6 +586,7 @@ namespace SaneDevelopment.WPF.Controls
 
         #endregion
 
+#pragma warning restore IDE1006 // Naming Styles
 #pragma warning restore SA1201 // Elements should appear in the correct order
 #pragma warning restore SA1202 // Elements should be ordered by access
     }
